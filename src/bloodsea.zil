@@ -2874,7 +2874,7 @@
 
 <OBJECT CHARACTER-JALUDA
 	(DESC "Jaluda The Black")
-	(LDESC "Jaluda is a ruthlessly clever fighter who believes herself more than a match for any man. Those who have sailed with her describe this fearsome amazon as fiery and proud, not one to forget either a favour or a slight. She bears a mortal grudge against Amcha, the pirate king.")
+	(LDESC "Jaluda is a ruthlessly clever fighter who believes herself more than a match for any man. Those who have sailed with her describe this fearsome amazon as fiery and proud, not one to forget either a favour or a slight. She bears a mortal grudge against Amcha, the pirate king")
 	(RANK 3)
 	(PROFESSION PROFESSION-WARRIOR)
 	(STAMINA 16)
@@ -2890,7 +2890,7 @@
 
 <OBJECT CHARACTER-ARCADIA
 	(DESC "Arcadia Ego")
-	(LDESC "Arcadia is a young woman whose purity of spirit enables her to hear the murmuring of the gods in her dreams. Cast out by her family because they disapproved of her unworldly ways, she has dedicated her life to the quest for spiritual enlightenment. She is curious about the gods of Ankon-Konu, of which she knows little, and so plans a visit to Smogmaw in the near future.")
+	(LDESC "Arcadia is a young woman whose purity of spirit enables her to hear the murmuring of the gods in her dreams. Cast out by her family because they disapproved of her unworldly ways, she has dedicated her life to the quest for spiritual enlightenment. She is curious about the gods of Ankon-Konu, of which she knows little, and so plans a visit to Smogmaw in the near future")
 	(RANK 3)
 	(PROFESSION PROFESSION-PRIEST)
 	(STAMINA 16)
@@ -2906,7 +2906,7 @@
 
 <OBJECT CHARACTER-DAMONTIR
 	(DESC "Damontir The Mad")
-	(LDESC "Haunted by memories of a former life in which he wielded great power, Damontir would willingly pledge his lifeblood to the demons of darkness if he stood to gain a snippet of magical lore. Power is his only goal, and so his primary objective is to enrol at one of the sorcerous academies in Dweomer.")
+	(LDESC "Haunted by memories of a former life in which he wielded great power, Damontir would willingly pledge his lifeblood to the demons of darkness if he stood to gain a snippet of magical lore. Power is his only goal, and so his primary objective is to enrol at one of the sorcerous academies in Dweomer")
 	(RANK 3)
 	(PROFESSION PROFESSION-MAGE)
 	(STAMINA 16)
@@ -2922,7 +2922,7 @@
 
 <OBJECT CHARACTER-SILAS
 	(DESC "Silas Cumberbatch")
-	(LDESC "After a short spell in the Yellowport militia (he mistakenly enlisted thinking he was joining a queue for alms), Silas signed on aboard a merchantman bound for Metriciens. He found that the fresh breeze and the open sea inspired his ballads, and resolved not to return to a landlubber's life until he has learned the song of the mermaids.")
+	(LDESC "After a short spell in the Yellowport militia (he mistakenly enlisted thinking he was joining a queue for alms), Silas signed on aboard a merchantman bound for Metriciens. He found that the fresh breeze and the open sea inspired his ballads, and resolved not to return to a landlubber's life until he has learned the song of the mermaids")
 	(RANK 3)
 	(PROFESSION PROFESSION-TROUBADOUR)
 	(STAMINA 16)
@@ -2938,7 +2938,7 @@
 
 <OBJECT CHARACTER-GREYMALKIN
 	(DESC "Greymalkin Smith")
-	(LDESC "A dashing scoundrel, Greymalkin lives by his wits and has no care for either the future or the past. Money slips through his fingers as fast as he can earn it, but of late he has begun to be tempted by a story he overheard in a dockside tavern -- a story of great riches that lie unguarded on an island in the south seas.")
+	(LDESC "A dashing scoundrel, Greymalkin lives by his wits and has no care for either the future or the past. Money slips through his fingers as fast as he can earn it, but of late he has begun to be tempted by a story he overheard in a dockside tavern -- a story of great riches that lie unguarded on an island in the south seas")
 	(RANK 3)
 	(PROFESSION PROFESSION-ROGUE)
 	(STAMINA 16)
@@ -2954,7 +2954,7 @@
 
 <OBJECT CHARACTER-VARKUNG
 	(DESC "Varkung of Metriciens")
-	(LDESC "Varkung has always been fascinated by the distant places of the world. As a child he would spend hours staring at his father's maps and day-dreaming of the people and creatures who lived across the sea. Now, as a young man, he has the chance to go exploring. His first wish is to visit Starspike Island and see if, as legends claim, it really does stretch up beyond the sky.")
+	(LDESC "Varkung has always been fascinated by the distant places of the world. As a child he would spend hours staring at his father's maps and day-dreaming of the people and creatures who lived across the sea. Now, as a young man, he has the chance to go exploring. His first wish is to visit Starspike Island and see if, as legends claim, it really does stretch up beyond the sky")
 	(RANK 3)
 	(PROFESSION PROFESSION-WAYFARER)
 	(STAMINA 16)
