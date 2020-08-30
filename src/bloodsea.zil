@@ -2884,7 +2884,7 @@
 	(MAGIC 2)
 	(SANCTITY 5)
 	(SCOUTING 4)
-	(THIEVERY 3)
+	(THIEVERY 5)
 	(POSSESSIONS <LTABLE SWORD CHAIN-MAIL MAP>)
 	(FLAGS PERSONBIT NARTICLEBIT)>
 
@@ -2930,7 +2930,7 @@
 	(CHARISMA 7)
 	(COMBAT 4)
 	(MAGIC 5)
-	(SANCTITY 5)
+	(SANCTITY 4)
 	(SCOUTING 3)
 	(THIEVERY 5)
 	(POSSESSIONS <LTABLE SWORD CHAIN-MAIL MAP>)
@@ -5395,27 +5395,29 @@
 	(VICTORY ENDING-WAR-TORN-KINGDOM)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT001 "You are alone in an open boat waiting for death.||How your life has changed since the day that you set out from your homeland across the Unbounded Ocean! You had signed on aboard a ship in the hope of visiting a dozen ports, seeing a thousand wonders. But calamity overtook your voyage in the first week, when pirates swooped down upon the vessel. You and a handful of shipmates managed to get the cutter down into the water and were making off, but some of the pirates leapt down from the rail right in your midst. The fighting was hard. You remember little of it now, but when it was over the boat was awash with blood and you were the only one left alive. Of your own ship and the pirates' there was no sign -- the current had carried you out of sight of any living thing.||Best not to think how you've survived since then. At the mercy of the wind and the currents, you have been swept steadily westwards into regions completely unknown to you. Drinking water has been your biggest problem -- you've had to rely on rain and there has been none for days. Your body is weak, your spirits low. Then, just as death seems ready to draw his boat alongside, you see something that kindles new hope. White clouds. Birds turning high above. The grey hump of land on the horizon!||Steering towards the shore, you feel the cutter lurch as it enters rough water. The wind whips up plumes of spindrift and breakers pound the cliffs. The tiller is yanked out of your hands. The little boat is spun around, out of control, and goes plunging towards the coast.||You leap clear at the last second. There is the snap of timber, the roaring crescendo of the waves -- and then silence as you go under. Striking out wildly, you try to swim clear, then suddenly a wave catches you and flings you contemptuously on to the beach.||You are battered and bedraggled, but alive. Now your adventures can begin.">
+
 <ROOM STORY001
 	(IN ROOMS)
 	(DESC "001")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-GOLNIR)
+	(STORY TEXT001)
+	(EVENTS STORY001-EVENTS)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY001-EVENTS ("AUX" ROLL)
+	<SET ROLL <RANDOM-EVENT 2 0 T>>
+	<COND (<L=? .ROLL 4>
+		<STORY-JUMP ,STORY709>
+	)(<L=? .ROLL 6>
+		<STORY-JUMP ,STORY505>
+	)(<L=? .ROLL 7>
+		<STORY-JUMP ,STORY714>
+	)(<L=? .ROLL 9>
+		<STORY-JUMP ,STORY313>
+	)(ELSE
+		<STORY-JUMP ,STORY151>
+	)>>
 
 <ROOM STORY002
 	(IN ROOMS)
