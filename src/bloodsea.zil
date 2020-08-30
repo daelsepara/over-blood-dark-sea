@@ -1,0 +1,21121 @@
+; "Over the Blood-Dark Sea (ZIL)"
+; ---------------------------------------------------------------------------------------------
+
+<CONSTANT GAME-TITLE "||Over the Blood-Dark Sea">
+<CONSTANT GAME-DESCRIPTION "|Dave Morris and Jamie Thomson (1995)||Implemented in ZIL by SD Separa (2020)|">
+<CONSTANT RELEASEID 1>
+<CONSTANT IFID "28661C3E-1309-484F-92C7-C681B054D742">
+<VERSION XZIP>
+
+<SETG EXTRA-FLAGS (CACHEBIT CURSEBIT DISEASEBIT POISONBIT)>
+
+<INSERT-FILE "minilib">
+
+<ROUTINE GO ()
+	<V-VERSION>
+	<TELL CR "IFID: ">
+	<TELL IFID>
+	<CRLF>
+	<GAME-BOOK>
+	<QUIT-MESSAGE>>
+
+; "GLOBALS"
+; ---------------------------------------------------------------------------------------------
+
+<CONSTANT NONE <>>
+<CONSTANT F <>>
+
+<GLOBAL PERIOD-CR ".|">
+<GLOBAL EXCLAMATION-CR "!|">
+
+<CONSTANT TEXT-AFFLICTED "afflicted">
+<CONSTANT TEXT-EXCELLENT "Excellent!">
+<CONSTANT TEXT-INFECTED "infected">
+<CONSTANT TEXT-POISONED "poisoned">
+<CONSTANT TEXT-SURE "Are you sure?">
+<CONSTANT TEXT-NEXT-TIME "See you next time!">
+<CONSTANT TEXT-RANDOM-EVENT "Random Event">
+<CONSTANT TEXT-BYE "Bye">
+<CONSTANT TEXT-BACK "Go back">
+<CONSTANT TEXT-GOODBYE "Goodbye!">
+
+; "CHOICES"
+; ---------------------------------------------------------------------------------------------
+
+<CONSTANT SELECT-CHOICES <LTABLE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE>>
+<CONSTANT TEMP-LIST <LTABLE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE>>
+
+<CONSTANT R-NONE 0> 
+<CONSTANT R-ABILITY 1> ; "tests whether ABILITY exceeds certain score"
+<CONSTANT R-TEST-ABILITY 2> ; "test ABILITY versus difficulty roll"
+<CONSTANT R-RANDOM 3> ; "rolls a number of dice and choose destination based on threshold"
+<CONSTANT R-CODEWORD 4> ; "presence of codeword(s)"
+<CONSTANT R-CODEWORDS 5> ; "presence of codeword(s)"
+<CONSTANT R-ITEM 6> ; "possession of item (s)"
+<CONSTANT R-ALL 7> ; "possession of all these item (s)"
+<CONSTANT R-ANY 8> ; "possession of any of the item (s)"
+<CONSTANT R-MONEY 9> ; "tests ability to pay indicated amount"
+<CONSTANT R-CODEWORD-ITEM 10> ; "presence of codeword and item"
+<CONSTANT R-DISCHARGE 11> ; "discharge a weapon"
+<CONSTANT R-TITLE 12> ; "check for presence of titles"
+<CONSTANT R-VISITS 13> ; "check if location was visited multiple times"
+<CONSTANT R-RANK 14> ; "check if location was visited multiple times"
+<CONSTANT R-GAIN-CODEWORD 15> ; "gain codeword (s)"
+<CONSTANT R-PROFESSION 16> ; "check profession"
+<CONSTANT R-DOCK 17> ; "dock at port"
+<CONSTANT R-LOCATION 18> ; "test current location"
+<CONSTANT R-LOSE-ITEM 19> ; "lose item"
+<CONSTANT R-WEAPON 20> ; "you have a weapon of a specific combat score"
+
+; "No requirements"
+<CONSTANT TWO-CHOICES <LTABLE R-NONE R-NONE>>
+<CONSTANT THREE-CHOICES <LTABLE R-NONE R-NONE R-NONE>>
+<CONSTANT FOUR-CHOICES <LTABLE R-NONE R-NONE R-NONE R-NONE>>
+<CONSTANT FIVE-CHOICES <LTABLE R-NONE R-NONE R-NONE R-NONE R-NONE>>
+<CONSTANT SIX-CHOICES <LTABLE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE>>
+<CONSTANT SEVEN-CHOICES <LTABLE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE>>
+<CONSTANT EIGHT-CHOICES <LTABLE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE>>
+
+; "ABILITIES"
+; ---------------------------------------------------------------------------------------------
+
+; "ability types"
+<CONSTANT ABILITY-CHARISMA 1>
+<CONSTANT ABILITY-COMBAT 2>
+<CONSTANT ABILITY-MAGIC 3>
+<CONSTANT ABILITY-SANCTITY 4>
+<CONSTANT ABILITY-SCOUTING 5>
+<CONSTANT ABILITY-THIEVERY 6>
+<CONSTANT ABILITY-DEFENSE 7>
+
+; "ability labels"
+<CONSTANT ABILITIES <LTABLE "CHARISMA" "COMBAT" "MAGIC" "SANCTITY" "SCOUTING" "THIEVERY" "DEFENSE">>
+
+; "PLAYER / CHARACTER / NPC"
+; ---------------------------------------------------------------------------------------------
+
+; "Globals"
+
+<CONSTANT LIMIT-POSSESSIONS 12>
+<GLOBAL CURRENT-SHIP NONE>
+<GLOBAL MONEY 0>
+<GLOBAL MAX-STAMINA 9>
+<GLOBAL STAMINA 0>
+
+; "For situations that require ransom"
+<GLOBAL RANSOM 0>
+
+<GLOBAL BEST-WEAPON NONE>
+<GLOBAL BEST-ARMOUR NONE>
+<GLOBAL PREVIOUS-STAMINA 0>
+
+; "Current Character"
+<GLOBAL CURRENT-CHARACTER NONE>
+
+; "GOD worshipped"
+<GLOBAL GOD NONE>
+
+; "resurrection arrangement"
+<GLOBAL RESURRECTION-ARRANGEMENTS NONE>
+
+; "diseases and aliments"
+<OBJECT AILMENTS (DESC "ailments/diseases/curses") (FLAGS CONTBIT OPENBIT)>
+
+; "object to refer to all of your money"
+<OBJECT ALL-MONEY (DESC "all your money") (FLAGS TAKEBIT NDESCBIT)>
+
+; "container for blessings"
+<OBJECT BLESSINGS (DESC "blessings") (FLAGS CONTBIT OPENBIT)>
+
+; "container for ship's cargo"
+<OBJECT CARGO (DESC "cargo") (FLAGS CONTBIT OPENBIT)>
+
+; "container for codewords"
+<OBJECT CODEWORDS (DESC "codewords") (FLAGS CONTBIT OPENBIT)>
+
+; "currency description"
+<OBJECT CURRENCY (DESC "shards")>
+
+; "lost stuff"
+<OBJECT LOST-STUFF (DESC "things lost") (FLAGS CONTBIT OPENBIT)>
+
+; "container for titles and honours acquired"
+<OBJECT TITLES-AND-HONOURS (DESC "Titles and Honours") (FLAGS CONTBIT OPENBIT)>
+
+; "container for ships owned"
+<OBJECT SHIPS (DESC "ships") (FLAGS CONTBIT OPENBIT)>
+
+; "townhouses and/secret caches"
+<OBJECT TOWNHOUSES (DESC "townhouses/secret caches") (FLAGS CONTBIT OPENBIT)>
+
+; "NON-PERSON OBJECTS Properties"
+; ---------------------------------------------------------------------------------------------
+
+<PROPDEF QUANTITY -1>
+<PROPDEF CHARGES -1>
+<PROPDEF STARS -1>
+<PROPDEF CONDITION -1>
+
+<PROPDEF EFFECTS NONE>
+; "STORY"
+; ---------------------------------------------------------------------------------------------
+
+<GLOBAL CURRENT-STORY NONE>
+<GLOBAL PREVIOUS-STORY NONE>
+<GLOBAL CONTINUE-TO-CHOICES T>
+<GLOBAL RUN-ONCE F>
+<GLOBAL STARTING-POINT STORY001>
+<GLOBAL CURRENT-LOCATION LOCATION-GOLNIR>
+
+<CONSTANT LOCATIONS <LTABLE "Golnir">>
+
+<CONSTANT LOCATION-GOLNIR 1>
+
+; "Gamebook loop"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE GAME-BOOK ("AUX" KEY)
+	<INSTRUCTIONS>
+	<RESET-PLAYER>
+	<RESET-OBJECTS>
+	<RESET-SELECTIONS>
+	<RESET-STORY>
+	<CHOOSE-CHARACTER>
+	<SETG HERE ,STARTING-POINT>
+	<REPEAT ()
+		<CRLF>
+		<RESET-CHOICES>
+		<COND (,RUN-ONCE
+			<MARK-VISITS>
+			<CHECK-BACKGROUND>
+		)>
+		<SETG CURRENT-STORY ,HERE>
+		<GOTO ,HERE>
+		<MARK-LOCATION>
+		<UPDATE-STATUS-LINE>
+		<PRINT-SECTION>
+		<CHECK-EVENTS>
+		<COND (<EQUAL? ,CURRENT-STORY ,HERE>
+			<CHECK-DOOM>
+			<CHECK-VICTORY>
+		)>
+		<COND (,RUN-ONCE
+			<GAIN-ITEMS>
+			<GAIN-CODEWORDS>
+			<GAIN-TITLES>
+		)>
+		<COND (,CONTINUE-TO-CHOICES
+			<SET KEY <PROCESS-STORY>>
+			<COND (<EQUAL? .KEY !\h !\H !\?> <DISPLAY-HELP> <PRESS-A-KEY> <SET KEY NONE>)>
+			<COND (<EQUAL? .KEY !\p !\P> <DESCRIBE-PLAYER> <PRESS-A-KEY> <SET KEY NONE>)>
+			<COND (<EQUAL? .KEY !\q !\Q> <CRLF> <TELL "Are you sure you want to quit the game?"> <COND(<YES?> <RETURN>)>)>
+			<COND (<EQUAL? .KEY !\r !\R> <CRLF> <TELL "Restore from a previous save?"> <COND (<YES?> <COND (<NOT <RESTORE>> <EMPHASIZE "Restore failed."> <PRESS-A-KEY>)>)>)>
+			<COND (<EQUAL? .KEY !\s !\S> <CRLF> <TELL "Save current progress?"> <COND (<YES?> <COND (<NOT <SAVE>> <EMPHASIZE "Save failed."> <PRESS-A-KEY>)>)>)>
+			<COND (<EQUAL? .KEY !\u !\U> <USE-INVENTORY> <SET KEY NONE>)>
+			<COND (<EQUAL? .KEY !\x !\X> <RETURN>)>
+		)>
+		<UPDATE-STATUS-LINE>
+	>>
+
+; "Gamebook Engine Routines"
+; ---------------------------------------------------------------------------------------------
+
+; "generic D6 roller"
+<GLOBAL LAST-ROLL 0>
+
+<ROUTINE ROLL-DICE ("OPT" DIE "AUX" RESULT)
+	<SET RESULT 0>
+	<COND (<NOT .DIE> <SET DIE 1>)>
+	<DO (I 1 .DIE)
+		<SET RESULT <+ .RESULT <RANDOM 6>>>
+	>
+	<SETG LAST-ROLL .RESULT>
+	<RETURN .RESULT>>
+
+; "Story Routines - print story, process choices, triggers"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE CHECK-BACKGROUND ("AUX" BACKGROUND STORY)
+	<SET BACKGROUND <GETP ,HERE ,P?BACKGROUND>>
+	<COND (.BACKGROUND
+		<SET STORY <APPLY .BACKGROUND>>
+		<COND (.STORY <SETG HERE .STORY>)>
+		<UPDATE-STATUS-LINE>
+	)>>
+
+<ROUTINE CHECK-DOOM ("AUX" DOOM HAS-ROYAL-RING)
+	<SET DOOM <GETP ,HERE ,P?DOOM>>
+	<COND (.DOOM
+		<COND (,RESURRECTION-ARRANGEMENTS
+			<SET HAS-ROYAL-RING <CHECK-ITEM ,ROYAL-RING>>
+			<STORY-LOSE-EVERYTHING F>
+			<COND (,CURRENT-SHIP
+				<REMOVE ,CURRENT-SHIP>
+				<SETG CURRENT-SHIP NONE>
+			)>
+			<COND (.HAS-ROYAL-RING
+				<EMPHASIZE "Through a quirk of magical fate, somehow the royal ring has travelled with you through the lands of the dead.">
+				<MOVE ,ROYAL-RING ,PLAYER>
+			)>
+			<SETG STAMINA ,MAX-STAMINA>
+			<STORY-JUMP <GETP ,RESURRECTION-ARRANGEMENTS ,P?CONTINUE>>
+			<SETG RESURRECTION-ARRANGEMENTS NONE>
+		)(ELSE
+			<PRINT-ENDING ,BAD-ENDING 3>G
+		)>
+		<SETG CONTINUE-TO-CHOICES F>
+	)>>
+
+<ROUTINE CHECK-EVENTS ("AUX" EVENTS)
+	<SET EVENTS <GETP ,HERE ,P?EVENTS>>
+	<COND (.EVENTS <APPLY .EVENTS>)>>
+
+<ROUTINE CHECK-GOD (GOD)
+	<RETURN <AND ,GOD <EQUAL? ,GOD .GOD>>>>
+
+<ROUTINE CHECK-PROFESSION (IS-PROFESSION "AUX" PROFESSION)
+	<SET PROFESSION <GETP ,CURRENT-CHARACTER ,P?PROFESSION>>
+	<COND (.PROFESSION <RETURN <EQUAL? .IS-PROFESSION .PROFESSION>>)>
+	<RETURN <EQUAL? ,CURRENT-CHARACTER .IS-PROFESSION>>>
+
+<ROUTINE CHECK-VICTORY ("AUX" VICTORY)
+	<SET VICTORY <GETP ,HERE ,P?VICTORY>>
+	<COND (.VICTORY
+		<COND (<EQUAL? .VICTORY T>
+			<PRINT-ENDING ,GOOD-ENDING 4>
+		)(ELSE
+			<PRINT-ENDING .VICTORY 6>
+		)>
+		<SETG CONTINUE-TO-CHOICES F>
+	)>>
+
+<ROUTINE CODEWORD-JUMP (CODEWORD STORY)
+	<COND (<CHECK-CODEWORD .CODEWORD> <STORY-JUMP .STORY>)>>
+
+<ROUTINE CONTINUE-TEXT (TEXT)
+	<COND (<IS-ALIVE> <TELL CR .TEXT CR>)>>
+
+<ROUTINE GAIN-CODEWORDS ("OPT" CODEWORDS)
+	<COND (<NOT .CODEWORDS> <SET CODEWORDS <GETP ,CURRENT-STORY ,P?CODEWORDS>>)>
+	<GAIN-OBJECTS .CODEWORDS ,GAIN-CODEWORD>>
+
+<ROUTINE GAIN-ITEMS ("OPT" ITEMS)
+	<COND (<NOT .ITEMS> <SET ITEMS <GETP ,CURRENT-STORY ,P?ITEMS>>)>
+	<GAIN-OBJECTS .ITEMS ,TAKE-ITEM>>
+
+<ROUTINE GAIN-OBJECTS (OBJECTS GAIN-ROUTINE "AUX" COUNT)
+	<COND (<NOT .OBJECTS> <RETURN>)>
+	<COND (.OBJECTS
+		<SET COUNT <GET .OBJECTS 0>>
+		<DO (I 1 .COUNT)
+			<APPLY .GAIN-ROUTINE <GET .OBJECTS .I>>
+		>
+	)>>
+
+<ROUTINE GAIN-TITLES ("OPT" TITLES)
+	<COND (<NOT .TITLES> <SET TITLES <GETP ,CURRENT-STORY ,P?TITLES>>)>
+	<GAIN-OBJECTS .TITLES ,GAIN-TITLE>>
+
+<ROUTINE IS-ALIVE ("OPT" THRESHOLD)
+	<COND (<NOT .THRESHOLD> <SET THRESHOLD 0>)>
+	<COND (<G? ,STAMINA .THRESHOLD> <RTRUE>)>
+	<RFALSE>>
+
+<ROUTINE ITEM-JUMP (ITEM STORY)
+	<COND (<CHECK-ITEM .ITEM> <STORY-JUMP .STORY>)>>
+
+<ROUTINE MARK-LOCATION ("OPT" SECTION "AUX" LOCATION)
+	<COND (<NOT .SECTION> <SET .SECTION ,HERE>)>
+	<SET LOCATION <GETP .SECTION ,P?LOCATION>>
+	<COND (.LOCATION
+		<SET-LOCATION .LOCATION>
+	)>>
+
+<ROUTINE MARK-VISITS ("OPT" SECTION VISITS)
+	<COND (<NOT .SECTION> <SET .SECTION ,HERE>)>
+	<SET VISITS <GETP .SECTION ,P?VISITS>>
+	<COND (.VISITS
+		<INC .VISITS>
+		<PUTP .SECTION ,P?VISITS .VISITS>
+	)>>
+
+<ROUTINE PREVENT-DOOM ("OPT" STORY)
+	<COND (<NOT .STORY> <SET STORY ,HERE>)>
+	<COND (<GETP .STORY ,P?DOOM> <PUTP .STORY ,P?DOOM F>)>>
+
+<ROUTINE PRINT-SECTION ("OPT" SECTION "AUX" TEXT)
+	<COND (<NOT .SECTION> <SET SECTION ,HERE>)>
+	<SET TEXT <GETP .SECTION ,P?STORY>>
+	<COND (.TEXT
+		<CRLF>
+		<TELL .TEXT>
+		<CRLF>
+	)>>
+
+<ROUTINE PROCESS-CHOICES (CHOICES "AUX" DESTINATIONS REQUIREMENTS TYPES KEY CHOICE TYPE LIST)
+	<SET DESTINATIONS <GETP ,HERE ,P?DESTINATIONS>>
+	<SET REQUIREMENTS <GETP ,HERE ,P?REQUIREMENTS>>
+	<SET TYPES <GETP ,HERE ,P?TYPES>>
+	<TELL CR "What will you choose? ">
+	<REPEAT ()
+		<REPEAT ()
+			<SET KEY <INPUT 1>>
+			<COND (
+				<OR
+					<AND <G=? .KEY !\1> <L=? .KEY !\9>>
+					<AND <G=? .KEY !\A> <L=? .KEY !\J> <G? <GET .CHOICES 0> 9>>
+					<AND <G=? .KEY !\a> <L=? .KEY !\j> <G? <GET .CHOICES 0> 9>>
+					<AND <EQUAL? .KEY !\H !\h> <L? <GET .CHOICES 0> 17>>
+					<EQUAL? .KEY !\? !\Q !\q !\P !\p !\R !\r !\S !\s !\U !\u>
+				>
+				<RETURN>
+			)>
+		>
+		<COND (
+			<OR
+				<AND <G=? .KEY !\1> <L=? .KEY !\9>>
+				<AND <G=? .KEY !\A> <L=? .KEY !\J> <G? <GET .CHOICES 0> 9>>
+				<AND <G=? .KEY !\a> <L=? .KEY !\j> <G? <GET .CHOICES 0> 9>>
+			>
+			<COND (<AND <G=? .KEY !\1> <L=? .KEY !\9>> <SET CHOICE <- .KEY !\0>>)>
+			<COND (<AND <G=? .KEY !\A> <L=? .KEY !\J>> <SET CHOICE <+ <- .KEY !\A> 10>>)>
+			<COND (<AND <G=? .KEY !\a> <L=? .KEY !\j>> <SET CHOICE <+ <- .KEY !\a> 10>>)>
+			<COND (<AND <G=? <GET .CHOICES 0> 1> <L=? .CHOICE <GET .CHOICES 0>>>
+				<COND (.REQUIREMENTS <SET LIST <GET .REQUIREMENTS .CHOICE>>)>
+				<COND (<AND <G=? .CHOICE 1> <L=? .CHOICE <GET .DESTINATIONS 0>> <L=? .CHOICE <GET .TYPES 0>>>
+					<SET TYPE <GET .TYPES .CHOICE>>
+					<COND (<EQUAL? .TYPE ,R-NONE>
+						<SETG HERE <GET .DESTINATIONS .CHOICE>>
+						<CRLF>
+					)(<AND <EQUAL? .TYPE ,R-TEST-ABILITY> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<CRLF>
+						<CRLF>
+						<COND (<TEST-ABILITY ,CURRENT-CHARACTER <GET .LIST 1> <GET .LIST 2>>
+							<SETG HERE <GET <GET .DESTINATIONS .CHOICE> 1>>
+						)(ELSE
+							<SETG HERE <GET <GET .DESTINATIONS .CHOICE> 2>>
+						)>
+						<PRESS-A-KEY>
+					)(<AND <EQUAL? .TYPE ,R-CODEWORD> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<COND (<CHECK-CODEWORD .LIST>
+							<SETG HERE <GET .DESTINATIONS .CHOICE>>
+							<CRLF>
+						)(ELSE
+							<HLIGHT ,H-BOLD>
+							<CRLF>
+							<TELL CR "You do not have " T .LIST " codeword" ,EXCLAMATION-CR>
+							<HLIGHT 0>
+							<PRESS-A-KEY>
+						)>
+					)(<AND <EQUAL? .TYPE ,R-CODEWORDS> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<COND (<CHECK-CODEWORDS .LIST>
+							<SETG HERE <GET .DESTINATIONS .CHOICE>>
+							<CRLF>
+						)(ELSE
+							<NOT-ALL-ANY ,R-ALL .LIST ,CODEWORDS>
+						)>
+					)(<AND <EQUAL? .TYPE ,R-ANY> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<COND (<CHECK-ANY .LIST>
+							<SETG HERE <GET .DESTINATIONS .CHOICE>>
+							<CRLF>
+						)(ELSE
+							<NOT-ALL-ANY ,R-ANY .LIST>
+						)>
+					)(<AND <EQUAL? .TYPE ,R-ALL> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<COND (<CHECK-ALL .LIST>
+							<SETG HERE <GET .DESTINATIONS .CHOICE>>
+							<CRLF>
+						)(ELSE
+							<NOT-ALL-ANY ,R-ALL .LIST>
+						)>
+					)(<AND <EQUAL? .TYPE ,R-ITEM ,R-DISCHARGE> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<COND (<CHECK-ITEM .LIST>
+							<COND (<CHECK-CHARGES .LIST>
+								<COND (<EQUAL? .TYPE ,R-DISCHARGE> <DISCHARGE-ITEM .LIST 1>)>
+								<SETG HERE <GET .DESTINATIONS .CHOICE>>
+								<CRLF>
+							)(ELSE
+								<NOT-CHARGED <GET .REQUIREMENTS .CHOICE>>
+							)>
+						)(ELSE
+							<NOT-POSSESSED .LIST>
+						)>
+					)(<AND <EQUAL? .TYPE ,R-CODEWORD-ITEM> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<COND (<AND <CHECK-CODEWORD <GET .LIST 1>> <CHECK-ITEM <GET .LIST 2>>>
+							<SETG HERE <GET .DESTINATIONS .CHOICE>>
+							<CRLF>
+						)(ELSE
+							<HLIGHT ,H-BOLD>
+							<CRLF>
+							<TELL CR "You do not have " T <GET .LIST 1> " codeword or ">
+							<COND (<FSET? <GET .LIST 2> ,NARTICLEBIT>
+								<TELL "the">
+							)(<FSET? <GET .LIST 2> ,VOWELBIT>
+								<TELL "an">
+							)(ELSE
+								<TELL "a">
+							)>
+							<TELL " " D <GET .LIST 2> ,EXCLAMATION-CR>
+							<HLIGHT 0>
+							<PRESS-A-KEY>
+						)>
+					)(<AND <EQUAL? .TYPE ,R-MONEY> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<COND (<CHECK-MONEY .LIST>
+							<SETG HERE <GET .DESTINATIONS .CHOICE>>
+							<CRLF>
+							<COND (<G? .LIST 0>
+								<COST-MONEY .LIST ,TEXT-PAID>
+								<PRESS-A-KEY>
+							)>
+						)>
+					)(<AND <EQUAL? .TYPE ,R-RANK> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<COND (<CHECK-RANK .LIST>
+							<SETG HERE <GET .DESTINATIONS .CHOICE>>
+							<CRLF>
+						)>
+					)(<AND <EQUAL? .TYPE ,R-RANDOM> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<SETG HERE <PROCESS-RANDOM .LIST <GET .DESTINATIONS .CHOICE>>>
+					)(<AND <EQUAL? .TYPE ,R-GAIN-CODEWORD> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<CRLF>
+						<GAIN-CODEWORD .LIST>
+						<PRESS-A-KEY>
+						<SETG HERE <GET .DESTINATIONS .CHOICE>>
+					)(<AND <EQUAL? .TYPE ,R-PROFESSION> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<COND (<CHECK-PROFESSION .LIST>
+							<SETG HERE <GET .DESTINATIONS .CHOICE>>
+							<CRLF>
+						)(ELSE
+							<CRLF>
+							<CRLF>
+							<HLIGHT ,H-BOLD>
+							<TELL "You are not a " D .LIST ,EXCLAMATION-CR>
+							<HLIGHT 0>
+						)>
+					)(<AND <EQUAL? .TYPE ,R-DOCK> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<CRLF>
+						<COND (,CURRENT-SHIP
+							<CRLF>
+							<TELL "Your " D ,CURRENT-SHIP " docks at " <GET ,DOCKS .LIST> ,PERIOD-CR>
+							<PUTP ,CURRENT-SHIP ,P?DOCKED .LIST>
+							<PRESS-A-KEY>
+							<SETG HERE <GET .DESTINATIONS .CHOICE>>
+							<SETG CURRENT-SHIP NONE>
+						)(ELSE
+							<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
+								<EMPHASIZE "Your ships are docked elsewhere!">
+							)(ELSE
+								<EMPHASIZE "You have no ship!">
+							)>
+						)>
+					)(<AND <EQUAL? .TYPE ,R-LOCATION> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<COND (<CHECK-LOCATION .LIST>
+							<SETG HERE <GET .DESTINATIONS .CHOICE>>
+							<CRLF>
+						)(ELSE
+							<CRLF>
+							<CRLF>
+							<HLIGHT ,H-BOLD>
+							<TELL "You are not in " <GET-LOCATION .LIST> ,EXCLAMATION-CR>
+							<HLIGHT 0>
+							<PRESS-A-KEY>
+						)>
+					)(<AND <EQUAL? .TYPE ,R-LOSE-ITEM> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<COND (<CHECK-ITEM <GET .REQUIREMENTS .CHOICE>>
+							<CRLF>
+							<LOSE-ITEM <GET .REQUIREMENTS .CHOICE>>
+							<SETG HERE <GET .DESTINATIONS .CHOICE>>
+							<CRLF>
+						)(ELSE
+							<NOT-POSSESSED .LIST>
+						)>
+					)(<AND <EQUAL? .TYPE ,R-TITLE> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<COND (<CHECK-TITLE .LIST>
+							<SETG HERE <GET .DESTINATIONS .CHOICE>>
+							<CRLF>
+						)(ELSE
+							<HLIGHT ,H-BOLD>
+							<CRLF>
+							<TELL CR "You are not ">
+							<COND (<FSET? .LIST ,NARTICLEBIT>
+								<TELL "the">
+							)(<FSET? .LIST ,VOWELBIT>
+								<TELL "an">
+							)(ELSE
+								<TELL "a">
+							)>
+							<TELL " " D .LIST ,EXCLAMATION-CR>
+							<HLIGHT 0>
+							<PRESS-A-KEY>
+						)>
+					)(<AND <EQUAL? .TYPE ,R-WEAPON> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<COND (<EQUAL? <FIND-BEST ,P?COMBAT ,WEAPONBIT ,PLAYER .LIST> .LIST>
+							<CRLF>
+							<SETG HERE <GET .DESTINATIONS .CHOICE>>
+						)(ELSE
+							<CRLF>
+							<HLIGHT ,H-BOLD>
+							<TELL CR "You do not have a weapon with +" N .LIST " COMBAT score" ,EXCLAMATION-CR>
+							<HLIGHT 0>
+							<PRESS-A-KEY>
+						)>
+					)>
+					<RETURN>
+				)(ELSE
+					<CRLF>
+					<TELL CR "Internal Error" ,PERIOD-CR>
+					<SET KEY !\q>
+					<RETURN>
+				)>
+			)>
+		)>
+		<COND (<EQUAL? .KEY !\? !\P !\p !\q !\Q !\r !\R !\s !\S !\U !\u> <CRLF> <RETURN>)>
+	>
+	<RETURN .KEY>>
+
+<ROUTINE PROCESS-STORY ("AUX" COUNT CHOICES TYPES REQUIREMENTS LIST CONTINUE CHOICE CHOICE-TYPE)
+	<SET CHOICES <GETP ,HERE ,P?CHOICES>>
+	<SET TYPES <GETP ,HERE ,P?TYPES>>
+	<SET REQUIREMENTS <GETP ,HERE ,P?REQUIREMENTS>>
+	<SET CONTINUE <GETP ,HERE ,P?CONTINUE>>
+	<SETG CURRENT-STORY ,HERE>
+	<SETG RUN-ONCE T>
+	<COND (.CHOICES
+		<REPEAT ()
+			<CRLF>
+			<SET COUNT <GET .CHOICES 0>>
+			<DO (I 1 .COUNT)
+				<SET CHOICE-TYPE <GET .TYPES .I>>
+				<COND (.REQUIREMENTS <SET LIST <GET .REQUIREMENTS .I>>)>
+				<HLIGHT ,H-BOLD>
+				<COND (<L? .I 10>
+					<TELL N .I>
+				)(ELSE
+					<TELL C <+ !\A <- .I 10>>>
+				)>
+				<TELL ") ">
+				<HLIGHT 0>
+				<TELL <GET .CHOICES .I>>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-TEST-ABILITY> .REQUIREMENTS> <TELL " (Difficulty: "> <HLIGHT ,H-BOLD> <TELL N <GET .LIST 2>> <HLIGHT 0> <TELL")">)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-ITEM ,R-CODEWORD ,R-DISCHARGE ,R-TITLE> .REQUIREMENTS> <TELL " ("> <COND (<EQUAL? .CHOICE-TYPE ,R-ITEM ,R-DISCHARGE> <HLIGHT ,H-BOLD>)(ELSE <HLIGHT ,H-ITALIC>)> <TELL D .LIST> <HLIGHT 0> <TELL ")">)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-CODEWORD-ITEM> .REQUIREMENTS> <TELL " (Codeword "> <HLIGHT ,H-ITALIC> <TELL D <GET .LIST 1>> <HLIGHT 0> <TELL " and "> <COND (<FSET? <GET .LIST 2> ,NARTICLEBIT> <TELL "the">)(<FSET? <GET .LIST 2> ,VOWELBIT> <TELL "an">)(ELSE TELL "a")> <TELL " "> <PRINT-ITEM <GET .LIST 2> T> <TELL ")">)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-MONEY> .REQUIREMENTS> <COND (<G? .LIST 0> <TELL " (" N .LIST " " D ,CURRENCY ")">)>)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-RANK> .REQUIREMENTS> <COND (<G? .LIST 0> <TELL " (Rank "> <HLIGHT ,H-BOLD> <TELL N .LIST> <HLIGHT 0> <TELL ")">)>)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-ANY> .REQUIREMENTS> <PRINT-ANY .LIST>)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-ALL> .REQUIREMENTS> <PRINT-ALL .LIST>)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-VISITS> .REQUIREMENTS> <COND (<G? .LIST 0> <TELL " (visited > " N .LIST " times)">)>)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-PROFESSION> .REQUIREMENTS> <COND (<G? .LIST 0> <TELL " (" D .LIST ")">)>)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-DOCK> .REQUIREMENTS> <COND (<G? .LIST 0> <TELL " (ship docks at " <GET ,DOCKS .LIST> ")">)>)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-WEAPON> .REQUIREMENTS> <COND (<G? .LIST 0> <TELL " (COMBAT +" N .LIST ")">)>)>
+				<CRLF>
+			>
+			<SET CHOICE <PROCESS-CHOICES .CHOICES>>
+			<COND (.CHOICE
+				<COND (<AND <G=? .CHOICE !\A> <L=? .CHOICE !\Z> <G=? <GET .CHOICES 0> <+ <- .CHOICE !\A> 10>>> <SET .CHOICE NONE> <RETURN>)>
+				<COND (<AND <G=? .CHOICE !\a> <L=? .CHOICE !\z> <G=? <GET .CHOICES 0> <+ <- .CHOICE !\a> 10>>> <SET .CHOICE NONE> <RETURN>)>
+				<RETURN>
+			)>
+		>
+		<COND (<EQUAL? ,CURRENT-STORY ,HERE>
+			<SETG RUN-ONCE F>
+		)(ELSE
+			<SETG PREVIOUS-STORY ,CURRENT-STORY>
+			<SETG RUN-ONCE T>
+		)>
+		<RETURN .CHOICE>
+	)(.CONTINUE
+		<SETG HERE .CONTINUE>
+		<SETG PREVIOUS-STORY ,CURRENT-STORY>
+		<PRESS-A-KEY>
+		<SETG RUN-ONCE T>
+		<RETURN>
+	)>
+	<RETURN !\x>>
+
+<ROUTINE RANDOM-EVENT ("OPT" DICE (MODIFIER 0) (SILENT F) "AUX" ROLL)
+	<COND (<NOT .DICE> <SET DICE 1>)>
+	<EMPHASIZE ,TEXT-RANDOM-EVENT>
+	<PRESS-A-KEY>
+	<REPEAT ()
+		<SET ROLL <ROLL-DICE .DICE>>
+		<CRLF>
+		<TELL "You rolled ">
+		<HLIGHT ,H-BOLD>
+		<TELL N .ROLL>
+		<HLIGHT 0>
+		<COND (<N=? .MODIFIER 0>
+			<TELL " (">
+			<HLIGHT ,H-BOLD>
+			<COND (<G? .MODIFIER 0>
+				<TELL "+">
+			)>
+			<TELL N .MODIFIER>
+			<HLIGHT 0>
+			<TELL ") = ">
+			<SET .ROLL <+ .ROLL .MODIFIER>>
+			<HLIGHT ,H-BOLD>
+			<COND (<L? .ROLL 0> <SET .ROLL 0>)>
+			<TELL N .ROLL>
+			<HLIGHT 0>
+		)>
+		<CRLF>
+		<COND (<NOT .SILENT>
+			<PRESS-A-KEY>
+		)>
+		<COND (<NOT <PROCESS-RANDOM-BLESSING>> <RETURN>)>
+	>
+	<SETG LAST-ROLL .ROLL>
+	<RETURN .ROLL>>
+
+<ROUTINE STORY-JUMP (STORY)
+	<COND (.STORY
+		<SETG HERE .STORY>
+		<SETG CONTINUE-TO-CHOICES F>
+		<SETG RUN-ONCE T>
+		<PRESS-A-KEY>
+	)>>
+
+<ROUTINE TITLE-JUMP (TITLE STORY "AUX")
+	<COND (<CHECK-TITLE .TITLE> <STORY-JUMP .STORY>)>>
+
+<ROUTINE TITLES-JUMP (TITLES STORY "AUX")
+	<COND (<CHECK-TITLES .TITLES> <STORY-JUMP .STORY>)>>
+
+; "Story - Choice Requirements Validations"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE CHECK-AILMENT (DISEASE)
+	<COND (<NOT .DISEASE> <RTRUE>)>
+	<RETURN <IN? .DISEASE ,AILMENTS>>>
+
+<ROUTINE CHECK-ALL (ITEMS "OPT" CONTAINER "AUX" COUNT)
+	<COND (<NOT .CONTAINER> <SET CONTAINER ,PLAYER>)>
+	<COND (.ITEMS
+		<SET COUNT <GET .ITEMS 0>>
+		<DO (I 1 .COUNT)
+			<COND (<NOT <IN? <GET .ITEMS .I> .CONTAINER>> <RFALSE>)>
+		>
+	)>
+	<RTRUE>>
+
+<ROUTINE CHECK-ANY (ITEMS "OPT" CONTAINER "AUX" COUNT)
+	<COND (<NOT .CONTAINER> <SET CONTAINER ,PLAYER>)>
+	<COND (.ITEMS
+		<SET COUNT <GET .ITEMS 0>>
+		<DO (I 1 .COUNT)
+			<COND (<IN? <GET .ITEMS .I> .CONTAINER> <RTRUE>)>
+		>
+		<RFALSE>
+	)>
+	<RTRUE>>
+
+<ROUTINE CHECK-BLESSING (BLESS)
+	<COND (<NOT .BLESS> <RTRUE>)>
+	<RETURN <IN? .BLESS ,BLESSINGS>>>
+
+<ROUTINE CHECK-CHARGES (ITEM "AUX" CHARGES)
+	<COND (<NOT .ITEM> <RTRUE>)>
+	<SET CHARGES <GETP .ITEM ,P?CHARGES>>
+	<COND (<L? .CHARGES 0>
+		<RTRUE>
+	)(<G? .CHARGES 0>
+		<RTRUE>
+	)>
+	<RFALSE>>
+
+<ROUTINE CHECK-CODEWORD (CODEWORD)
+	<COND (<NOT .CODEWORD> <RTRUE>)>
+	<RETURN <IN? .CODEWORD ,CODEWORDS>>>
+
+<ROUTINE CHECK-CODEWORDS (CODEWORDS)
+	<RETURN <CHECK-ALL .CODEWORDS ,CODEWORDS>>>
+
+<ROUTINE CHECK-CREW (THIS-CONDITION "AUX" CONDITION)
+	<COND (,CURRENT-SHIP
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<RETURN <AND <CHECK-SHIP ,CURRENT-SHIP> <G=? .CONDITION .THIS-CONDITION>>>
+	)>
+	<RFALSE>>
+
+<ROUTINE CHECK-ITEM (ITEM "AUX" QUANTITY)
+	<COND (<NOT .ITEM> <RTRUE>)>
+	<SET QUANTITY <GETP .ITEM ,P?QUANTITY>>
+	<COND (<L? .QUANTITY 0>
+		<RETURN <IN? .ITEM ,PLAYER>>
+	)(ELSE
+		<RETURN <AND <IN? .ITEM ,PLAYER> <G? .QUANTITY 0>>>
+	)>>
+
+<ROUTINE CHECK-LOCATION (LOCATION)
+	<RETURN <AND ,CURRENT-LOCATION <EQUAL? ,CURRENT-LOCATION .LOCATION>>>>
+
+<ROUTINE CHECK-MONEY (AMOUNT)
+	<COND (<OR <AND <G? .AMOUNT 0> <L? ,MONEY .AMOUNT>> <L=? ,MONEY 0>>
+		<CRLF>
+		<CRLF>
+		<HLIGHT ,H-BOLD>
+		<TELL "You do not have enough " D ,CURRENCY ,PERIOD-CR>
+		<HLIGHT 0>
+		<PRESS-A-KEY>
+		<RFALSE>
+	)>
+	<RTRUE>>
+
+<ROUTINE CHECK-RANK (LEVEL "OPT" CHARACTER "AUX" RANK)
+	<COND (<NOT .CHARACTER> <SET CHARACTER ,CURRENT-CHARACTER>)>
+	<SET RANK <GET-RANK .CHARACTER>>
+	<COND (<AND .RANK <G=? .RANK .LEVEL>>
+		<RTRUE>
+	)(ELSE
+		<CRLF>
+		<EMPHASIZE "Your Rank is not high enough!">
+		<PRESS-A-KEY>
+	)>
+	<RFALSE>>
+
+<ROUTINE CHECK-STAMINA (AMOUNT)
+	<COND (<G? .AMOUNT 0>
+		<COND (<L=? ,STAMINA .AMOUNT>
+			<CRLF>
+			<EMPHASIZE "You'll die if you do that!">
+			<PRESS-A-KEY>
+			<RFALSE>
+		)>
+	)>
+	<RTRUE>>
+
+<ROUTINE CHECK-TITLE (TITLE)
+	<COND (<NOT .TITLE> <RTRUE>)>
+	<RETURN <IN? .TITLE ,TITLES-AND-HONOURS>>>
+
+<ROUTINE CHECK-TITLES (TITLES "AUX" COUNT)
+	<SET COUNT <GET .TITLES 0>>
+	<DO (I 1 .COUNT)
+		<COND (<NOT <CHECK-TITLE <GET .TITLES .I>>> <RFALSE>)>
+	>
+	<RTRUE>>
+
+<ROUTINE CHECK-SHIP (THIS-SHIP)
+	<COND (,CURRENT-SHIP
+		<RETURN <AND <IN? .THIS-SHIP ,SHIPS> <EQUAL? ,CURRENT-SHIP .THIS-SHIP>>>
+	)>
+	<RFALSE>>
+
+<ROUTINE CHECK-TOWNHOUSE (TOWNHOUSE)
+	<COND (<NOT .TOWNHOUSE> <RTRUE>)>
+	<RETURN <IN? .TOWNHOUSE ,TOWNHOUSES>>>
+
+<ROUTINE CHECK-VISITS-EQUAL ("OPT" LOCATION COUNTER "AUX" VISITS)
+	<COND (<NOT .LOCATION> <SET LOCATION ,HERE>)>
+	<COND (<NOT .COUNTER> <SET .COUNTER 1>)>
+	<SET VISITS <GETP .LOCATION ,P?VISITS>>
+	<COND (<G=? .VISITS 0>
+		<RETURN <EQUAL? .VISITS .COUNTER>>
+	)>
+	<RFALSE>>
+
+<ROUTINE CHECK-VISITS-MORE ("OPT" LOCATION COUNTER "AUX" VISITS)
+	<COND (<NOT .LOCATION> <SET LOCATION ,HERE>)>
+	<COND (<NOT .COUNTER> <SET .COUNTER 1>)>
+	<SET VISITS <GETP .LOCATION ,P?VISITS>>
+	<COND (.VISITS <RETURN <G? .VISITS .COUNTER>>)>
+	<RFALSE>>
+
+<ROUTINE GET-DIFFICULTY (STORY INDEX "AUX" ODDS)
+	<SET ODDS <GET <GETP .STORY ,P?REQUIREMENTS> .INDEX>>
+	<RETURN <GET .ODDS 2>>>
+
+<ROUTINE GET-RANK ("OPT" CHARACTER "AUX" (RANK 1))
+	<COND (<NOT .CHARACTER> <SET CHARACTER ,CURRENT-CHARACTER>)>
+	<COND (.CHARACTER <SET RANK <GETP .CHARACTER ,P?RANK>>)>
+	<RETURN .RANK>>
+
+<ROUTINE NOT-ALL-ANY (TYPE LIST "OPT" CONTAINER "AUX" COUNT)
+	<COND (<NOT .CONTAINER> <SET CONTAINER ,PLAYER>)>
+	<COND (<EQUAL? .TYPE ,R-ANY ,R-ALL>
+		<SET COUNT <GET .LIST 0>>
+		<HLIGHT ,H-BOLD>
+		<CRLF>
+		<TELL CR "You do not have ">
+		<COND (<G? .COUNT 1>
+			<COND (<EQUAL? .TYPE ,R-ANY>
+				<TELL "any">
+			)(<EQUAL? .TYPE ,R-ALL>
+				<TELL "all">
+			)>
+			<TELL " of the">
+		)(<EQUAL? .CONTAINER ,CODEWORDS>
+			<TELL "the">
+		)(<FSET? <GET .LIST 1> ,VOWELBIT>
+			<TELL "an">
+		)(ELSE
+			<TELL "a">
+		)>
+		<TELL " ">
+		<COND (<EQUAL? .CONTAINER ,CODEWORDS>
+			<TELL "codeword">
+			<COND (<G? .COUNT 1>
+				<TELL "s">
+				<HLIGHT 0>
+				<PRINT-CODEWORDS .LIST>
+			)(ELSE
+				<TELL " ">
+				<HLIGHT 0>
+				<HLIGHT ,H-ITALIC>
+				<TELL D <GET .LIST 1>>
+				<HLIGHT 0>
+				<TELL ,PERIOD-CR>
+			)>
+		)(ELSE
+			<COND (<G? .COUNT 1>
+				<TELL "items">
+				<HLIGHT 0>
+				<COND (<EQUAL? .TYPE ,R-ANY>
+					<PRINT-ANY .LIST>
+				)(<EQUAL? .TYPE ,R-ALL>
+					<PRINT-ALL .LIST>
+				)>
+			)(ELSE
+				<HLIGHT 0>
+				<HLIGHT ,H-ITALIC>
+				<TELL D <GET .LIST 1>>
+				<HLIGHT 0>
+				<TELL ,PERIOD-CR>
+			)>
+		)>
+		<HLIGHT 0>
+		<CRLF>
+		<PRESS-A-KEY>
+	)>>
+
+<ROUTINE NOT-CHARGED (OBJECT)
+	<CRLF>
+	<CRLF>
+	<HLIGHT ,H-BOLD>
+	<TELL CT .OBJECT " has no charges left" ,PERIOD-CR>
+	<HLIGHT 0>
+	<PRESS-A-KEY>>
+
+<ROUTINE NOT-POSSESSED (OBJECT)
+	<HLIGHT ,H-BOLD>
+	<CRLF>
+	<TELL CR "You do not have ">
+	<COND (<FSET? .OBJECT ,NARTICLEBIT>
+		<TELL "the">
+	)(ELSE
+		<TELL "a">
+		<COND (<FSET? .OBJECT ,VOWELBIT> <TELL "n">)>
+	)>
+	<TELL " " D .OBJECT ,EXCLAMATION-CR>
+	<HLIGHT 0>
+	<PRESS-A-KEY>>
+
+<ROUTINE PROCESS-RANDOM (LIST DESTINATIONS "AUX" ODDS (EVENTS 0) RESULT (DESTINATION NONE) (MODIFIERS 0) (OUTCOMES NONE) (HAS-DESTINATION F))
+	<SET ODDS <GET .LIST 3>>
+	<COND (.ODDS <SET EVENTS <GET .ODDS 0>>)>
+	<SET DESTINATION ,HERE>
+	<CRLF>
+	<COND (<G? .EVENTS 0>
+		<REPEAT ()
+			<SET HAS-DESTINATION F>
+			<CRLF>
+			<TELL "Rolling (" N <GET .LIST 1> ") and triggering events with " N .EVENTS " possible outcomes ">
+			<SET MODIFIERS <GET .LIST 2>>
+			<SET OUTCOMES <GET .LIST 4>>
+			<COND (<N=? .MODIFIERS 0>
+				<TELL "(">
+				<COND (<G? .MODIFIERS 0> <TELL "+">)>
+				<TELL N .MODIFIERS " to rolls)">
+			)>
+			<TELL ".." ,PERIOD-CR>
+			<PRESS-A-KEY>
+			<SET RESULT <ROLL-DICE <GET .LIST 1>>> ; "roll # of dice"
+			<SET RESULT <+ .RESULT <GET .LIST 2>>> ; "add/subtract modifiers"
+			<CRLF>
+			<TELL "You rolled " N .RESULT "." CR>
+			<SETG LAST-ROLL .RESULT>
+			<DO (I 1 .EVENTS)
+				<COND (<L=? .RESULT <GET .ODDS .I>>
+					<SET DESTINATION <GET .DESTINATIONS .I>>
+					<EMPHASIZE <GET .OUTCOMES .I> "Outcome">
+					<PRESS-A-KEY>
+					<COND (<NOT <PROCESS-RANDOM-BLESSING>>
+						<SET HAS-DESTINATION T>
+					)>
+					<RETURN>
+				)>
+			>
+			<COND (.HAS-DESTINATION <RETURN>)>
+		>
+	)>
+	<RETURN .DESTINATION>>
+
+<ROUTINE PROCESS-RANDOM-BLESSING ("AUX" RESULT)
+	<SET RESULT F>
+	<COND (<CHECK-BLESSING ,BLESSING-LUCK>
+		<CRLF>
+		<TELL "Change the outcome with " T ,BLESSING-LUCK " blessing?">
+		<COND (<YES?>
+			<DELETE-BLESSING ,BLESSING-LUCK>
+			<SET RESULT T>
+		)>
+	)>
+	<RETURN .RESULT>>
+
+<ROUTINE RESET-DIFFICULTY (STORY INDEX DIFFICULTY "AUX" ODDS)
+	<SET ODDS <GET <GETP .STORY ,P?REQUIREMENTS> .INDEX>>
+	<PUT .ODDS 2 .DIFFICULTY>>
+
+<ROUTINE RESET-ODDS (DICE MODIFIERS "OPT" STORY "AUX" REQUIREMENTS)
+	<COND (<NOT .STORY> <SET .STORY ,HERE>)>
+	<SET REQUIREMENTS <GETP .STORY ,P?REQUIREMENTS>>
+	<COND (.REQUIREMENTS
+		<PUT <GET .REQUIREMENTS 1> 1 .DICE>
+		<PUT <GET .REQUIREMENTS 1> 2 .MODIFIERS>
+	)>>
+
+; "Story - Support Routines (display)"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE PRINT-ALL (ITEMS)
+	<PRINT-LIST .ITEMS "and ">>
+
+<ROUTINE PRINT-ANY (ITEMS)
+	<PRINT-LIST .ITEMS "or ">>
+
+<ROUTINE PRINT-CODEWORDS (CODEWORDS)
+	<PRINT-LIST .CODEWORDS "and ">>
+
+<ROUTINE PRINT-LIST (ITEMS "OPT" LASTFIX "AUX" COUNT)
+	<COND (.ITEMS
+		<SET COUNT <GET .ITEMS 0>>
+		<COND (<G? .COUNT 0>
+			<TELL " (">
+			<DO (I 1 .COUNT)
+				<COND (<G? .I 1>
+					<COND (<NOT <EQUAL? .COUNT 2>>
+						<TELL ", ">
+					)(ELSE
+						<TELL " ">
+					)>
+				)>
+				<COND (<AND <G? .COUNT 1> <EQUAL? .I .COUNT> .LASTFIX> <TELL .LASTFIX>)>
+				<HLIGHT ,H-ITALIC>
+				<TELL D <GET .ITEMS .I>>
+				<HLIGHT 0>
+			>
+			<TELL ")">
+		)>
+	)>>
+
+; "Choose Character / Profession"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE CHOOSE-CHARACTER ("AUX" COUNT KEY CHOICE CHARACTER POSSESSIONS)
+	<SET COUNT <GET ,CHARACTERS 0>>
+	<COND (<G? .COUNT 0>
+		<REPEAT ()
+			<SET COUNT <GET ,CHARACTERS 0>>
+			<CRLF>
+			<HLIGHT ,H-BOLD>
+			<TELL "Choose a character:">
+			<HLIGHT 0>
+			<CRLF>
+			<PRINT-MENU ,CHARACTERS T F>
+			<HLIGHT ,H-BOLD>
+			<TELL "C">
+			<HLIGHT 0>
+			<TELL " - Choose a Profession" CR>
+			<HLIGHT ,H-BOLD>
+			<TELL "R">
+			<HLIGHT 0>
+			<TELL " - Restore from previous save" CR>
+			<HLIGHT ,H-BOLD>
+			<TELL "Q">
+			<HLIGHT 0>
+			<TELL " - Quit the game" CR>
+			<TELL "Select which character?">
+			<REPEAT ()
+				<SET KEY <INPUT 1>>
+				<COND (<OR <AND <G=? .KEY !\1> <L=? .KEY !\9> <L=? <- .KEY !\0> .COUNT>> <EQUAL? .KEY !\C !\c !\Q !\q !\R !\r>> <RETURN>)>
+			>
+			<COND (<AND <G=? .KEY !\1> <L=? .KEY !\9>>
+				<SET CHOICE <- .KEY !\0>>
+				<COND (<AND <G=? <GET ,CHARACTERS 0> 1> <G=? .CHOICE 1> <L=? .CHOICE <GET ,CHARACTERS 0>>>
+				<SET CHARACTER <GET ,CHARACTERS .CHOICE>>
+					<CRLF>
+					<DESCRIBE-CHARACTER .CHARACTER>
+					<CRLF>
+					<TELL "Select this character?">
+					<COND (<YES?>
+						<SETG CURRENT-CHARACTER .CHARACTER>
+						<SET POSSESSIONS <GETP .CHARACTER ,P?POSSESSIONS>>
+						<COND (.POSSESSIONS
+							<SET COUNT <GET .POSSESSIONS 0>>
+							<DO (I 1 .COUNT)
+								<MOVE <GET .POSSESSIONS .I> ,PLAYER>
+							>
+						)>
+						<SETG CURRENT-CHARACTER .CHARACTER>
+						<SETG MONEY <GETP .CHARACTER ,P?MONEY>>
+						<SETG STAMINA <GETP .CHARACTER ,P?STAMINA>>
+						<SETG MAX-STAMINA ,STAMINA>
+						<MOVE ,ALL-MONEY ,PLAYER>
+						<TELL CR "You have selected " CT ,CURRENT-CHARACTER CR>
+						<TELL CR "[Press a key to begin]" CR>
+						<INPUT 1>
+						<RETURN>
+					)>
+				)(ELSE
+					<CRLF>
+				)>
+			)(<EQUAL? .KEY !\C !\c>
+				<COND (<CHOOSE-PROFESSION> <RETURN>)>
+			)(<EQUAL? .KEY !\R !\r>
+				<COND (<NOT <RESTORE>>
+					<EMPHASIZE "Restore failed.">
+				)>
+			)(<EQUAL? .KEY !\Q !\q>
+				<CRLF>
+				<TELL CR ,TEXT-SURE>
+				<COND (<YES?>
+					<QUIT-MESSAGE>
+				)>
+			)(ELSE
+				<CRLF>
+			)>
+		>
+	)>>
+
+<ROUTINE CHOOSE-PROFESSION ("AUX" COUNT KEY CHOICE PROFESSION POSSESSIONS (RESULT F))
+	<CRLF>
+	<TELL CR ,INSTRUCTIONS-PROFESSIONS>
+	<CRLF>
+	<SET COUNT <GET ,PROFESSIONS 0>>
+	<COND (<G? .COUNT 0>
+		<REPEAT ()
+			<SET COUNT <GET ,PROFESSIONS 0>>
+			<CRLF>
+			<HLIGHT ,H-BOLD>
+			<TELL "Choose a professions:">
+			<HLIGHT 0>
+			<CRLF>
+			<PRINT-MENU ,PROFESSIONS T F>
+			<HLIGHT ,H-BOLD>
+			<TELL "R">
+			<HLIGHT 0>
+			<TELL " - Return to character selection" CR>
+			<HLIGHT ,H-BOLD>
+			<TELL "Q">
+			<HLIGHT 0>
+			<TELL " - Quit the game" CR>
+			<TELL "Select which profession?">
+			<REPEAT ()
+				<SET KEY <INPUT 1>>
+				<COND (<OR <AND <G=? .KEY !\1> <L=? .KEY !\9> <L=? <- .KEY !\0> .COUNT>> <EQUAL? .KEY !\Q !\q !\R !\r>> <RETURN>)>
+			>
+			<COND (<AND <G=? .KEY !\1> <L=? .KEY !\9>>
+				<SET CHOICE <- .KEY !\0>>
+				<COND (<AND <G=? <GET ,PROFESSIONS 0> 1> <G=? .CHOICE 1> <L=? .CHOICE <GET ,PROFESSIONS 0>>>
+					<SET PROFESSION <GET ,PROFESSIONS .CHOICE>>
+					<CRLF>
+					<DESCRIBE-CHARACTER .PROFESSION>
+					<CRLF>
+					<TELL "Select this profession?">
+					<COND (<YES?>
+						<SETG CURRENT-CHARACTER .PROFESSION>
+						<SET POSSESSIONS <GETP .PROFESSION ,P?POSSESSIONS>>
+						<COND (.POSSESSIONS
+							<SET COUNT <GET .POSSESSIONS 0>>
+							<DO (I 1 .COUNT)
+								<MOVE <GET .POSSESSIONS .I> ,PLAYER>
+							>
+						)>
+						<SETG CURRENT-CHARACTER .PROFESSION>
+						<SETG MONEY <GETP .PROFESSION ,P?MONEY>>
+						<SETG STAMINA <GETP .PROFESSION ,P?STAMINA>>
+						<SETG MAX-STAMINA ,STAMINA>
+						<MOVE ,ALL-MONEY ,PLAYER>
+						<TELL CR "You have selected " T ,CURRENT-CHARACTER CR>
+						<TELL CR "[Press a key to begin]" CR>
+						<INPUT 1>
+						<SET RESULT T>
+						<RETURN>
+					)>
+				)(ELSE
+					<CRLF>
+				)>
+			)(<EQUAL? .KEY !\R !\r>
+				<CRLF>
+				<RETURN>
+			)(<EQUAL? .KEY !\Q !\q>
+				<CRLF>
+				<TELL CR ,TEXT-SURE>
+				<COND (<YES?> <QUIT-MESSAGE>)>
+			)>
+		>
+	)>
+	<RETURN .RESULT>>
+
+<ROUTINE DESCRIBE-CHARACTER (CHARACTER "AUX" COUNT ITEM POSSESSIONS)
+	<COND (.CHARACTER
+		<CRLF>
+		<HLIGHT ,H-BOLD>
+		<TELL CT .CHARACTER CR>
+		<HLIGHT 0>
+		<COND (<GETP .CHARACTER ,P?LDESC>
+			<CRLF>
+			<TELL <GETP .CHARACTER ,P?LDESC> ,PERIOD-CR>
+		)>
+		<DESCRIBE-PLAYER-STATS .CHARACTER .CHARACTER>
+		<CRLF>
+		<HLIGHT ,H-BOLD>
+		<TELL "Possessions: ">
+		<HLIGHT 0>
+		<SET POSSESSIONS <GETP .CHARACTER ,P?POSSESSIONS>>
+		<COND (.POSSESSIONS
+			<SET COUNT <GET .POSSESSIONS 0>>
+			<COND (<G? .COUNT 0>
+				<DO (I 1 .COUNT)
+					<SET ITEM <GET .POSSESSIONS .I>>
+					<COND (<G? .I 1> <TELL ", ">)>
+					<PRINT-ITEM .ITEM>
+				>
+			)>
+		)(ELSE
+			<TELL "None">
+		)>
+		<CRLF>
+	)>>
+
+; "Container routines"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE COUNT-CONTAINER (CONTAINER "OPT" (FLAG NONE) "AUX" COUNT ITEM QUANTITY REMOVE)
+	<SET COUNT 0>
+	<SET ITEM <FIRST? .CONTAINER>>
+	<REPEAT ()
+		<SET REMOVE NONE>
+		<COND (<NOT .ITEM> <RETURN>)>
+		<COND (<NOT <FSET? .ITEM ,NDESCBIT>>
+			<COND (<OR <NOT .FLAG> <FSET? .ITEM .FLAG>>
+				<SET QUANTITY <GETP .ITEM ,P?QUANTITY>>
+				<COND (<G? .QUANTITY 0>
+					<SET COUNT <+ .COUNT .QUANTITY>>
+				)(<EQUAL? .QUANTITY 0>
+					<PUTP .ITEM ,P?QUANTITY 1>
+					<SET REMOVE .ITEM>
+				)(ELSE
+					<INC .COUNT>
+				)>
+			)>
+		)>
+		<SET ITEM <NEXT? .ITEM>>
+		<COND (.REMOVE <REMOVE .REMOVE>)> ; "remove objects with 0 quantities"
+	>
+	<RETURN .COUNT>>
+
+<ROUTINE PRINT-CONTAINER (CONTAINER "OPT" (FLAG NONE) "AUX" COUNT ITEMS)
+	<COND (<EQUAL? .CONTAINER ,PLAYER> <FIND-BEST-GEAR>)>
+	<SET COUNT 0>
+	<SET ITEMS <FIRST? .CONTAINER>>
+	<COND (.ITEMS
+		<REPEAT ()
+			<COND (.ITEMS
+				<COND (<NOT <FSET? .ITEMS ,NDESCBIT>>
+					<COND (.FLAG
+						<COND (<FSET? .ITEMS .FLAG>
+							<PRINT-ITEM .ITEMS F .COUNT>
+							<INC .COUNT>
+						)>
+					)(ELSE
+						<PRINT-ITEM .ITEMS F .COUNT>
+						<INC .COUNT>
+					)>
+				)>
+			)(ELSE
+				<RETURN>
+			)>
+			<SET ITEMS <NEXT? .ITEMS>>
+		>
+	)>
+	<COND (<G? .COUNT 0>
+		<CRLF>
+	)(ELSE
+		<TELL "None" CR>
+	)>>
+
+<ROUTINE TRANSFER-CONTAINER (FROM TO "AUX" ITEM NEXT)
+	<COND (<COUNT-CONTAINER .FROM>
+		<SET ITEM <FIRST? .FROM>>
+		<REPEAT ()
+			<COND (<NOT .ITEM> <RETURN>)>
+			<SET NEXT <NEXT? .ITEM>>
+			<MOVE .ITEM .TO>
+			<SET ITEM .NEXT>
+		>
+	)>>
+
+; "Player or Item routines"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE ADD-QUANTITY (OBJECT "OPT" AMOUNT CONTAINER (BUY F) "AUX" QUANTITY CURRENT)
+	<COND (<NOT .OBJECT> <RETURN>)>
+	<COND (<L=? .AMOUNT 0> <RETURN>)>
+	<COND (<NOT .CONTAINER> <SET CONTAINER ,PLAYER>)>
+	<COND (<EQUAL? .CONTAINER ,PLAYER>
+		<COND (<G? .AMOUNT 0>
+			<DO (I 1 .AMOUNT)
+				<TAKE-ITEM .OBJECT>
+			>
+		)>
+	)(ELSE
+		<SET CURRENT <GETP .OBJECT ,P?QUANTITY>>
+		<SET QUANTITY <+ .CURRENT .AMOUNT>>
+		<PUTP .OBJECT ,P?QUANTITY .QUANTITY>
+	)>>
+
+<ROUTINE AFFLICTED-WITH (DISEASE "OPT" EFFECT)
+	<COND (<NOT .EFFECT> <SET EFFECT ,TEXT-AFFLICTED>)>
+	<COND (<NOT <CHECK-AILMENT .DISEASE>>
+		<COND (<OR <FSET? .DISEASE ,POISONBIT> <FSET? .DISEASE ,DISEASEBIT>>
+			<COND (<CHECK-BLESSING ,BLESSING-IMMUNITY-POISON-DISEASE>
+				<CRLF>
+				<TELL "Use the blessing ">
+				<PRINT-ITEM ,BLESSING-IMMUNITY-POISON-DISEASE T>
+				<TELL " to counter the ">
+				<PRINT-ITEM .DISEASE T>
+				<TELL "?">
+				<COND (<YES?>
+					<DELETE-BLESSING ,BLESSING-IMMUNITY-POISON-DISEASE>
+					<RETURN>
+				)>
+			)>
+		)>
+		<CRLF>
+		<TELL "You are " .EFFECT " with the ">
+		<PRINT-ITEM .DISEASE T>
+		<TELL ,PERIOD-CR>
+		<MOVE .DISEASE ,AILMENTS>
+	)>>
+
+<ROUTINE BUY-ITEM (ITEM FEE)
+	<COND (<AND <G=? ,MONEY .FEE> <NOT <CHECK-ITEM .ITEM>>>
+		<CRLF>
+		<TELL "Do you want to buy ">
+		<PRINT-ITEM .ITEM T>
+		<TELL " for ">
+		<HLIGHT ,H-BOLD>
+		<TELL N .FEE " shards?">
+		<HLIGHT 0>
+		<COND (<YES?>
+			<COST-MONEY .FEE ,TEXT-PAID>
+			<TAKE-ITEM .ITEM>
+		)>
+	)>>
+
+<ROUTINE BUY-ITEMS (ITEM PRICE "OPT" MAX "AUX" NUMBER)
+	<COND (<NOT .MAX> <SET MAX 1>)>
+	<COND (<G=? ,MONEY .PRICE>
+		<REPEAT ()
+			<COND (<L=? ,MONEY .PRICE> <RETURN>)>
+			<CRLF>
+			<COND (<FSET? .ITEM ,NARTICLEBIT>
+				<TELL "The">
+			)(ELSE
+				<TELL "A">
+				<COND (<FSET? .ITEM ,VOWELBIT> <TELL "n">)>
+			)>
+			<TELL " ">
+			<PRINT-ITEM .ITEM T>
+			<TELL " sells at ">
+			<HLIGHT ,H-BOLD>
+			<TELL N .PRICE " " D ,CURRENCY>
+			<HLIGHT 0>
+			<TELL " each.">
+			<SET NUMBER <GET-NUMBER "How many will you buy?" 0 .MAX>>
+			<COND (<G? .NUMBER 0>
+				<COND (<G=? ,MONEY <* .PRICE .NUMBER>>
+					<CRLF>
+					<TELL "Are you sure?">
+					<COND (<YES?>
+						<COST-MONEY <* .PRICE .NUMBER> "paid">
+						<DO (I 1 .NUMBER)
+							<TAKE-ITEM .ITEM T>
+						>
+						<COND (<G=? .NUMBER .MAX>
+							<RETURN>
+						)(ELSE
+							<SET MAX <- .MAX .NUMBER>>
+						)>
+					)>
+				)(ELSE
+					<EMPHASIZE "You can't afford that!">
+				)>
+			)(ELSE
+				<RETURN>
+			)>
+		>
+	)>>
+
+<ROUTINE COST-MONEY (COST "OPT" REASON)
+	<CRLF>
+	<HLIGHT ,H-BOLD>
+	<TELL "You ">
+	<COND (.REASON
+		<TELL .REASON>
+	)(ELSE
+		<TELL "are charged">
+	)>
+	<TELL " " N .COST " " D ,CURRENCY ,PERIOD-CR>
+	<HLIGHT 0>
+	<SETG MONEY <- ,MONEY .COST>>
+	<COND (<L? ,MONEY 0> <SETG MONEY 0>)>
+	<UPDATE-STATUS-LINE>>
+
+<ROUTINE COUNT-BLESSINGS (ITEM "AUX" (ITEMS 0) (BLESSINGS 0) (PROPERTY NONE))
+	<COND (.ITEM
+		<SET ITEMS <GET ,ABILITIES 0>>
+		<DO (I 1 .ITEMS)
+			<SET PROPERTY <GET-ABILITY-PROPERTY .I>>
+			<COND (<AND .PROPERTY <GETP .ITEM .PROPERTY> <G? <GETP .ITEM .PROPERTY> 0>>
+				<INC .BLESSINGS>
+			)>
+		>
+	)>
+	<RETURN .BLESSINGS>>
+
+<ROUTINE COUNT-POSSESSIONS ()
+	<RETURN <COUNT-CONTAINER ,PLAYER>>>
+
+<ROUTINE CURE-AILMENTS (FEE FLAG "OPT" (FLAG2 NONE) "AUX" COUNT)
+	<COND (<NOT .FLAG> <RETURN>)>
+	<COND (<G=? ,MONEY .FEE>
+		<SET COUNT <COUNT-CONTAINER ,AILMENTS .FLAG>>
+		<COND (.FLAG2 <SET COUNT <+ .COUNT <COUNT-CONTAINER ,AILMENTS .FLAG2>>>)>
+		<COND (<G? .COUNT 0>
+			<CRLF>
+			<COND (<G? .FEE 0>
+				<TELL "Pay ">
+				<HLIGHT ,H-BOLD>
+				<TELL N .FEE " " D ,CURRENCY>
+				<HLIGHT 0>
+			)(<EQUAL? .FEE 0>
+				<TELL "Do you wish">
+			)>
+			<TELL " to be cured?">
+			<COND (<YES?>
+				<COND (<G? .FEE 0> <COST-MONEY .FEE ,TEXT-PAID>)>
+				<COND (<G? <COUNT-CONTAINER ,AILMENTS .FLAG> 0>
+					<CRLF>
+					<TELL "You are cured of: ">
+					<PRINT-CONTAINER ,AILMENTS .FLAG>
+					<RESET-CONTAINER ,AILMENTS .FLAG>
+				)>
+				<COND (.FLAG2
+					<COND (<G? <COUNT-CONTAINER ,AILMENTS .FLAG2> 0>
+						<CRLF>
+						<TELL "You are cured of: ">
+						<PRINT-CONTAINER ,AILMENTS .FLAG2>
+						<RESET-CONTAINER ,AILMENTS .FLAG2>
+					)>
+				)>
+			)>
+		)(ELSE
+			<COND (<EQUAL? .FLAG ,CURSEBIT ,CURSEBIT>
+				<EMPHASIZE "There are no curses to lift!">
+			)(<EQUAL? .FLAG ,POISONBIT ,POISONBIT>
+				<EMPHASIZE "You are not poisoned!">
+			)(<EQUAL? .FLAG ,DISEASEBIT ,DISEASEBIT>
+				<EMPHASIZE "There are no diseases to cure!">
+			)>
+		)>
+	)(ELSE
+		<EMPHASIZE "You cannot afford a cure at this time!">
+	)>>
+
+<ROUTINE DELETE-AILMENT (AILMENT FLAG TYPE FIX)
+	<COND (<CHECK-AILMENT .AILMENT>
+		<COND (<FSET? .AILMENT .FLAG>
+			<CRLF>
+			<TELL "The " .TYPE ": ">
+			<PRINT-ITEM .AILMENT T>
+			<TELL " has been " .FIX ,EXCLAMATION-CR>
+			<REMOVE .AILMENT>
+		)>
+	)>>
+
+<ROUTINE DELETE-BLESSING (BLESSING)
+	<DELETE-OBJECT .BLESSING ,CHECK-BLESSING "blessing of">>
+
+<ROUTINE DELETE-CODEWORD (CODEWORD)
+	<DELETE-OBJECT .CODEWORD ,CHECK-CODEWORD "codeword">>
+
+<ROUTINE DELETE-CURSE (CURSE)
+	<DELETE-AILMENT .CURSE ,CURSEBIT "curse" "lifted">>
+
+<ROUTINE DELETE-DISEASE (DISEASE)
+	<DELETE-AILMENT .DISEASE ,DISEASEBIT "disease" "cured">>
+
+<ROUTINE DELETE-POISON (POISON)
+	<DELETE-AILMENT .POISON ,POISONBIT "poison" "remedied">>
+
+<ROUTINE DELETE-TITLE (TITLE)
+	<DELETE-OBJECT .TITLE ,CHECK-TITLE "title of">>
+
+<ROUTINE DELETE-OBJECT (OBJECT CHECK-ROUTINE DESCRIPTION "OPT" (RENDER ,H-BOLD))
+	<COND (<AND .OBJECT <APPLY .CHECK-ROUTINE .OBJECT>>
+		<CRLF>
+		<TELL "You lose the " .DESCRIPTION " ">
+		<HLIGHT .RENDER>
+		<TELL D .OBJECT>
+		<HLIGHT 0>
+		<TELL ,PERIOD-CR>
+		<REMOVE .OBJECT>
+	)>>
+
+<ROUTINE DESCRIBE-INVENTORY-MAIN ("AUX" COUNT)
+	<SET COUNT <COUNT-POSSESSIONS>>
+	<TELL "You are carrying " N .COUNT " items">
+	<COND (<G? .COUNT 0>
+		<TELL ": ">
+		<PRINT-CONTAINER ,PLAYER>
+	)(ELSE
+		<TELL ,PERIOD-CR>
+	)>>
+
+<ROUTINE DESCRIBE-INVENTORY ()
+	<COND (,CURRENT-CHARACTER
+		<CRLF>
+		<DESCRIBE-INVENTORY-MAIN>
+	)>>
+
+<ROUTINE DESCRIBE-PLAYER ()
+	<COND (,CURRENT-CHARACTER
+		<DESCRIBE-PLAYER-BACKGROUND>
+		<DESCRIBE-PLAYER-STATS>
+		<DESCRIBE-PLAYER-LOCATION>
+		<DESCRIBE-PLAYER-TOWNHOUSES>
+		<DESCRIBE-PLAYER-POSSESSIONS>
+		<DESCRIBE-PLAYER-CODEWORDS>
+		<DESCRIBE-PLAYER-SHIPS>
+		<DESCRIBE-PLAYER-TITLES>
+		<DESCRIBE-PLAYER-BLESSINGS>
+		<DESCRIBE-PLAYER-WORSHIP>
+		<DESCRIBE-PLAYER-RESURRECTIONS>
+		<DESCRIBE-PLAYER-AILMENTS>
+		<DESCRIBE-PLAYER-CURRENCY>
+	)>>
+
+<ROUTINE DESCRIBE-PLAYER-AILMENTS ()
+	<COND (<G? <COUNT-CONTAINER ,AILMENTS> 0>
+		<HLIGHT ,H-BOLD>
+		<PRINT-CAP-OBJ ,AILMENTS>
+		<TELL ": ">
+		<HLIGHT 0>
+		<PRINT-CONTAINER ,AILMENTS>
+	)>>
+
+<ROUTINE DESCRIBE-PLAYER-BACKGROUND ()
+	<CRLF>
+	<HLIGHT ,H-BOLD>
+	<TELL CT ,CURRENT-CHARACTER CR>
+	<HLIGHT 0>
+	<COND (<GETP ,CURRENT-CHARACTER ,P?LDESC>
+		<CRLF>
+		<TELL <GETP ,CURRENT-CHARACTER ,P?LDESC> CR>
+	)>>
+
+<ROUTINE DESCRIBE-PLAYER-BLESSINGS ()
+	<COND (<G? <COUNT-CONTAINER ,BLESSINGS> 0>
+		<HLIGHT ,H-BOLD>
+		<PRINT-CAP-OBJ ,BLESSINGS>
+		<TELL ": ">
+		<HLIGHT 0>
+		<PRINT-CONTAINER ,BLESSINGS>
+	)>>
+
+<ROUTINE DESCRIBE-PLAYER-CODEWORDS ()
+	<COND (<G? <COUNT-CONTAINER ,CODEWORDS> 0>
+		<HLIGHT ,H-BOLD>
+		<PRINT-CAP-OBJ ,CODEWORDS>
+		<TELL ": ">
+		<HLIGHT 0>
+		<PRINT-CONTAINER ,CODEWORDS>
+	)>>
+
+<ROUTINE DESCRIBE-PLAYER-CURRENCY ()
+	<HLIGHT ,H-BOLD>
+	<PRINT-CAP-OBJ ,CURRENCY>
+	<TELL ": ">
+	<HLIGHT 0>
+	<TELL N ,MONEY CR>>
+
+<ROUTINE DESCRIBE-PLAYER-LOCATION ()
+	<CRLF>
+	<HLIGHT ,H-BOLD>
+	<TELL "Current Location: ">
+	<HLIGHT 0>
+	<TELL "Somewhere in " <GET-LOCATION ,CURRENT-LOCATION> CR>>
+
+<ROUTINE DESCRIBE-PLAYER-POSSESSIONS ()
+	<COND (<L=? <COUNT-CONTAINER ,TOWNHOUSES> 0> <CRLF>)>
+	<HLIGHT ,H-BOLD>
+	<TELL "Possessions: ">
+	<HLIGHT 0>
+	<PRINT-CONTAINER ,PLAYER>
+	<COND (<OR ,BEST-ARMOUR ,BEST-WEAPON>
+		<COND (,BEST-ARMOUR
+			<HLIGHT ,H-BOLD>
+			<TELL "Best Armour: ">
+			<HLIGHT 0>
+			<PRINT-ITEM ,BEST-ARMOUR>
+			<COND (,BEST-WEAPON <TELL " ">)>
+		)>
+		<COND (,BEST-WEAPON
+			<HLIGHT ,H-BOLD>
+			<TELL "Best Weapon: ">
+			<HLIGHT 0>
+			<PRINT-ITEM ,BEST-WEAPON>
+		)>
+		<CRLF>
+	)>>
+
+<ROUTINE DESCRIBE-PLAYER-RESURRECTIONS ()
+	<COND (,RESURRECTION-ARRANGEMENTS
+		<HLIGHT ,H-BOLD>
+		<TELL "Resurrection Arrangements: ">
+		<HLIGHT 0>
+		<TELL D ,RESURRECTION-ARRANGEMENTS>
+		<CRLF>
+	)>>
+
+<ROUTINE DESCRIBE-PLAYER-STATS ("OPT" CHARACTER CONTAINER)
+	<COND (<NOT .CHARACTER> <SET CHARACTER ,CURRENT-CHARACTER>)>
+	<COND (<NOT .CONTAINER> <SET CONTAINER ,PLAYER>)>
+	<CRLF>
+	<TELL "RANK: " N <GET-RANK .CHARACTER> CR>
+	<COND (<GETP .CHARACTER ,P?PROFESSION>
+		<TELL "PROFESSION: " D <GETP .CHARACTER ,P?PROFESSION> CR>
+	)>
+	<COND (<NOT ,CURRENT-CHARACTER>
+		<TELL "STAMINA: " N <GETP .CHARACTER ,P?STAMINA> CR>
+	)(ELSE
+		<TELL "STAMINA: " N ,STAMINA CR>
+	)>
+	<TELL "DEFENSE: " N <CALCULATE-DEFENSE .CHARACTER .CONTAINER> CR>
+	<TELL "CHARISMA: " N <CALCULATE-ABILITY .CHARACTER ,ABILITY-CHARISMA .CONTAINER> CR>
+	<TELL "COMBAT: " N <CALCULATE-ABILITY .CHARACTER ,ABILITY-COMBAT .CONTAINER> CR>
+	<TELL "MAGIC: " N <CALCULATE-ABILITY .CHARACTER ,ABILITY-MAGIC .CONTAINER> CR>
+	<TELL "SANCTITY: " N <CALCULATE-ABILITY .CHARACTER ,ABILITY-SANCTITY .CONTAINER> CR>
+	<TELL "SCOUTING: " N <CALCULATE-ABILITY .CHARACTER ,ABILITY-SCOUTING .CONTAINER> CR>
+	<TELL "THIEVERY: " N <CALCULATE-ABILITY .CHARACTER ,ABILITY-THIEVERY .CONTAINER> CR>>
+
+<ROUTINE DESCRIBE-PLAYER-SHIPS ()
+	<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
+		<HLIGHT ,H-BOLD>
+		<PRINT-CAP-OBJ ,SHIPS>
+		<TELL ": ">
+		<HLIGHT 0>
+		<PRINT-CONTAINER ,SHIPS>
+		<HLIGHT ,H-BOLD>
+		<PRINT-CAP-OBJ ,CARGO>
+		<TELL ": ">
+		<HLIGHT 0>
+		<PRINT-CONTAINER ,CARGO>
+	)>>
+
+<ROUTINE DESCRIBE-PLAYER-TITLES ()
+	<COND (<G? <COUNT-CONTAINER ,TITLES-AND-HONOURS> 0>
+		<HLIGHT ,H-BOLD>
+		<PRINT-CAP-OBJ ,TITLES-AND-HONOURS>
+		<TELL ": ">
+		<HLIGHT 0>
+		<PRINT-CONTAINER ,TITLES-AND-HONOURS>
+	)>>
+
+<ROUTINE DESCRIBE-PLAYER-TOWNHOUSES ()
+	<COND (<G? <COUNT-CONTAINER ,TOWNHOUSES> 0>
+		<CRLF>
+		<HLIGHT ,H-BOLD>
+		<PRINT-CAP-OBJ ,TOWNHOUSES>
+		<TELL ": ">
+		<HLIGHT 0>
+		<PRINT-CONTAINER ,TOWNHOUSES>
+	)>>
+
+<ROUTINE DESCRIBE-PLAYER-WORSHIP ()
+	<COND (,GOD
+	<HLIGHT ,H-BOLD>
+	<TELL "God: ">
+	<HLIGHT 0>
+	<TELL D ,GOD>
+	<CRLF>
+	)>>
+
+<ROUTINE DISCHARGE-ITEM (ITEM "OPT" AMOUNT "AUX" (CHARGES 0))
+	<SET CHARGES <GETP .ITEM ,P?CHARGES>>
+	<COND (<G? .CHARGES 0>
+		<COND (<NOT .AMOUNT> <SET AMOUNT 1>)>
+		<SET CHARGES <- .CHARGES .AMOUNT>>
+		<COND (<L? .CHARGES 1> <SET CHARGES 0>)>
+		<PUTP .ITEM ,P?CHARGES .CHARGES>
+	)>>
+
+<ROUTINE DROP-REPLACE-ITEM (OBJ "AUX" KEY COUNT ITEM CHOICE QUANTITY)
+	<COND (<AND .OBJ <G=? <COUNT-POSSESSIONS> ,LIMIT-POSSESSIONS>>
+		<REPEAT ()
+			<CRLF>
+			<TELL "Please choose an item to drop:" CR>
+			<SET COUNT 0>
+			<SET ITEM <FIRST? ,PLAYER>>
+			<REPEAT ()
+				<COND (<NOT .ITEM> <RETURN>)>
+				<COND (<NOT <FSET? .ITEM ,NDESCBIT>>
+					<INC .COUNT>
+					<HLIGHT ,H-BOLD>
+					<TELL N .COUNT>
+					<HLIGHT 0>
+					<TELL " - " T .ITEM>
+					<SET QUANTITY <GETP .ITEM ,P?QUANTITY>>
+					<COND (<G? .QUANTITY 0> <TELL " (" N .QUANTITY ")">)>
+					<CRLF>
+				)>
+				<SET ITEM <NEXT? .ITEM>>
+			>
+			<HLIGHT ,H-BOLD>
+			<TELL N <+ .COUNT 1>>
+			<HLIGHT 0>
+			<TELL " - drop " T .OBJ " instead" ,PERIOD-CR>
+			<REPEAT ()
+				<SET KEY <INPUT 1>>
+				<COND (<AND <G? .KEY !\0> <L=? .KEY <+ .COUNT 49>>> <RETURN>)>
+			>
+			<COND (<AND <G? .KEY 48> <L? .KEY <+ .COUNT 49>>>
+				<SET CHOICE <- .KEY 48>>
+				<SET ITEM <GET-ITEM .CHOICE>>
+				<COND (.ITEM
+					<CRLF>
+					<TELL "Drop " T .ITEM "?">
+					<COND (<YES?>
+						<HLIGHT 0>
+						<TELL CR "You dropped ">
+						<HLIGHT ,H-BOLD>
+						<TELL T .ITEM>
+						<HLIGHT 0>
+						<TELL " and took ">
+						<HLIGHT ,H-BOLD>
+						<TELL T .OBJ>
+						<HLIGHT 0>
+						<TELL ,PERIOD-CR>
+						<COND (<NOT <EQUAL? .ITEM .OBJ>>
+							<SET QUANTITY <GETP .ITEM ,P?QUANTITY>>
+							<COND (<G? .QUANTITY 0>
+								<DEC .QUANTITY>
+								<COND (<G? .QUANTITY 0>
+									<PUTP .ITEM ,P?QUANTITY .QUANTITY>
+								)(ELSE
+									<PUTP .ITEM ,P?QUANTITY 1>
+									<REMOVE .ITEM>
+								)>
+							)(<EQUAL? .QUANTITY 0>
+								<PUTP .ITEM ,P?QUANTITY 1>
+								<REMOVE .ITEM>
+							)(ELSE
+								<REMOVE .ITEM>
+							)>
+							<COND (<IN? .OBJ ,PLAYER>
+								<SET QUANTITY <GETP .OBJ ,P?QUANTITY>>
+								<COND (<G=? .QUANTITY 0> <PUTP .OBJ ,P?QUANTITY <+ .QUANTITY 1>>)>
+							)>
+							<MOVE .OBJ ,PLAYER>
+						)>
+						<RETURN>
+					)>
+				)>
+			)(<EQUAL? .KEY <+ .COUNT 49>>
+				<CRLF>
+				<TELL "Drop " T .OBJ "?">
+				<COND (<YES?>
+					<HLIGHT 0>
+					<TELL CR "You dropped ">
+					<HLIGHT ,H-BOLD>
+					<TELL T .OBJ>
+					<HLIGHT 0>
+					<TELL ,PERIOD-CR>
+					<SET QUANTITY <GETP .OBJ ,P?QUANTITY>>
+					<COND (<L? .QUANTITY 0> <REMOVE .OBJ>)>
+					<RETURN>
+				)>
+			)>
+		>
+	)>>
+
+<ROUTINE GAIN-BLESSING (BLESSING)
+	<GAIN-OBJECT .BLESSING ,BLESSINGS "blessing" ,CHECK-BLESSING>>
+
+<ROUTINE GAIN-CODEWORD (CODEWORD)
+	<GAIN-OBJECT .CODEWORD ,CODEWORDS "codeword" ,CHECK-CODEWORD>>
+
+<ROUTINE GAIN-MONEY (AMOUNT)
+	<CRLF>
+	<TELL "You gain ">
+	<HLIGHT ,H-BOLD>
+	<TELL N .AMOUNT " " D ,CURRENCY>
+	<HLIGHT 0>
+	<TELL ,PERIOD-CR>
+	<SETG MONEY <+ ,MONEY .AMOUNT>>
+	<UPDATE-STATUS-LINE>>
+
+<ROUTINE GAIN-OBJECT (OBJECT CONTAINER DESCRIPTION CHECK-ROUTINE)
+	<COND (<NOT <APPLY .CHECK-ROUTINE .OBJECT>>
+		<CRLF>
+		<TELL "You gained the " .DESCRIPTION " ">
+		<PRINT-ITEM .OBJECT <NOT <EQUAL? .CONTAINER ,CODEWORDS>>>
+		<TELL ,PERIOD-CR>
+		<MOVE .OBJECT .CONTAINER>
+	)>>
+
+<ROUTINE GAIN-RANK ("OPT" (GAIN 1) "AUX" RANK)
+	<COND (,CURRENT-CHARACTER
+		<CRLF>
+		<SET RANK <GET-RANK ,CURRENT-CHARACTER>>
+		<SET RANK <+ .RANK .GAIN>>
+		<TELL "You've gained a rank! Your rank is now is now: ">
+		<HLIGHT ,H-BOLD>
+		<TELL N .RANK>
+		<HLIGHT 0>
+		<TELL ,PERIOD-CR>
+		<PUTP ,CURRENT-CHARACTER ,P?RANK .RANK>
+	)>>
+
+<ROUTINE GAIN-CACHE (CACHE)
+	<GAIN-OBJECT .CACHE ,TOWNHOUSES "secret cache" ,CHECK-TOWNHOUSE>>
+
+<ROUTINE GAIN-STAMINA (POINTS "AUX" DIFFERENCE)
+	<COND (<L? ,STAMINA ,MAX-STAMINA>
+		<SET DIFFERENCE <- ,MAX-STAMINA ,STAMINA>>
+		<CRLF>
+		<SETG STAMINA <+ ,STAMINA .POINTS>>
+		<HLIGHT ,H-BOLD>
+		<TELL "You gained ">
+		<COND (<G? ,STAMINA ,MAX-STAMINA>
+			<SETG STAMINA ,MAX-STAMINA>
+			<TELL N .DIFFERENCE>
+		)(ELSE
+			<TELL N .POINTS>
+		)>
+		<TELL " stamina" ,PERIOD-CR>
+		<HLIGHT 0>
+    )>>
+
+<ROUTINE GAIN-TITLE (TITLE)
+	<GAIN-OBJECT .TITLE ,TITLES-AND-HONOURS "title" ,CHECK-TITLE>>
+
+<ROUTINE GAIN-TOWNHOUSE (TOWNHOUSE)
+	<GAIN-OBJECT .TOWNHOUSE ,TOWNHOUSES "townhouse" ,CHECK-TOWNHOUSE>>
+
+<ROUTINE GET-ITEM (ITEM "OPT" CONTAINER "AUX" ITEMS COUNT)
+	<COND (<NOT .CONTAINER> <SET CONTAINER ,PLAYER>)>
+	<COND(<AND .ITEM <G=? <COUNT-CONTAINER .CONTAINER> 0>>
+		<SET COUNT 0>
+		<SET ITEMS <FIRST? .CONTAINER>>
+		<REPEAT ()
+			<COND (.ITEMS
+				<COND (<NOT <FSET? .ITEMS ,NDESCBIT>>
+					<INC .COUNT>
+					<COND (<EQUAL? .COUNT .ITEM> <RETURN>)>
+				)>
+			)(ELSE
+				<RETURN>
+			)>
+			<SET ITEMS <NEXT? .ITEMS>>
+		>
+		<RETURN .ITEMS>
+	)>>
+
+<ROUTINE GET-LOCATION (LOCATION)
+	<COND (<L=? .LOCATION 20>
+		<RETURN <GET ,LOCATIONS .LOCATION>>
+	)(<L=? .LOCATION 40>
+		
+	)>>
+
+<ROUTINE GIVE-ITEM (ITEM "OPT" (SILENT F))
+	<REMOVE-ITEM .ITEM "gave" F .SILENT>>
+
+<ROUTINE KEEP-ITEM (ITEM "OPT" JUMP)
+	<CRLF>
+	<TELL "Keep " T .ITEM "?">
+	<COND (<YES?>
+		<COND (<NOT <CHECK-ITEM .ITEM>> <TAKE-ITEM .ITEM>)>
+		<COND (.JUMP <STORY-JUMP .JUMP>)>
+		<RTRUE>
+	)>
+	<COND (<CHECK-ITEM .ITEM> <LOSE-ITEM .ITEM>)>
+	<RFALSE>>
+
+<ROUTINE LOSE-ABILITY (ABILITY "OPT" LOSS "AUX" SCORE PROPERTY)
+	<COND (<NOT ,CURRENT-CHARACTER> <RETURN>)>
+	<COND (<NOT .LOSS> <SET LOSS 1>)>
+	<SET SCORE <GET-ABILITY-SCORE ,CURRENT-CHARACTER .ABILITY>>
+	<CRLF>
+	<TELL "Your " <GET ,ABILITIES .ABILITY> " score has decreased from ">
+	<HLIGHT ,H-BOLD>
+	<TELL N .SCORE>
+	<HLIGHT 0>
+	<SET PROPERTY <GET-ABILITY-PROPERTY .ABILITY>>
+	<TELL " to ">
+	<SET SCORE <- .SCORE .LOSS>>
+	<COND (<L? .SCORE 1> <SET .SCORE 1>)>
+	<HLIGHT ,H-BOLD>
+	<TELL N .SCORE ,EXCLAMATION-CR>
+	<COND (.PROPERTY <PUTP ,CURRENT-CHARACTER .PROPERTY .SCORE>)>
+	<HLIGHT 0>>
+
+<ROUTINE LOSE-ITEM (ITEM "OPT" (SILENT F))
+	<REMOVE-ITEM .ITEM "lost" F .SILENT>>
+
+<ROUTINE LOSE-MONEY (COST)
+	<COST-MONEY .COST "lose">>
+
+<ROUTINE LOSE-STAMINA (DAMAGE MESSAGE STORY)
+	<SETG STAMINA <- ,STAMINA .DAMAGE>>
+	<COND (<L? ,STAMINA 0> <SETG STAMINA 0>)>
+	<UPDATE-STATUS-LINE>
+	<CRLF>
+	<HLIGHT ,H-BOLD>
+	<COND (<L? ,STAMINA 1>
+		<PUTP .STORY ,P?DOOM T>
+		<TELL .MESSAGE>
+		<SETG CONTINUE-TO-CHOICES F>
+	)(ELSE
+		<PUTP .STORY ,P?DOOM F>
+		<TELL "You lost " N .DAMAGE " stamina">
+	)>
+	<HLIGHT 0>
+	<TELL ,PERIOD-CR>>
+
+<ROUTINE LOSE-STUFF (CONTAINER LOST-CONTAINER ITEM "OPT" MAX ACTION "AUX" (COUNT 0) ITEMS)
+	<COND (<NOT .MAX> <SET MAX 1>)>
+	<RESET-CONTAINER .LOST-CONTAINER>
+	<COND (<G? <COUNT-CONTAINER .CONTAINER> .MAX>
+		<RESET-TEMP-LIST>
+		<SET ITEMS <COUNT-CONTAINER .CONTAINER>>
+		<DO (I 1 .ITEMS)
+			<SET COUNT <+ .COUNT 1>>
+			<COND (<L=? .COUNT .ITEMS>
+				<PUT ,TEMP-LIST .COUNT <GET-ITEM .I .CONTAINER>>
+			)>
+		>
+		<REPEAT ()
+			<COND (.ACTION <APPLY .ACTION>)>
+			<SELECT-FROM-LIST ,TEMP-LIST .COUNT .MAX .ITEM .CONTAINER "retain">
+			<COND (<EQUAL? <COUNT-CONTAINER .CONTAINER> .MAX>
+				<CRLF>
+				<TELL "You have selected: ">
+				<PRINT-CONTAINER .CONTAINER>
+				<CRLF>
+				<TELL "Do you agree?">
+				<COND (<YES?> <RETURN>)>
+			)(ELSE
+				<CRLF>
+				<HLIGHT ,H-BOLD>
+				<TELL "You must select " N .MAX " " .ITEM>
+				<COND (<G? .MAX 1> <TELL "s">)>
+				<TELL ,PERIOD-CR>
+				<HLIGHT 0>
+			)>
+		>
+		<DO (I 1 .COUNT)
+			<COND (<NOT <IN? <GET ,TEMP-LIST .I> .CONTAINER>>
+				<MOVE <GET ,TEMP-LIST .I> .LOST-CONTAINER>
+			)>
+		>
+	)>>
+
+<ROUTINE POISONED-WITH (POISON)
+	<AFFLICTED-WITH .POISON ,TEXT-POISONED>>
+
+<ROUTINE PRINT-BLESSINGS (ITEM "OPT"  "AUX" (COUNT 0) (ITEMS 0) (SCORE 0) (PROPERTY NONE))
+	<COND (<G? <COUNT-BLESSINGS .ITEM> 0>
+		<SET ITEMS <GET ,ABILITIES 0>>
+		<DO (I 1 .ITEMS)
+			<SET PROPERTY <GET-ABILITY-PROPERTY .I>>
+			<COND (<G? .PROPERTY 0>
+				<SET SCORE <GETP .ITEM .PROPERTY>>
+				<COND (<AND .SCORE <G? .SCORE 0>>
+					<INC .COUNT>
+					<COND (<G? .COUNT 1> <TELL ", ">)>
+					<TELL "+" N .SCORE " " <GET ,ABILITIES .I>>
+				)>
+			)>
+		>
+	)>>
+
+<ROUTINE PRINT-ITEM (ITEMS "OPT" (BOLD F) (COUNT 0) (NO-QUANTITY F) "AUX" (QUANTITY 1) CHARGES BLESSINGS STARS (WORN F) (EFFECTS NONE) CONDITION)
+	<COND (.ITEMS
+		<COND (<NOT <FSET? .ITEMS ,NDESCBIT>>
+			<SET BLESSINGS <COUNT-BLESSINGS .ITEMS>>
+			<COND (<NOT .NO-QUANTITY> <SET QUANTITY <GETP .ITEMS ,P?QUANTITY>>)>
+			<SET CHARGES <GETP .ITEMS ,P?CHARGES>>
+			<SET STARS <GETP .ITEMS ,P?STARS>>
+			<SET WORN <AND <FSET? .ITEMS ,WEARBIT> <FSET? .ITEMS ,WORNBIT>>>
+			<SET EFFECTS <GETP .ITEMS ,P?EFFECTS>>
+			<SET CONDITION <GETP .ITEMS ,P?CONDITION>>
+			<COND (<G? .COUNT 0> <TELL ", ">)>
+			<COND (.BOLD <HLIGHT ,H-BOLD>)(ELSE <HLIGHT ,H-ITALIC>)>
+			<TELL D .ITEMS>
+			<HLIGHT 0>
+			<COND (<OR <G? .BLESSINGS 0> <G? .QUANTITY 1> <G? .CHARGES 0> <G? .STARS 0> .WORN .EFFECTS <G=? .CONDITION 0>> <TELL " (">)>
+			<COND (<G? .BLESSINGS 0> <PRINT-BLESSINGS .ITEMS>)>
+			<COND (<G? .QUANTITY 1>
+				<COND (<G? .BLESSINGS 0>
+					<TELL ", quantity: ">
+				)(<OR <G? .STARS 0> <G? .CHARGES 0> .WORN>
+					<TELL "quantity: ">
+				)>
+				<TELL N .QUANTITY>
+			)>
+			<COND (<G=? .CHARGES 1>
+				<COND (<OR <G? .BLESSINGS 0> <G? .QUANTITY 1>> <TELL ", ">)>
+				<TELL "charges: " N .CHARGES>
+			)>
+			<COND (<G=? .STARS 0>
+				<COND (<OR <G? .BLESSINGS 0> <G? .QUANTITY 1> <G? .CHARGES 0>> <TELL ", ">)>
+				<TELL "stars: " N .STARS>
+			)>
+			<COND (.WORN
+				<COND (<OR <G? .BLESSINGS 0> <G? .QUANTITY 1> <G? .CHARGES 0> <G? .STARS 0>> <TELL ", ">)>
+				<TELL "worn">
+			)>
+			<COND (.EFFECTS
+				<COND (<OR <G? .BLESSINGS 0> <G? .QUANTITY 1> <G? .CHARGES 0> <G? .STARS 0> .WORN> <TELL ", ">)>
+				<PRINT-MODIFIERS .ITEMS>
+			)>
+			<COND (<G=? .CONDITION 0>
+				<COND (<OR <G? .BLESSINGS 0> <G? .QUANTITY 1> <G? .CHARGES 0> <G? .STARS 0> .WORN .EFFECTS> <TELL ", ">)>
+				<TELL "condition: " <GET ,CONDITIONS <+ .CONDITION 1>>>
+				<COND (<GETP .ITEMS ,P?DOCKED> <TELL ", docked at: " <GET ,DOCKS <GETP .ITEMS ,P?DOCKED>>>)>
+			)>
+			<COND (<OR <G? .BLESSINGS 0> <G? .QUANTITY 1> <G? .CHARGES 0> <G? .STARS 0> .WORN .EFFECTS <G=? .CONDITION 0>> <TELL ")">)>
+			<COND (<G? <GETP .ITEMS ,P?MONEY> 0> <TELL " (" N <GETP .ITEMS ,P?MONEY> " " D ,CURRENCY ")">)>
+		)>
+	)>>
+
+<ROUTINE PRINT-MODIFIERS (ITEM "AUX" (EFFECTS NONE) (EFFECT 0) (MODIFIERS 0))
+	<COND (<NOT .ITEM> <RETURN>)>
+	<SET EFFECTS <GETP .ITEM ,P?EFFECTS>>
+	<COND (.EFFECTS
+		<DO (I 1 6)
+			<SET EFFECT <GET .EFFECTS .I>>
+			<COND (<N=? .EFFECT 0>
+				<COND (<G? .MODIFIERS 0> <TELL ", ">)>
+				<COND (<G? .EFFECT 0> <TELL "+">)>
+				<TELL N .EFFECT " " <GET ,ABILITIES .I>>
+				<INC .MODIFIERS>
+			)>
+		>
+	)>>
+
+<ROUTINE REMOVE-ITEM (ITEM REASON "OPT" (USE-THE F) (SILENT F) "AUX" QUANTITY)
+	<SET QUANTITY <GETP .ITEM ,P?QUANTITY>>
+	<CRLF>
+	<TELL "You " .REASON " ">
+	<COND (<L? .QUANTITY 0>
+		<REMOVE .ITEM>
+	)(ELSE
+		<COND (<G? .QUANTITY 0>
+			<DEC .QUANTITY>
+			<COND (<G? .QUANTITY 0>
+				<PUTP .ITEM ,P?QUANTITY .QUANTITY>
+			)(ELSE
+				<PUTP .ITEM ,P?QUANTITY 1>
+				<REMOVE .ITEM>
+			)>
+		)(ELSE
+			<PUTP .ITEM ,P?QUANTITY 1>
+			<REMOVE .ITEM>
+		)>
+	)>
+    <COND (<OR .USE-THE <L? .QUANTITY 0>>
+        <TELL "the ">
+	)(ELSE
+		<TELL "a">
+		<COND (<FSET? .ITEM ,VOWELBIT> <TELL "n">)>
+		<TELL " ">
+	)>
+	<PRINT-ITEM .ITEM T>
+	<TELL ,PERIOD-CR>
+	<COND (<NOT .SILENT> <PRESS-A-KEY>)>
+	<WEAR-BEST>
+	<FIND-BEST-GEAR>>
+
+<ROUTINE RETURN-ITEM (ITEM "OPT" (SILENT F))
+	<REMOVE-ITEM .ITEM "returned" T .SILENT>>
+
+<ROUTINE SELECT-FROM-LIST (LIST ITEMS MAX "OPT" DESC CONTAINER ACTION "AUX" KEY COUNT CHOICE)
+	<COND (<NOT .CONTAINER> <SET CONTAINER ,PLAYER>)>
+	<COND (<NOT .ACTION> <SET ACTION "take">)>
+	<SET COUNT 0>
+	<COND (<NOT .DESC> <SET DESC "item">)>
+	<RESET-SELECTIONS>
+	<REPEAT ()
+		<CRLF>
+		<COND (<EQUAL? .CONTAINER ,PLAYER>
+			<TELL "You are already carrying " N <COUNT-POSSESSIONS> " items in your inventory" ,PERIOD-CR>
+		)>
+		<TELL "You can select up to " N .MAX " " .DESC "s from:" CR>
+		<DO (I 1 .ITEMS)
+			<HLIGHT ,H-BOLD>
+			<COND (<L? .I 10>
+				<TELL N .I>
+			)(ELSE
+				<TELL C <+ <- .I 10> !\A>>
+			)>
+			<HLIGHT 0>
+			<TELL " - [">
+			<COND (<INTBL? <GET .LIST .I> ,SELECT-CHOICES 21> <TELL "X">)(ELSE <TELL " ">)>
+			<TELL "] - ">
+			<PRINT-ITEM <GET .LIST .I> T>
+			<CRLF>
+		>
+		<HLIGHT ,H-BOLD>
+		<TELL "P">
+		<HLIGHT 0>
+		<TELL " - View your character (" D ,CURRENT-CHARACTER ")" CR>
+		<HLIGHT ,H-BOLD>
+		<TELL "0">
+		<HLIGHT 0>
+		<TELL " - I'm alright with my choices" ,PERIOD-CR>
+		<TELL "Select which " .DESC "(s) to ">
+		<TELL .ACTION>
+		<TELL ":" CR>
+		<REPEAT ()
+			<SET KEY <INPUT 1>>
+			<COND (
+				<OR
+					<AND <G=? .KEY !\A> <L=? .KEY !\F> <L=? <+ <- .KEY !\A> 10> .ITEMS>>
+					<AND <G=? .KEY !\a> <L=? .KEY !\f> <L=? <+ <- .KEY !\a> 10> .ITEMS>>
+					<AND <G=? .KEY !\1> <L=? .KEY !\9> <L=? <- .KEY !\0> .ITEMS>>
+					<EQUAL? .KEY !\P !\p !\0 !\?>
+				>
+				<RETURN>
+			)>
+		>
+		<COND (<EQUAL? .KEY !\0>
+			<COND (<L? .COUNT .MAX>
+				<CRLF>
+				<TELL ,TEXT-SURE>
+				<COND(<YES?> <RETURN>)>
+			)(ELSE
+				<RETURN>
+			)>
+		)>
+		<COND (<EQUAL? .KEY !\p !\P> <DESCRIBE-PLAYER> <PRESS-A-KEY>)>
+		<COND (<EQUAL? .KEY !\?> <DISPLAY-HELP> <PRESS-A-KEY>)>
+		<COND (<OR <AND <G=? .KEY !\1> <L=? .KEY !\9>> <AND <G=? .KEY !\a> <L=? .KEY !\f>> <AND <G=? .KEY !\A> <L=? .KEY !\F>>>
+			<COND (<AND <G=? .KEY !\a> <L=? .KEY !\f>>
+				<SET CHOICE <+ <- .KEY !\a> 10>>
+			)(<AND <G=? .KEY !\A> <L=? .KEY !\F>>
+				<SET CHOICE <+ <- .KEY !\A> 10>>
+			)(ELSE
+				<SET CHOICE <- .KEY !\0>>
+			)>
+			<COND (<L=? .CHOICE .ITEMS>
+				<COND (<INTBL? <GET .LIST .CHOICE> ,SELECT-CHOICES 21>
+					<PUT ,SELECT-CHOICES <GET-INDEX ,SELECT-CHOICES <GET .LIST .CHOICE>> NONE>
+					<DEC .COUNT>
+				)(ELSE
+					<COND (<EQUAL? .COUNT .MAX>
+						<CRLF>
+						<HLIGHT ,H-BOLD>
+						<TELL "You have already selected " N .MAX " " .DESC "s" ,EXCLAMATION-CR>
+						<HLIGHT 0>
+					)(ELSE
+						<INC .COUNT>
+						<PUT ,SELECT-CHOICES <GET-INDEX ,SELECT-CHOICES NONE> <GET .LIST .CHOICE>>
+					)>
+				)>
+			)>
+		)>
+	>
+	<COND (<G? .COUNT 0>
+		<DO (I 1 20)
+			<COND (<GET ,SELECT-CHOICES .I>
+				<COND (<EQUAL? <GET ,SELECT-CHOICES .I> ,MONEY-BAG>
+					<GAIN-MONEY <GETP <GET ,SELECT-CHOICES .I> ,P?MONEY>>
+				)(<EQUAL? .CONTAINER ,PLAYER>
+					<TAKE-ITEM <GET ,SELECT-CHOICES .I>>
+				)(ELSE
+					<MOVE <GET ,SELECT-CHOICES .I> .CONTAINER>
+				)>
+			)>
+		>
+	)>>
+
+<ROUTINE SET-DESTINATION (STORY DESTINATION NEW)
+	<PUT <GETP .STORY ,P?DESTINATIONS> .DESTINATION .NEW>>
+
+<ROUTINE SET-LOCATION (LOCATION)
+	<SETG CURRENT-LOCATION .LOCATION>>
+
+<ROUTINE TAKE-ITEM (ITEM "OPT" (BUY F) "AUX" QUANTITY)
+	<COND (.ITEM
+		<CRLF>
+		<COND (.BUY
+			<TELL "You bought ">
+		)(ELSE
+			<TELL "You gained ">
+		)>
+		<COND (<FSET? .ITEM ,NARTICLEBIT>
+			<TELL "the">
+		)(ELSE
+			<TELL "a">
+			<COND (<FSET? .ITEM ,VOWELBIT> <TELL "n">)>
+		)>
+		<TELL " ">
+		<PRINT-ITEM .ITEM T 0 .BUY>
+		<TELL ,PERIOD-CR>
+		<COND (<G=? <COUNT-POSSESSIONS> ,LIMIT-POSSESSIONS>
+			<EMPHASIZE "You are carrying too many items!">
+			<DROP-REPLACE-ITEM .ITEM>
+		)(ELSE
+			; "check if object has the QUANTITY property"
+			<SET QUANTITY <GETP .ITEM ,P?QUANTITY>>
+			<COND (<L? .QUANTITY 0>
+				<COND (<NOT <CHECK-ITEM .ITEM>> <MOVE .ITEM ,PLAYER>)>
+			)(ELSE
+				<COND (<IN? .ITEM ,PLAYER>
+					<PUTP .ITEM ,P?QUANTITY <+ .QUANTITY 1>>
+				)(ELSE
+					<PUTP .ITEM ,P?QUANTITY 1>
+					<MOVE .ITEM ,PLAYER>
+				)>
+			)>
+		)>
+	)>
+	<WEAR-BEST>
+	<FIND-BEST-GEAR>>
+
+<ROUTINE TAKE-QUANTITIES (OBJECT PLURAL MESSAGE "OPT" AMOUNT)
+	<CRLF>
+	<TELL "Take the " .PLURAL "?">
+	<COND (<YES?> <ADD-QUANTITY .OBJECT <GET-NUMBER .MESSAGE 0 .AMOUNT> ,PLAYER>)>>
+
+<ROUTINE UPGRADE-ABILITIES (POINTS "AUX" KEY ABILITY CURRENT)
+	<COND (<NOT ,CURRENT-CHARACTER> <RETURN>)>
+	<REPEAT ()
+		<COND (<L=? .POINTS 0> <RETURN>)>
+		<CRLF>
+		<TELL "You have " N .POINTS " point">
+		<COND (<G? .POINTS 1> <TELL "s">)>
+		<TELL " to allocate:" CR>
+		<DO (I 1 6)
+			<HLIGHT ,H-BOLD>
+			<TELL N .I>
+			<HLIGHT 0>
+			<TELL " - " <GET ,ABILITIES .I> " (" N <GET-ABILITY-SCORE ,CURRENT-CHARACTER .I> ")" CR>
+		>
+		<TELL "Select ability to improve:">
+		<REPEAT ()
+			<SET KEY <INPUT 1>>
+			<COND (<AND <G=? .KEY !\1> <L=? .KEY !\8>> <RETURN>)>
+		>
+		<CRLF>
+		<SET ABILITY <- .KEY !\0>>
+		<SET CURRENT <GET-ABILITY-SCORE ,CURRENT-CHARACTER .ABILITY>>
+		<COND (<L? .CURRENT 12>
+			<CRLF>
+			<TELL "Add +1 to " <GET ,ABILITIES .ABILITY> "?">
+			<COND (<YES?>
+				<CRLF>
+				<TELL "Your ">
+				<HLIGHT ,H-BOLD>
+				<TELL <GET ,ABILITIES .ABILITY>>
+				<HLIGHT 0>
+				<TELL " score improved from ">
+				<HLIGHT ,H-BOLD>
+				<TELL N .CURRENT>
+				<HLIGHT 0>
+				<TELL " -> ">
+				<HLIGHT ,H-BOLD>
+				<INC .CURRENT>
+				<TELL N .CURRENT ,EXCLAMATION-CR>
+				<HLIGHT 0>
+				<PUTP ,CURRENT-CHARACTER <GET-ABILITY-PROPERTY .ABILITY> .CURRENT>
+				<DEC .POINTS>
+			)>
+		)(ELSE
+			<CRLF>
+			<TELL "Your ">
+			<HLIGHT ,H-BOLD>
+			<TELL <GET ,ABILITIES .ABILITY>>
+			<HLIGHT 0>
+			<TELL " score is already at a maximum" ,EXCLAMATION-CR>
+		)>
+	>>
+
+<ROUTINE UPGRADE-ABILITY (ABILITY "OPT" UPGRADE "AUX" SCORE PROPERTY)
+	<COND (<NOT ,CURRENT-CHARACTER> <RETURN>)>
+	<COND (<NOT .UPGRADE> <SET UPGRADE 1>)>
+	<SET SCORE <GET-ABILITY-SCORE ,CURRENT-CHARACTER .ABILITY>>
+	<CRLF>
+	<TELL "Your " <GET ,ABILITIES .ABILITY> " score has improved from ">
+	<HLIGHT ,H-BOLD>
+	<TELL N .SCORE>
+	<HLIGHT 0>
+	<SET PROPERTY <GET-ABILITY-PROPERTY .ABILITY>>
+	<TELL " to ">
+	<SET SCORE <+ .SCORE .UPGRADE>>
+	<COND (<G? .SCORE 12> <SET .SCORE 12>)>
+	<HLIGHT ,H-BOLD>
+	<TELL N .SCORE ,EXCLAMATION-CR>
+	<COND (.PROPERTY <PUTP ,CURRENT-CHARACTER .PROPERTY .SCORE>)>
+	<HLIGHT 0>>
+
+<ROUTINE UPGRADE-STAMINA ("OPT" UPGRADE)
+	<COND (<NOT .UPGRADE> <SET UPGRADE 1>)>
+	<CRLF>
+	<TELL "You've gained ">
+	<HLIGHT ,H-BOLD>
+	<TELL "+" N .UPGRADE>
+	<HLIGHT 0>
+	<TELL " stamina permanently!" CR>
+	<SETG MAX-STAMINA <+ ,MAX-STAMINA .UPGRADE>>
+	<SETG STAMINA <+ ,STAMINA .UPGRADE>>
+	<COND (<G? ,STAMINA ,MAX-STAMINA> <SETG STAMINA ,MAX-STAMINA>)>
+	<UPDATE-STATUS-LINE>>
+
+<ROUTINE WEAR-BEST ("AUX" ITEMS DEFENSE (SCORE 0))
+	<SET ITEMS <FIRST? ,PLAYER>>
+	<REPEAT ()
+		<COND (<NOT .ITEMS> <RETURN>)>
+		<COND (<FSET? .ITEMS ,WEARBIT>
+			<FCLEAR .ITEMS ,WORNBIT>
+			<SET DEFENSE <GETP .ITEMS ,P?DEFENSE>>
+			<COND (<AND <G? .DEFENSE 0> <G? .DEFENSE .SCORE>>
+				<SET SCORE .DEFENSE>
+			)>
+		)>
+		<SET .ITEMS <NEXT? .ITEMS>>
+	>
+	<COND (<G? .SCORE 0>
+		<SET ITEMS <FIRST? ,PLAYER>>
+		<REPEAT ()
+			<COND (<NOT .ITEMS> <RETURN>)>
+			<COND (<FSET? .ITEMS ,WEARBIT>
+				<SET DEFENSE <GETP .ITEMS ,P?DEFENSE>>
+				<COND (<AND <G? .DEFENSE 0> <EQUAL? .DEFENSE .SCORE>>
+					<FSET .ITEMS ,WORNBIT>
+					<SET-BEST-GEAR .ITEMS>
+					<RETURN>
+				)>
+			)>
+			<SET .ITEMS <NEXT? .ITEMS>>
+		>
+	)>>
+
+; "Story - Merchant routines (display)"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE MERCHANT (WARES PRICELIST "OPT" CONTAINER (SELL F) (LIMIT 0) "AUX" ITEM ITEMS KEY QUANTITY)
+	<COND (<NOT .CONTAINER> <SET CONTAINER ,PLAYER>)>
+	<COND (<OR <NOT .WARES> <NOT .PRICELIST>> <RETURN>)>
+	<SET ITEMS <GET .WARES 0>>
+	<REPEAT MAIN ()
+		<CRLF>
+		<COND (<NOT .SELL>
+			<TELL "You can buy anything you have money for:">
+		)(ELSE
+			<TELL "You can sell these items at these prices if you have them:">
+		)>
+		<CRLF>
+		<PRINT-MENU .WARES T T NONE NONE .PRICELIST T>
+		<COND (<AND <L? .ITEMS 12> <EQUAL? .CONTAINER ,CARGO>>
+			<HLIGHT ,H-BOLD>
+			<TELL "C">
+			<HLIGHT 0>
+			<TELL " - View cargo">
+			<COND (,CURRENT-SHIP <TELL " (" D ,CURRENT-SHIP ")">)>
+			<CRLF>
+		)>
+		<COND (<EQUAL? .CONTAINER ,PLAYER>
+			<HLIGHT ,H-BOLD>
+			<TELL "P">
+			<HLIGHT 0>
+			<TELL " - View character">
+			<COND (,CURRENT-CHARACTER <TELL " (" D ,CURRENT-CHARACTER ")">)>
+			<CRLF>
+		)>
+		<HLIGHT ,H-BOLD>
+		<TELL "0">
+		<HLIGHT 0>
+		<TELL " - Bye" CR>
+		<TELL "You are carrying " N ,MONEY " " D ,CURRENCY ": ">
+		<REPEAT ()
+			<SET KEY <INPUT 1>>
+			<COND (
+				<OR
+					<AND <EQUAL? .KEY !\c !\C> <L? .ITEMS 12> <EQUAL? .CONTAINER ,CARGO>>
+					<AND <G=? .KEY !\1> <L=? .KEY !\9> <L=? <- .KEY !\0> .ITEMS>>
+					<AND <G=? .KEY !\A> <L=? .KEY !\J> <G? .ITEMS 9> <L=? <+ <- .KEY !\A> 10> .ITEMS>>
+					<AND <G=? .KEY !\a> <L=? .KEY !\j> <G? .ITEMS 9> <L=? <+ <- .KEY !\a> 10> .ITEMS>>
+					<AND <EQUAL? .KEY !\p !\P> <EQUAL? .CONTAINER ,PLAYER>>
+					<EQUAL? .KEY !\? !\0>
+				>
+				<RETURN>
+			)>
+		>
+		<CRLF>
+		<COND (<AND <EQUAL? .KEY !\c !\C> <EQUAL? .CONTAINER ,CARGO> <L? .ITEMS 12>>
+			<TELL CR "Current designated ship: ">
+			<COND (,CURRENT-SHIP <PRINT-ITEM ,CURRENT-SHIP T>)(ELSE <TELL "None">)>
+			<CRLF>
+			<TELL "Cargo: ">
+			<PRINT-CONTAINER ,CARGO>
+			<PRESS-A-KEY>
+		)>
+		<COND (<AND <EQUAL? .KEY !\p !\P> <EQUAL? .CONTAINER ,PLAYER>> <DESCRIBE-PLAYER> <PRESS-A-KEY>)>
+		<COND (<EQUAL? .KEY !\?> <DISPLAY-HELP> <PRESS-A-KEY>)>
+		<COND (
+			<OR
+				<AND <G=? .KEY !\1> <L=? .KEY !\9> <L=? <- .KEY !\0> .ITEMS>>
+				<AND <G=? .KEY !\A> <L=? .KEY !\J> <G? .ITEMS 9> <L=? <+ <- .KEY !\A> 10> .ITEMS>>
+				<AND <G=? .KEY !\a> <L=? .KEY !\j> <G? .ITEMS 9> <L=? <+ <- .KEY !\a> 10> .ITEMS>>
+			>
+			<COND (<AND <G=? .KEY !\1> <L=? .KEY !\9> <L=? <- .KEY !\0> .ITEMS>>
+				<SET ITEM <- .KEY !\0>>
+			)(<AND <G=? .KEY !\A> <L=? .KEY !\J> <G? .ITEMS 9> <L=? <+ <- .KEY !\A> 10> .ITEMS>>
+				<SET ITEM <+ <- .KEY !\A> 10>>
+			)(<AND <G=? .KEY !\a> <L=? .KEY !\j> <G? .ITEMS 9> <L=? <+ <- .KEY !\a> 10> .ITEMS>>
+				<SET ITEM <+ <- .KEY !\a> 10>>
+			)>
+			<CRLF>
+			<COND (<NOT .SELL>
+				<COND (<AND <G? .LIMIT 0> <N=? .CONTAINER ,PLAYER> <G=? <COUNT-CONTAINER .CONTAINER> .LIMIT>>
+					<HLIGHT ,H-BOLD>
+					<TELL "Your " D .CONTAINER " is already at full capacity" ,EXCLAMATION-CR>
+					<HLIGHT 0>
+					<PRESS-A-KEY>
+					<AGAIN .MAIN>
+				)(<L=? <GET .PRICELIST .ITEM> 0>
+					<HLIGHT ,H-BOLD>
+					<TELL <GET .WARES .ITEM> " not available here" ,PERIOD-CR>
+					<HLIGHT 0>
+					<PRESS-A-KEY>
+					<AGAIN .MAIN>
+				)>
+				<TELL "Purchase ">
+				<PRINT-ITEM <GET .WARES .ITEM> T>
+				<TELL " (" N <GET .PRICELIST .ITEM> " " D ,CURRENCY ")?">
+			)(ELSE
+				<TELL "Sell ">
+				<PRINT-ITEM <GET .WARES .ITEM> T>
+				<TELL " (" N <GET .PRICELIST .ITEM> " " D ,CURRENCY ")?">
+			)>
+			<COND (<YES?>
+				<COND (<NOT .SELL>
+					<CRLF>
+					<COND (<L? ,MONEY <GET .PRICELIST .ITEM>>
+						<TELL "You can't afford the ">
+						<PRINT-ITEM <GET .WARES .ITEM> T>
+						<TELL ,EXCLAMATION-CR>
+						<PRESS-A-KEY>
+					)(ELSE
+						<COND (<FSET? <GET .WARES .ITEM> ,TAKEBIT>
+							<COND (<IN? <GET .WARES .ITEM> .CONTAINER>
+								<SET QUANTITY <GETP <GET .WARES .ITEM> ,P?QUANTITY>>
+								<COND (<L=? .QUANTITY 0>
+									<TELL "You already have the ">
+									<PRINT-ITEM <GET .WARES .ITEM> T>
+									<TELL ,EXCLAMATION-CR>
+									<PRESS-A-KEY>
+								)(ELSE
+									<SETG MONEY <- ,MONEY <GET .PRICELIST .ITEM>>>
+									<ADD-QUANTITY <GET .WARES .ITEM> 1 .CONTAINER T>
+								)>
+							)(ELSE
+								<SETG MONEY <- ,MONEY <GET .PRICELIST .ITEM>>>
+								<TELL "You bought ">
+								<COND (<FSET? <GET .WARES .ITEM> ,NARTICLEBIT>
+									<TELL "the">
+								)(ELSE
+									<TELL "a">
+									<COND (<FSET? <GET .WARES .ITEM> ,VOWELBIT> <TELL "n">)>
+								)>
+								<TELL " ">
+								<PRINT-ITEM <GET .WARES .ITEM> T>
+								<TELL ,PERIOD-CR>
+								<COND (<AND <EQUAL? .CONTAINER ,PLAYER> <EQUAL? <COUNT-POSSESSIONS> ,LIMIT-POSSESSIONS> <NOT <IN? <GET .WARES .ITEM> .CONTAINER>>>
+									<EMPHASIZE "You are carrying too many items.">
+									<DROP-REPLACE-ITEM <GET .WARES .ITEM>>
+								)(ELSE
+									<MOVE <GET .WARES .ITEM> .CONTAINER>
+								)>
+							)>
+						)(ELSE
+							<TELL "You can't have that" ,EXCLAMATION-CR>
+							<PRESS-A-KEY>
+						)>
+					)>
+				)(ELSE
+					<COND (<OR <AND <EQUAL? .CONTAINER ,PLAYER> <CHECK-ITEM <GET .WARES .ITEM>>> <IN? <GET .WARES .ITEM> .CONTAINER>>
+						<REMOVE-ITEM <GET .WARES .ITEM> "sold" F T>
+						<SETG MONEY <+ ,MONEY <GET .PRICELIST .ITEM>>>
+					)(ELSE
+						<CRLF>
+						<TELL "You do not have any ">
+						<PRINT-ITEM <GET .WARES .ITEM> T>
+						<TELL ,EXCLAMATION-CR>
+						<PRESS-A-KEY>
+					)>
+				)>
+			)>
+		)>
+		<UPDATE-STATUS-LINE>
+		<COND (<EQUAL? .KEY !\0>
+			<CRLF>
+			<TELL ,TEXT-SURE>
+			<COND (<YES?> <RTRUE>)>
+		)>
+	>>
+
+; "Use Item - (Player inventory)"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE USE-ANTIDOTE (ANTIDOTE DISEASE DELETE-ROUTINE)
+	<COND (<AND <CHECK-ITEM .ANTIDOTE> <CHECK-AILMENT .DISEASE>>
+		<CRLF>
+		<TELL "Use the ">
+		<PRINT-ITEM .ANTIDOTE T>
+		<TELL " to ">
+		<COND (<FSET? .DISEASE ,POISONBIT>
+			<TELL "counter">
+		)(<FSET? .DISEASE ,CURSEBIT>
+			<TELL "lift">
+		)(ELSE
+			<TELL "cure">
+		)>
+		<TELL " the ">
+		<PRINT-ITEM .DISEASE T>
+		<TELL "?">
+		<COND (<YES?>
+			<REMOVE-ITEM .ANTIDOTE ,TEXT-USED T T>
+			<APPLY .DELETE-ROUTINE .DISEASE>
+		)>
+	)(<CHECK-ITEM .ANTIDOTE>
+		<CRLF>
+		<HLIGHT ,H-BOLD>
+		<TELL "You are not ">
+		<COND (<FSET? .DISEASE ,POISONBIT>
+			<TELL "poisoned">
+		)(<FSET? .DISEASE ,CURSEBIT>
+			<TELL "cursed">
+		)(ELSE
+			<TELL "afflicted">
+		)>
+		<TELL " with the " D .DISEASE>
+		<TELL ,EXCLAMATION-CR>
+		<HLIGHT 0>
+		<CRLF>
+		<TELL "Do you want to drop it instead?">
+		<COND (<YES?> <REMOVE-ITEM .ANTIDOTE "dropped" T T>)>
+	)(ELSE
+		<CRLF>
+		<HLIGHT ,H-BOLD>
+		<TELL "You do not have the ">
+		<HLIGHT 0>
+		<PRINT-ITEM .ANTIDOTE>
+		<HLIGHT ,H-BOLD>
+		<TELL ,EXCLAMATION-CR>
+		<HLIGHT 0>
+		<PRESS-A-KEY>
+	)>>
+
+<ROUTINE USE-INVENTORY ("AUX" KEY CHOICE ITEM COUNT ACTION)
+	<REPEAT ()
+		<EMPHASIZE "You are carrying the following items:">
+		<SET COUNT <PRINT-CONTAINER-MENU ,PLAYER>>
+		<HLIGHT ,H-BOLD>
+		<TELL "V">
+		<HLIGHT 0>
+		<TELL " - View ship manifest" CR>
+		<HLIGHT ,H-BOLD>
+		<TELL "0">
+		<HLIGHT 0>
+		<TELL " - Back" CR>
+		<TELL "Select an item to use:">
+		<REPEAT ()
+			<SET KEY <INPUT 1>>
+			<COND (
+				<OR
+					<AND <G=? .KEY !\1> <L=? .KEY !\9> <L=?  <- .KEY !\0>.COUNT>>
+					<AND <G=? .KEY !\A> <L=? .KEY !\J> <G? .COUNT 9> <L=? <+ <- .KEY !\A> 10> .COUNT>>
+					<AND <G=? .KEY !\a> <L=? .KEY !\j> <G? .COUNT 9> <L=? <+ <- .KEY !\a> 10> .COUNT>>
+					<EQUAL? .KEY !\V !\v !\0>
+				>
+				<RETURN>
+			)>
+		>
+		<COND (<EQUAL? .KEY !\0>
+			<CRLF>
+			<RETURN>
+		)(<EQUAL? .KEY !\V !\v>
+			<CRLF>
+			<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
+				<VIEW-SHIP-MANIFEST>
+			)(ELSE
+				<EMPHASIZE ,TEXT-NO-SHIPS>
+				<PRESS-A-KEY>
+			)>
+		)(<OR <AND <G=? .KEY !\1> <L=? .KEY !\9> <L=?  <- .KEY !\0>.COUNT>> <AND <G=? .KEY !\A> <L=? .KEY !\J> <G? .COUNT 9> <L=? <+ <- .KEY !\A> 10> .COUNT>> <AND <G=? .KEY !\a> <L=? .KEY !\j> <G? .COUNT 9> <L=? <+ <- .KEY !\a> 10> .COUNT>>>
+			<COND (<AND <G=? .KEY !\1> <L=? .KEY !\9> <L=?  <- .KEY !\0>.COUNT>>
+				<SET CHOICE <- .KEY !\0>>
+			)(<AND <G=? .KEY !\A> <L=? .KEY !\J> <G? .COUNT 9> <L=? <+ <- .KEY !\A> 10> .COUNT>>
+				<SET CHOICE <+ <- .KEY !\A> 10>>
+			)(<AND <G=? .KEY !\a> <L=? .KEY !\j> <G? .COUNT 9> <L=? <+ <- .KEY !\a> 10> .COUNT>>
+				<SET CHOICE <+ <- .KEY !\a> 10>>
+			)>
+			<SET ITEM <GET-ITEM .CHOICE ,PLAYER>>
+			<COND (.ITEM
+				<SET ACTION <GETP .ITEM ,P?ACTION>>
+				<COND (.ACTION
+					<CRLF>
+					<COND (<APPLY .ACTION> <RETURN>)>
+				)(ELSE
+					<CRLF>
+					<TELL CR "Drop the ">
+					<PRINT-ITEM .ITEM T>
+					<TELL "?">
+					<COND (<YES?> <REMOVE-ITEM .ITEM "dropped" T T>)>
+				)>
+			)>
+		)>
+	>>
+
+; "Reset routines"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE RESET-AILMENTS ()
+	<RESET-CONTAINER ,AILMENTS>>
+
+<ROUTINE RESET-BLESSINGS ()
+	<RESET-CONTAINER ,BLESSINGS>>
+
+<ROUTINE RESET-CARGO ()
+	<RESET-CONTAINER ,CARGO>>
+
+<ROUTINE RESET-CHOICES ()
+	<SETG CONTINUE-TO-CHOICES T>>
+
+<ROUTINE RESET-CODEWORDS ()
+	<RESET-CONTAINER ,CODEWORDS>>
+
+<ROUTINE RESET-CONTAINER (CONTAINER "OPT" (FLAG) "AUX" ITEM NEXT)
+	<SET ITEM <FIRST? .CONTAINER>>
+	<REPEAT ()
+		<COND (<NOT .ITEM> <RETURN>)>
+		<SET NEXT <NEXT? .ITEM>>
+		<COND (.FLAG
+			<COND (<FSET? .ITEM .FLAG> <REMOVE .ITEM>)>
+		)(ELSE
+			<REMOVE .ITEM>
+		)>
+		<SET ITEM .NEXT>
+	>
+	<COND (<EQUAL? .CONTAINER ,PLAYER>
+		<MOVE ,ALL-MONEY .CONTAINER>
+		<SETG BEST-WEAPON NONE>
+		<SETG BEST-ARMOUR NONE>
+	)>>
+
+<ROUTINE RESET-PLAYER ()
+	<SETG LAST-ROLL 0>
+	<SETG CURRENT-CHARACTER NONE>
+	<SETG CURRENT-SHIP NONE>
+	<SETG GOD NONE>
+	<SETG MAX-STAMINA 0>
+	<SETG MONEY 0>
+	<SETG RESURRECTION-ARRANGEMENTS NONE>
+	<SETG STAMINA 0>
+	<SETG RANSOM 0>
+	<RESET-AILMENTS>
+	<RESET-BLESSINGS>
+	<RESET-CARGO>
+	<RESET-CODEWORDS>
+	<RESET-POSSESSIONS>
+	<RESET-TITLES>
+	<RESET-TOWNHOUSES>
+	<RESET-SHIPS>>
+
+<ROUTINE RESET-POSSESSIONS ()
+	<RESET-CONTAINER ,PLAYER>>
+
+<ROUTINE RESET-SELECTIONS ()
+	<DO (I 1 20) <PUT ,SELECT-CHOICES .I NONE>>>
+
+<ROUTINE RESET-TEMP-LIST ("AUX" ITEMS)
+	<SET ITEMS <GET ,TEMP-LIST 0>>
+	<DO (I 1 .ITEMS)
+		<PUT ,TEMP-LIST .I NONE>
+	>>
+
+<ROUTINE RESET-TITLES ()
+	<RESET-CONTAINER ,TITLES-AND-HONOURS>>
+
+<ROUTINE RESET-TOWNHOUSES ()
+	<RESET-CONTAINER ,TOWNHOUSES>>
+
+<ROUTINE RESET-SHIPS ()
+	<RESET-CONTAINER ,SHIPS>>
+
+; "System/Utility/Miscellaneous routines"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE EMPHASIZE (TEXT "OPT" SPEAKER)
+	<COND (.TEXT
+		<CRLF>
+		<HLIGHT ,H-BOLD>
+		<COND (<ASSIGNED? SPEAKER>
+			<TELL .SPEAKER ": ">
+			<HLIGHT 0>
+		)>
+		<TELL .TEXT>
+		<HLIGHT 0>
+		<CRLF>
+	)>>
+
+<ROUTINE GET-INDEX (LIST ITEM "AUX" COUNT)
+	<COND (.LIST
+		<SET COUNT <GET .LIST 0>>
+		<DO (I 1 .COUNT)
+			<COND (<EQUAL? .ITEM <GET .LIST .I>>
+				<RETURN .I>
+			)>
+		>
+	)>
+	<RETURN 0>>
+
+<ROUTINE GET-NUMBER (MESSAGE "OPT" MINIMUM MAXIMUM "AUX" COUNT)
+	<REPEAT ()
+		<CRLF>
+		<TELL .MESSAGE>
+		<COND (<AND <OR <ASSIGNED? MINIMUM> <ASSIGNED? MAXIMUM>> <G? .MAXIMUM .MINIMUM>>
+			<TELL " (" N .MINIMUM "-" N .MAXIMUM ")">
+		)>
+		<TELL "? ">
+		<READLINE>
+		<COND (<EQUAL? <GETB ,LEXBUF 1> 1> <SET COUNT <CONVERT-TO-NUMBER 1 10>>
+			<COND (<OR .MINIMUM .MAXIMUM>
+				<COND (<AND <G=? .COUNT .MINIMUM> <L=? .COUNT .MAXIMUM>> <RETURN>)>
+			)(<G? .COUNT 0>
+				<RETURN>
+			)>
+		)>
+	>
+	<RETURN .COUNT>>
+
+<ROUTINE PRESS-A-KEY ()
+	<TELL CR "[Press a key to continue]" CR>
+	<INPUT 1>>
+
+<ROUTINE PRINT-CONTAINER-MENU ("OPT" CONTAINER EXIT-KEY EXIT-TEXT "AUX" ITEMS COUNT)
+	<COND (<NOT .CONTAINER> <SET CONTAINER ,PLAYER>)>
+	<COND (<L=? <COUNT-CONTAINER .CONTAINER> 0> <RETURN>)>
+	<SET ITEMS <FIRST? .CONTAINER>>
+	<SET COUNT 0>
+	<REPEAT ()
+		<COND (<NOT .ITEMS> <RETURN>)>
+		<COND (<NOT <FSET? .ITEMS ,NDESCBIT>>
+			<INC .COUNT>
+			<HLIGHT ,H-BOLD>
+			<COND (<L? .COUNT 10>
+				<TELL N .COUNT>
+			)(ELSE
+				<TELL C <+ !\A <- .COUNT 10>>>
+			)>
+			<HLIGHT 0>
+			<TELL " - ">
+			<PRINT-ITEM .ITEMS>
+			<CRLF>
+		)>
+		<SET .ITEMS <NEXT? .ITEMS>>
+	>
+	<COND (<AND .EXIT-KEY .EXIT-TEXT>
+		<HLIGHT ,H-BOLD>
+		<TELL C .EXIT-KEY>
+		<HLIGHT 0>
+		<TELL " - " .EXIT-TEXT>
+		<CRLF>
+	)>
+	<RETURN .COUNT>>
+
+<ROUTINE PRINT-MENU (CHOICES ITEM-MENU SHOW-STATS "OPT" EXIT-KEY EXIT-TEXT PRICES (NO-QUANTITY F)"AUX" ITEMS)
+	<COND (<NOT .CHOICES> <RETURN>)>
+	<SET ITEMS <GET .CHOICES 0>>
+	<DO (I 1 .ITEMS)
+		<HLIGHT ,H-BOLD>
+		<COND (<L? .I 10>
+			<TELL N .I>
+		)(ELSE
+			<TELL C <+ !\A <- .I 10>>>
+		)>
+		<HLIGHT 0>
+		<TELL " - ">
+		<COND (.ITEM-MENU
+			<COND (.SHOW-STATS
+				<PRINT-ITEM <GET .CHOICES .I> T 0 .NO-QUANTITY>
+			)(ELSE
+				<TELL D <GET .CHOICES .I>>
+			)>
+		)(ELSE
+			<TELL <GET .CHOICES .I>>
+		)>
+		<COND (.PRICES
+			<COND (<G? <GET .PRICES .I> 0>
+				<TELL " (">
+				<HLIGHT ,H-BOLD>
+				<TELL N <GET .PRICES .I>>
+				<HLIGHT 0>
+				<TELL " " D ,CURRENCY ")">
+			)>
+		)>
+		<CRLF>
+	>
+	<COND (<AND .EXIT-KEY .EXIT-TEXT>
+		<HLIGHT ,H-BOLD>
+		<TELL C .EXIT-KEY>
+		<HLIGHT 0>
+		<TELL " - " .EXIT-TEXT>
+		<CRLF>
+	)>>
+
+; "Status Line routines"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE LINE-ERASE (ROW)
+	<CURSET .ROW 1>
+	<DO (I <LOWCORE SCRH> 1 -1) <PRINTC !\ >>
+	<CURSET .ROW 1>>
+
+<ROUTINE UPDATE-STATUS-LINE ("AUX" WIDTH)
+	<SPLIT 2>
+	<SCREEN 1>
+	<SET WIDTH <LOWCORE SCRH>>
+	<HLIGHT ,H-INVERSE>
+	<LINE-ERASE 1>
+	<COND (,HERE
+		<CURSET 1 1>
+		<TELL D ,HERE>
+		<COND (<G? <GETP ,HERE ,P?VISITS> 1>
+			<TELL " (Visited " N <GETP ,HERE ,P?VISITS> " times)">
+		)>
+		<COND (,CURRENT-CHARACTER
+			<COND (,CURRENT-SHIP <TELL " "> <PRINT-CAP-OBJ ,CURRENT-SHIP>)>
+			<CURSET 1 <- .WIDTH 20>>
+			<TELL "Stamina: " N ,STAMINA "/" N ,MAX-STAMINA>
+			<LINE-ERASE 2>
+			<CURSET 2 1>
+			<PRINT-CAP-OBJ ,CURRENT-CHARACTER>
+			<CURSET 2 <- .WIDTH 20>>
+			<PRINT-CAP-OBJ ,CURRENCY>
+			<COND (<G? ,MONEY 9999>
+				<TELL ": lots">
+			)(ELSE
+				<TELL ": " N ,MONEY>
+			)>
+		)>
+	)>
+	<SCREEN 0>
+	<HLIGHT 0>>
+
+; "Gamebook loop routines"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE GAMES-UP ("OPT" TEXT "AUX" W)
+	<COND (.TEXT <TELL .TEXT CR>)>
+	<CRLF>
+	<PRINT-GAME-OVER>
+	<CRLF>
+	<REPEAT PROMPT ()
+		<PRINTI "Would you like to RESTART or QUIT? > ">
+		<REPEAT ()
+			<READLINE>
+			<SET W <AND <GETB ,LEXBUF 1> <GET ,LEXBUF 1>>>
+			<COND (<EQUAL? .W ,W?RESTART>
+				<RESTART>
+			)(<EQUAL? .W ,W?QUIT>
+				<QUIT-MESSAGE>
+			)(T
+				<TELL CR "(Please type RESTART or QUIT) > ">
+			)>
+		>
+	>>
+
+<ROUTINE PRINT-ENDING (MESSAGE "OPT" COLOR)
+	<COND (<NOT .COLOR> <SET COLOR 1>)>
+	<CRLF>
+	<HLIGHT ,H-BOLD>
+	<COLOR .COLOR 0>
+	<TELL .MESSAGE>
+	<COLOR 1 0>
+	<HLIGHT 0>
+	<GAMES-UP>>
+
+<ROUTINE QUIT-MESSAGE ()
+	<TELL CR "Thanks for playing" ,PERIOD-CR>
+	<QUIT>>
+
+; "Characters for War-Torn Kingdom"
+; ---------------------------------------------------------------------------------------------
+
+<CONSTANT CHARACTERS <LTABLE CHARACTER-JALUDA CHARACTER-ARCADIA CHARACTER-DAMONTIR CHARACTER-SILAS CHARACTER-GREYMALKIN CHARACTER-VARKUNG>>
+<CONSTANT PROFESSIONS <LTABLE PROFESSION-PRIEST PROFESSION-MAGE PROFESSION-ROGUE PROFESSION-TROUBADOUR PROFESSION-WARRIOR PROFESSION-WAYFARER>>
+
+<OBJECT CHARACTER-JALUDA
+	(DESC "Jaluda The Black")
+	(LDESC "Jaluda is a ruthlessly clever fighter who believes herself more than a match for any man. Those who have sailed with her describe this fearsome amazon as fiery and proud, not one to forget either a favour or a slight. She bears a mortal grudge against Amcha, the pirate king.")
+	(RANK 3)
+	(PROFESSION PROFESSION-WARRIOR)
+	(STAMINA 16)
+	(MONEY 40)
+	(CHARISMA 4)
+	(COMBAT 7)
+	(MAGIC 2)
+	(SANCTITY 5)
+	(SCOUTING 4)
+	(THIEVERY 3)
+	(POSSESSIONS <LTABLE SWORD CHAIN-MAIL MAP>)
+	(FLAGS PERSONBIT NARTICLEBIT)>
+
+<OBJECT CHARACTER-ARCADIA
+	(DESC "Arcadia Ego")
+	(LDESC "Arcadia is a young woman whose purity of spirit enables her to hear the murmuring of the gods in her dreams. Cast out by her family because they disapproved of her unworldly ways, she has dedicated her life to the quest for spiritual enlightenment. She is curious about the gods of Ankon-Konu, of which she knows little, and so plans a visit to Smogmaw in the near future.")
+	(RANK 3)
+	(PROFESSION PROFESSION-PRIEST)
+	(STAMINA 16)
+	(MONEY 40)
+	(CHARISMA 5)
+	(COMBAT 3)
+	(MAGIC 4)
+	(SANCTITY 7)
+	(SCOUTING 5)
+	(THIEVERY 2)
+	(POSSESSIONS <LTABLE SWORD CHAIN-MAIL MAP>)
+	(FLAGS PERSONBIT NARTICLEBIT)>
+
+<OBJECT CHARACTER-DAMONTIR
+	(DESC "Damontir The Mad")
+	(LDESC "Haunted by memories of a former life in which he wielded great power, Damontir would willingly pledge his lifeblood to the demons of darkness if he stood to gain a snippet of magical lore. Power is his only goal, and so his primary objective is to enrol at one of the sorcerous academies in Dweomer.")
+	(RANK 3)
+	(PROFESSION PROFESSION-MAGE)
+	(STAMINA 16)
+	(MONEY 40)
+	(CHARISMA 3)
+	(COMBAT 3)
+	(MAGIC 7)
+	(SANCTITY 1)
+	(SCOUTING 6)
+	(THIEVERY 4)
+	(POSSESSIONS <LTABLE SWORD CHAIN-MAIL MAP>)
+	(FLAGS PERSONBIT NARTICLEBIT)>
+
+<OBJECT CHARACTER-SILAS
+	(DESC "Silas Cumberbatch")
+	(LDESC "After a short spell in the Yellowport militia (he mistakenly enlisted thinking he was joining a queue for alms), Silas signed on aboard a merchantman bound for Metriciens. He found that the fresh breeze and the open sea inspired his ballads, and resolved not to return to a landlubber's life until he has learned the song of the mermaids.")
+	(RANK 3)
+	(PROFESSION PROFESSION-TROUBADOUR)
+	(STAMINA 16)
+	(MONEY 40)
+	(CHARISMA 7)
+	(COMBAT 4)
+	(MAGIC 5)
+	(SANCTITY 5)
+	(SCOUTING 3)
+	(THIEVERY 5)
+	(POSSESSIONS <LTABLE SWORD CHAIN-MAIL MAP>)
+	(FLAGS PERSONBIT NARTICLEBIT)>
+
+<OBJECT CHARACTER-GREYMALKIN
+	(DESC "Greymalkin Smith")
+	(LDESC "A dashing scoundrel, Greymalkin lives by his wits and has no care for either the future or the past. Money slips through his fingers as fast as he can earn it, but of late he has begun to be tempted by a story he overheard in a dockside tavern -- a story of great riches that lie unguarded on an island in the south seas.")
+	(RANK 3)
+	(PROFESSION PROFESSION-ROGUE)
+	(STAMINA 16)
+	(MONEY 40)
+	(CHARISMA 6)
+	(COMBAT 5)
+	(MAGIC 5)
+	(SANCTITY 2)
+	(SCOUTING 3)
+	(THIEVERY 7)
+	(POSSESSIONS <LTABLE SWORD CHAIN-MAIL MAP>)
+	(FLAGS PERSONBIT NARTICLEBIT)>
+
+<OBJECT CHARACTER-VARKUNG
+	(DESC "Varkung of Metriciens")
+	(LDESC "Varkung has always been fascinated by the distant places of the world. As a child he would spend hours staring at his father's maps and day-dreaming of the people and creatures who lived across the sea. Now, as a young man, he has the chance to go exploring. His first wish is to visit Starspike Island and see if, as legends claim, it really does stretch up beyond the sky.")
+	(RANK 3)
+	(PROFESSION PROFESSION-WAYFARER)
+	(STAMINA 16)
+	(MONEY 40)
+	(CHARISMA 3)
+	(COMBAT 6)
+	(MAGIC 3)
+	(SANCTITY 4)
+	(SCOUTING 7)
+	(THIEVERY 5)
+	(POSSESSIONS <LTABLE SWORD CHAIN-MAIL MAP>)
+	(FLAGS PERSONBIT NARTICLEBIT)>
+
+; "Professions and default stats"
+; ---------------------------------------------------------------------------------------------
+
+<OBJECT PROFESSION-PRIEST
+	(DESC "Priest")
+	(RANK 3)
+	(STAMINA 16)
+	(MONEY 40)
+	(CHARISMA 5)
+	(COMBAT 3)
+	(MAGIC 4)
+	(SANCTITY 7)
+	(SCOUTING 5)
+	(THIEVERY 2)
+	(POSSESSIONS <LTABLE SWORD CHAIN-MAIL MAP>)
+	(FLAGS PERSONBIT)>
+
+<OBJECT PROFESSION-MAGE
+	(DESC "Mage")
+	(RANK 3)
+	(STAMINA 16)
+	(MONEY 40)
+	(CHARISMA 3)
+	(COMBAT 3)
+	(MAGIC 7)
+	(SANCTITY 1)
+	(SCOUTING 6)
+	(THIEVERY 4)
+	(POSSESSIONS <LTABLE SWORD CHAIN-MAIL MAP>)
+	(FLAGS PERSONBIT)>
+
+<OBJECT PROFESSION-ROGUE
+	(DESC "Rouge")
+	(RANK 3)
+	(STAMINA 16)
+	(MONEY 40)
+	(CHARISMA 6)
+	(COMBAT 5)
+	(MAGIC 5)
+	(SANCTITY 2)
+	(SCOUTING 3)
+	(THIEVERY 7)
+	(POSSESSIONS <LTABLE SWORD CHAIN-MAIL MAP>)
+	(FLAGS PERSONBIT)>
+
+<OBJECT PROFESSION-TROUBADOUR
+	(DESC "Troubadour")
+	(RANK 3)
+	(STAMINA 16)
+	(MONEY 40)
+	(CHARISMA 7)
+	(COMBAT 4)
+	(MAGIC 5)
+	(SANCTITY 4)
+	(SCOUTING 3)
+	(THIEVERY 5)
+	(POSSESSIONS <LTABLE SWORD CHAIN-MAIL MAP>)
+	(FLAGS PERSONBIT)>
+
+<OBJECT PROFESSION-WARRIOR
+	(DESC "Warrior")
+	(RANK 3)
+	(STAMINA 16)
+	(MONEY 40)
+	(CHARISMA 4)
+	(COMBAT 7)
+	(MAGIC 2)
+	(SANCTITY 5)
+	(SCOUTING 4)
+	(THIEVERY 5)
+	(POSSESSIONS <LTABLE SWORD CHAIN-MAIL MAP>)
+	(FLAGS PERSONBIT)>
+
+<OBJECT PROFESSION-WAYFARER
+	(DESC "Wayfarer")
+	(RANK 3)
+	(STAMINA 16)
+	(MONEY 40)
+	(CHARISMA 3)
+	(COMBAT 6)
+	(MAGIC 3)
+	(SANCTITY 4)
+	(SCOUTING 7)
+	(THIEVERY 5)
+	(POSSESSIONS <LTABLE SWORD CHAIN-MAIL MAP>)
+	(FLAGS PERSONBIT)>
+
+; "Codewords for War-Torn-Kingdom"
+; ---------------------------------------------------------------------------------------------
+
+
+; "codewords from other books. Included here only for completeness"
+; ---------------------------------------------------------------------------------------------
+
+; "Weapons"
+; ---------------------------------------------------------------------------------------------
+
+<OBJECT AXE
+	(DESC "axe")
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT AXE1
+	(DESC "axe")
+	(COMBAT 1)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT AXE2
+	(DESC "axe")
+	(COMBAT 2)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT AXE3
+	(DESC "axe")
+	(COMBAT 3)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT BATTLE-AXE
+	(DESC "battle-axe")
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT BATTLE-AXE1
+	(DESC "battle-axe")
+	(COMBAT 1)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT BATTLE-AXE2
+	(DESC "battle-axe")
+	(COMBAT 2)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT BATTLE-AXE3
+	(DESC "battle-axe")
+	(COMBAT 3)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT ENCHANTED-SPEAR
+	(DESC "enchanted spear")
+	(COMBAT 2)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT ENCHANTED-SWORD
+	(DESC "enchanted sword")
+	(COMBAT 3)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT MACE
+	(DESC "mace")
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT MACE1
+	(DESC "mace")
+	(COMBAT 1)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT MACE2
+	(DESC "mace")
+	(COMBAT 2)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT MACE3
+	(DESC "mace")
+	(COMBAT 3)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT MAGIC-SPEAR
+	(DESC "magic spear")
+	(COMBAT 2)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT SPEAR
+	(DESC "spear")
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT SPEAR1
+	(DESC "spear")
+	(COMBAT 1)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT SPEAR2
+	(DESC "spear")
+	(COMBAT 2)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT SPEAR3
+	(DESC "spear")
+	(COMBAT 3)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT STAFF
+	(DESC "staff")
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT STAFF1
+	(DESC "staff")
+	(COMBAT 1)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT STAFF2
+	(DESC "staff")
+	(COMBAT 2)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT STAFF3
+	(DESC "staff")
+	(COMBAT 3)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT SWORD
+	(DESC "sword")
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT SWORD1
+	(DESC "sword")
+	(COMBAT 1)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT SWORD2
+	(DESC "sword")
+	(COMBAT 2)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT SWORD3
+	(DESC "sword")
+	(COMBAT 3)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+; "Armours"
+; ---------------------------------------------------------------------------------------------
+
+<OBJECT CHAIN-MAIL
+	(DESC "chain mail")
+	(DEFENSE 3)
+	(FLAGS TAKEBIT WEARBIT)>
+
+<OBJECT HEAVY-PLATE
+	(DESC "heavy plate")
+	(DEFENSE 6)
+	(FLAGS TAKEBIT WEARBIT)>
+
+<OBJECT LEATHER-ARMOUR
+	(DESC "leather armour")
+	(DEFENSE 1)
+	(FLAGS TAKEBIT WEARBIT)>
+
+<OBJECT PLATE-ARMOUR
+	(DESC "plate armour")
+	(DEFENSE 5)
+	(FLAGS TAKEBIT WEARBIT)>
+
+<OBJECT RING-MAIL
+	(DESC "ring mail")
+	(DEFENSE 2)
+	(FLAGS TAKEBIT WEARBIT)>
+
+<OBJECT SPLINT-ARMOUR
+	(DESC "splint armour")
+	(DEFENSE 4)
+	(FLAGS TAKEBIT WEARBIT)>
+
+; Wands
+; ---------------------------------------------------------------------------------------------
+
+<OBJECT AMBER-WAND
+	(DESC "amber wand")
+	(MAGIC 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT COBALT-WAND
+	(DESC "cobalt wand")
+	(MAGIC 3)
+	(FLAGS TAKEBIT)>
+
+<OBJECT EBONY-WAND
+	(DESC "ebony wand")
+	(MAGIC 2)
+	(FLAGS TAKEBIT)>
+
+<OBJECT SELENIUM-WAND
+	(DESC "selenium wand")
+	(MAGIC 3)
+	(FLAGS TAKEBIT)>
+
+; "other objects"
+; ---------------------------------------------------------------------------------------------
+
+<OBJECT BAG-OF-PEARLS
+	(DESC "bag of pearls")
+	(FLAGS TAKEBIT)>
+
+<OBJECT CANDLE
+	(DESC "candle")
+	(QUANTITY 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT CLIMBING-GEAR
+	(DESC "climbing gear")
+	(FLAGS TAKEBIT)>
+
+<OBJECT COMPASS
+	(DESC "compass")
+	(SCOUTING 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT GOLD-COMPASS
+	(DESC "gold compass")
+	(SCOUTING 2)
+	(FLAGS TAKEBIT)>
+
+<OBJECT HOLY-SYMBOL
+	(DESC "holy symbol")
+	(SANCTITY 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT INK-SAC
+	(DESC "ink sac")
+	(QUANTITY 1)
+	(FLAGS TAKEBIT VOWELBIT)>
+
+<OBJECT LANTERN
+	(DESC "lantern")
+	(QUANTITY 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT LOCKPICKS
+	(DESC "lockpicks")
+	(THIEVERY 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT MAGIC-LOCKPICKS
+	(DESC "magic lockpicks")
+	(THIEVERY 2)
+	(FLAGS TAKEBIT)>
+
+<OBJECT MAGIC-MANDOLIN
+	(DESC "magic mandolin")
+	(CHARISMA 2)
+	(FLAGS TAKEBIT)>
+
+<OBJECT MANDOLIN
+	(DESC "mandolin")
+	(CHARISMA 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT MAP
+	(DESC "map")
+	(FLAGS TAKEBIT)>
+
+<OBJECT MONEY-BAG
+	(DESC "Money")
+	(MONEY 500)
+	(FLAGS TAKEBIT)>
+
+<OBJECT PICKAXE
+	(DESC "pickaxe")
+	(FLAGS TAKEBIT)>
+
+<OBJECT PLATINUM-EARRING
+	(DESC "platinum earring")
+	(FLAGS TAKEBIT)>
+
+<OBJECT POTION-OF-COMELINESS
+	(DESC "potion of comeliness")
+	(QUANTITY 1)
+	(CHARISMA 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT POTION-OF-GODLINESS
+	(DESC "potion of godliness")
+	(QUANTITY 1)
+	(SANCTITY 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT POTION-OF-HEALING
+	(DESC "potion of healing")
+	(ACTION POTION-OF-HEALING-F)
+	(FLAGS TAKEBIT)>
+
+<ROUTINE POTION-OF-HEALING-F ()
+	<COND (<CHECK-ITEM ,POTION-OF-HEALING>
+		<COND (<L? ,STAMINA ,MAX-STAMINA>
+			<CRLF>
+			<TELL "Use the ">
+			<PRINT-ITEM ,POTION-OF-HEALING T>
+			<TELL " to heal up to ">
+			<HLIGHT ,H-BOLD>
+			<TELL "5">
+			<HLIGHT 0>
+			<TELL " stamina points?">
+			<COND (<YES?>
+				<GAIN-STAMINA 5>
+				<REMOVE-ITEM ,POTION-OF-HEALING ,TEXT-USED T T>
+				<UPDATE-STATUS-LINE>
+			)>
+		)(ELSE
+			<EMPHASIZE "You are not injured!">
+			<CRLF>
+			<TELL "Do you want to drop this instead?">
+			<COND (<YES?> <REMOVE-ITEM ,POTION-OF-HEALING "dropped" T T>)>
+		)>
+	)(ELSE
+		<EMPHASIZE "You do not have a potion of healing?">
+	)>
+	<RFALSE>>
+
+<OBJECT POTION-OF-INTELLECT
+	(DESC "potion of intellect")
+	(QUANTITY 1)
+	(MAGIC 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT POTION-OF-NATURE
+	(DESC "potion of nature")
+	(QUANTITY 1)
+	(SCOUTING 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT POTION-OF-RESTORATION
+	(DESC "potion of restoration")
+	(QUANTITY 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT POTION-OF-STEALTH
+	(DESC "potion of godliness")
+	(QUANTITY 1)
+	(THIEVERY 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT POTION-OF-STRENGTH
+	(DESC "potion of strength")
+	(QUANTITY 1)
+	(COMBAT 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT RAT-POISON
+	(DESC "rat poison")
+	(FLAGS TAKEBIT)>
+
+<OBJECT ROPE
+	(DESC "rope")
+	(FLAGS TAKEBIT)>
+
+<OBJECT ROYAL-RING
+	(DESC "royal ring")
+	(FLAGS TAKEBIT)>
+
+<OBJECT SILVER-HOLY-SYMBOL
+	(DESC "silver holy symbol")
+	(SANCTITY 2)
+	(FLAGS TAKEBIT)>
+
+<OBJECT SILVER-MEDALLION
+	(DESC "silver medallion")
+	(FLAGS TAKEBIT)>
+
+<OBJECT SILVER-NUGGET
+	(DESC "silver nugget")
+	(FLAGS TAKEBIT)>
+
+<OBJECT SMOLDER-FISH
+	(DESC "smolder fish")
+	(QUANTITY 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT WILLOW-STAFF
+	(DESC "willow staff")
+	(FLAGS TAKEBIT)>
+
+<OBJECT WOLF-PELT
+	(DESC "wolf pelt")
+	(FLAGS TAKEBIT)>
+
+; "Resurrections"
+; ---------------------------------------------------------------------------------------------
+
+<OBJECT RESURRECTION-TYRNAI
+	(DESC "Temple of Tyrnai, The War-Torn Kingdom")
+	(CONTINUE NONE)
+	(FLAGS TAKEBIT)>
+
+<OBJECT RESURRECTION-NAGIL
+	(DESC "Temple of Nagil, The War-Torn Kingdom")
+	(CONTINUE NONE)
+	(FLAGS TAKEBIT)>
+
+<OBJECT RESURRECTION-ANY
+	(DESC "Any resurrection arrangement")
+	(FLAGS TAKEBIT)>
+
+; GODS
+; ---------------------------------------------------------------------------------------------
+
+<OBJECT GOD-ALVIR-VALMIR
+	(DESC "Alvir and Valmir the Twin Gods")>
+
+<OBJECT GOD-ELNIR
+	(DESC "Elnir the Sky God")>
+
+<OBJECT GOD-LACUNA
+	(DESC "Lacuna")>
+
+<OBJECT GOD-MAKA
+	(DESC "Maka")>
+
+<OBJECT GOD-NAGIL
+	(DESC "Nagil, the God of Death")
+	(RESURRECTION RESURRECTION-ANY)>
+
+<OBJECT GOD-THREE-FORTUNES
+	(DESC "Three Fortunes")>
+
+<OBJECT GOD-SIG
+	(DESC "Sig the Cunning")>
+
+<OBJECT GOD-TYRNAI
+	(DESC "Tyrnai the War God")
+	(RESURRECTION RESURRECTION-TYRNAI)>
+
+; Blessings
+; ---------------------------------------------------------------------------------------------
+
+<OBJECT BLESSING-CHARISMA (DESC "CHARISMA")>
+<OBJECT BLESSING-COMBAT (DESC "COMBAT")>
+<OBJECT BLESSING-MAGIC (DESC "MAGIC")>
+<OBJECT BLESSING-SANCTITY (DESC "SANCTITY")>
+<OBJECT BLESSING-SCOUTING (DESC "SCOUTING")>
+<OBJECT BLESSING-THIEVERY (DESC "THIEVERY")>
+<OBJECT BLESSING-LUCK (DESC "LUCK")>
+<OBJECT BLESSING-SAFETY-FROM-STORMS (DESC "Safety from Storms")>
+<OBJECT BLESSING-IMMUNITY-POISON-DISEASE (DESC "Immunity to Disease and Poison")>
+
+; Ships
+; ---------------------------------------------------------------------------------------------
+
+<CONSTANT CONDITIONS <LTABLE "poor" "average" "good" "excellent">>
+<CONSTANT CONDITION-POOR 0>
+<CONSTANT CONDITION-AVERAGE 1>
+<CONSTANT CONDITION-GOOD 2>
+<CONSTANT CONDITION-EXCELLENT 3>
+
+<CONSTANT DOCKS NONE>
+
+<OBJECT SHIP-BARQUE
+	(DESC "barque")
+	(CAPACITY 1)
+	(DOCKED NONE)
+	(CONDITION CONDITION-POOR)>
+
+<OBJECT SHIP-BRIGANTINE
+	(DESC "brigantine")
+	(CAPACITY 2)
+	(DOCKED NONE)
+	(CONDITION CONDITION-POOR)>
+
+<OBJECT SHIP-GALLEON
+	(DESC "galleon")
+	(CAPACITY 3)
+	(DOCKED NONE)
+	(CONDITION CONDITION-POOR)>
+
+; "Disease/Poison EFFECTS (CHARISMA COMBAT MAGIC SANCTITY SCOUTING THIEVERY)"
+; ---------------------------------------------------------------------------------------------
+
+; "Monsters"
+; ---------------------------------------------------------------------------------------------
+
+
+; "Titles and Honours for War-Torn Kingdom"
+; ---------------------------------------------------------------------------------------------
+
+
+; "Abilities and Combat"
+; ---------------------------------------------------------------------------------------------
+
+<CONSTANT LOOKUP-ABILITY <LTABLE P?CHARISMA P?COMBAT P?MAGIC P?SANCTITY P?SCOUTING P?THIEVERY P?DEFENSE>>
+
+<ROUTINE APPLY-EFFECTS (ABILITY "OPT" CONTAINER "AUX" ITEM (EFFECTS NONE) (SCORE 0))
+	<COND (<NOT .CONTAINER> <SET CONTAINER ,AILMENTS>)>
+	<SET SCORE 0>
+	<COND (<G? <COUNT-CONTAINER .CONTAINER> 0>
+		<SET ITEM <FIRST? .CONTAINER>>
+		<REPEAT ()
+			<COND (<NOT .ITEM> <RETURN>)>
+			<SET EFFECTS <GETP .ITEM ,P?EFFECTS>>
+			<COND (.EFFECTS <SET SCORE <+ .SCORE <GET .EFFECTS .ABILITY>>>)>
+			<SET ITEM <NEXT? .ITEM>>
+		>
+	)>
+	<RETURN .SCORE>>
+
+; "Calculates ability scores"
+
+<ROUTINE CALCULATE-ABILITY (CHARACTER ABILITY "OPT" CONTAINER "AUX" SCORE PROPERTY)
+	<COND (<NOT .CONTAINER> <SET .CONTAINER ,PLAYER>)>
+	<SET PROPERTY <GET-ABILITY-PROPERTY .ABILITY>>
+	<SET SCORE <GET-ABILITY-SCORE .CHARACTER .ABILITY>>
+	<COND (<EQUAL? .ABILITY ,ABILITY-COMBAT>
+		<SET SCORE <+ .SCORE <FIND-BEST .PROPERTY ,WEAPONBIT .CONTAINER>>>
+	)(ELSE
+		<SET SCORE <+ .SCORE <FIND-BEST .PROPERTY NONE .CONTAINER>>>
+	)>
+	<COND (<AND <CHECK-GOD ,GOD-SIG> <EQUAL? .ABILITY ,ABILITY-THIEVERY>>
+		<INC .SCORE>
+	)>
+	<SET SCORE <+ .SCORE <APPLY-EFFECTS .ABILITY ,AILMENTS>>>
+	<SET SCORE <+ .SCORE <APPLY-EFFECTS .ABILITY ,TITLES-AND-HONOURS>>>
+	<COND (<G? .SCORE 12> <SET SCORE 12>)>
+	<COND (<L? .SCORE 1> <SET SCORE 1>)>
+	<RETURN .SCORE>>
+
+; "Get object property that is associated to ability"
+<ROUTINE GET-ABILITY-PROPERTY (ABILITY "AUX" (PROPERTY NONE))
+	<SET PROPERTY <GET ,LOOKUP-ABILITY .ABILITY>>
+	<RETURN .PROPERTY>>
+
+; "Get ability score"
+<ROUTINE GET-ABILITY-SCORE (CHARACTER ABILITY "AUX" PROPERTY RESULT)
+	<SET PROPERTY <GET-ABILITY-PROPERTY .ABILITY>>
+	<COND (.PROPERTY
+		<SET RESULT <GETP .CHARACTER .PROPERTY>>
+		<RETURN .RESULT>
+	)>
+	<RETURN 1>>
+
+; "Search gear/money routines"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE FIND-ALL-ARMOUR ()
+	<RETURN <FIND-ALL-GEAR ,FIND-ARMOUR>>>
+
+; "Finds a weapon/armour on player and in townhouses and caches"
+<ROUTINE FIND-ALL-GEAR ("OPT" (FIND-ROUTINE NONE) "AUX" RESULT FINAL CACHES)
+	<COND (<NOT .FIND-ROUTINE> <SET FIND-ROUTINE ,FIND-WEAPON>)>
+	<SET FINAL NONE>
+	<SET RESULT NONE>
+	<DO (I 0 3)
+		<SET RESULT <APPLY .FIND-ROUTINE .I ,PLAYER>>
+		<COND (.RESULT
+			<SET FINAL .RESULT>
+			<RETURN>
+		)>
+	>
+	<COND (.FINAL <RETURN .FINAL>)>
+	<COND (<G? <COUNT-CONTAINER ,TOWNHOUSES> 0>
+		<SET CACHES <FIRST? ,TOWNHOUSES>>
+		<REPEAT ()
+			<COND (<NOT .CACHES> <RETURN>)>
+			<SET RESULT NONE>
+			<DO (I 0 3)
+				<SET RESULT <FIND-WEAPON .I .CACHES>>
+				<COND (.RESULT
+					<SET FINAL .RESULT>
+					<RETURN>
+				)>
+			>
+			<COND (.FINAL <RETURN>)>
+			<SET .CACHES <NEXT? .CACHES>>
+		>
+	)>
+	<RETURN .FINAL>>
+
+; "Finds a weapon/armour on player and in townhouses and caches"
+<ROUTINE FIND-ALL-MONEY ("AUX" RESULT CACHES)
+	<COND (<G? ,MONEY 0> <RTRUE>)>
+	<SET RESULT 0>
+	<COND (<G? <COUNT-CONTAINER ,TOWNHOUSES> 0>
+		<SET CACHES <FIRST? ,TOWNHOUSES>>
+		<REPEAT ()
+			<COND (<NOT .CACHES> <RETURN>)>
+			<SET RESULT 0>
+			<DO (I 0 3)
+				<SET RESULT <GETP .CACHES ,P?MONEY>>
+				<COND (<G? .RESULT 0> <RETURN>)>
+			>
+			<COND (<G? .RESULT 0> <RETURN>)>
+			<SET .CACHES <NEXT? .CACHES>>
+		>
+	)>
+	<COND (<G? .RESULT 0> <RTRUE>)>
+	<RFALSE>>
+
+<ROUTINE FIND-ALL-WEAPON ()
+	<RETURN <FIND-ALL-GEAR ,FIND-WEAPON>>>
+
+; "Find armour in container"
+<ROUTINE FIND-ARMOUR ("OPT" (SCORE 0) CONTAINER)
+	<RETURN <FIND-GEAR ,WEARBIT ,P?DEFENSE .SCORE .CONTAINER>>>
+
+; "Finds the item with the best PROPERTY score"
+<ROUTINE FIND-BEST (PROPERTY "OPT" (FLAG NONE) CONTAINER (MATCH 0) "AUX" (SCORE 0) (ITEM NONE) (RESULT 0))
+	<SET RESULT 0>
+	<SET SCORE 0>
+	<COND (<NOT .CONTAINER> <SET .CONTAINER ,PLAYER>)>
+	<SET ITEM <FIRST? .CONTAINER>>
+	<REPEAT ()
+		<COND (<NOT .ITEM> <RETURN>)>
+		<SET SCORE <GETP .ITEM .PROPERTY>>
+		<COND (<G? .MATCH 0>
+			<COND (.FLAG
+				<COND (<AND <FSET? .ITEM .FLAG> <NOT <FSET? .ITEM ,NDESCBIT>>>
+					<COND (<EQUAL? .SCORE .MATCH>
+						<SET RESULT .SCORE>
+						<SET-BEST-GEAR .ITEM>
+						<RETURN>
+					)>
+				)>
+			)(<AND <NOT <FSET? .ITEM ,NDESCBIT>> <EQUAL? .SCORE .MATCH>>
+				<SET .RESULT .SCORE>
+				<SET-BEST-GEAR .ITEM>
+				<RETURN>
+			)>
+		)(.FLAG
+			<COND (<AND <NOT <FSET? .ITEM ,NDESCBIT>> <FSET? .ITEM .FLAG>>
+				<COND (<G=? .SCORE .RESULT>
+					<SET .RESULT .SCORE>
+					<SET-BEST-GEAR .ITEM>
+				)>
+			)>
+		)(<AND <NOT <FSET? .ITEM ,NDESCBIT>> <G=? .SCORE .RESULT>>
+			<SET-BEST-GEAR .ITEM>
+			<SET .RESULT .SCORE>
+		)>
+		<SET ITEM <NEXT? .ITEM>>
+	>
+	<RETURN .RESULT>>
+
+; "as above but find in list"
+<ROUTINE FIND-BEST-LIST (PROPERTY "OPT" (FLAG NONE) LIST "AUX" COUNT SCORE ITEM RESULT)
+	<COND (<NOT .LIST> <RETURN 0>)>
+	<SET SCORE 0>
+	<SET RESULT 0>
+	<SET COUNT <GET .LIST 0>>
+	<DO (I 1 .COUNT)
+		<SET ITEM <GET .LIST .I>>
+		<SET SCORE <GETP .ITEM .PROPERTY>>
+		<COND (<AND .FLAG <NOT <FSET? .ITEM ,NDESCBIT>>>
+			<COND (<FSET? .ITEM .FLAG>
+				<COND (<G=? .SCORE .RESULT>
+					<SET .RESULT .SCORE>
+					<SET-BEST-GEAR .ITEM>
+				)>
+			)>
+		)(<AND <G=? .SCORE .RESULT> <NOT <FSET? .ITEM ,NDESCBIT>>>
+			<SET-BEST-GEAR .ITEM>
+			<SET .RESULT .SCORE>
+		)>
+	>
+	<RETURN .RESULT>>
+
+<ROUTINE FIND-BEST-GEAR ()
+	<SETG BEST-WEAPON NONE>
+	<SETG BEST-ARMOUR NONE>
+	<FIND-BEST ,P?COMBAT ,WEAPONBIT ,PLAYER>
+	<FIND-BEST ,P?DEFENSE ,WEARBIT ,PLAYER>>
+
+<ROUTINE FIND-GEAR (FLAG PROPERTY "OPT" (SCORE 0) CONTAINER "AUX" BONUS ITEMS RESULT)
+	<COND (<NOT .CONTAINER> <SET CONTAINER ,PLAYER>)>
+	<SET RESULT NONE>
+	<SET ITEMS <FIRST? .CONTAINER>>
+	<REPEAT ()
+		<COND (<NOT .ITEMS> <RETURN>)>
+		<COND (<FSET? .ITEMS .FLAG>
+			<SET BONUS <GETP .ITEMS .PROPERTY>>
+			<COND (<OR <NOT .BONUS> <L=? .BONUS 0>> <SET BONUS 0>)>
+			<COND (<EQUAL? .SCORE .BONUS>
+				<SET RESULT .ITEMS>
+				<RETURN>
+			)>
+		)>
+		<SET ITEMS <NEXT? .ITEMS>>
+	>
+	<RETURN .RESULT>>
+
+<ROUTINE FIND-WEAPON ("OPT" (SCORE 0) CONTAINER)
+	<RETURN <FIND-GEAR ,WEAPONBIT ,P?COMBAT .SCORE .CONTAINER>>>
+
+<ROUTINE SET-BEST-GEAR (ITEM)
+	<COND (<FSET? .ITEM ,WEAPONBIT>
+		<SETG BEST-WEAPON .ITEM>
+	)(<FSET? .ITEM ,WEARBIT>
+		<SETG BEST-ARMOUR .ITEM>
+	)>>
+
+; "Fighting routines"
+; ---------------------------------------------------------------------------------------------
+
+; "messages during rounds of combat"
+<ROUTINE ATTACK-INEFFECTIVE (ATTACKER)
+	<CRLF>
+	<HLIGHT ,H-BOLD>
+	<COND (<EQUAL? .ATTACKER ,CURRENT-CHARACTER>
+		<TELL D .ATTACKER>
+	)(ELSE
+		<TELL CT .ATTACKER>
+	)>
+	<TELL "'s attack was ineffective" ,EXCLAMATION-CR>
+	<HLIGHT 0>>
+
+<ROUTINE ATTACK-MESSAGE (ATTACKER DEFENDER ATTACK DAMAGE)
+	<CRLF>
+	<HLIGHT ,H-BOLD>
+	<COND (<EQUAL? .ATTACKER ,CURRENT-CHARACTER>
+		<TELL D .ATTACKER "'s">
+	)(ELSE
+		<TELL CT .ATTACKER "'s">
+	)>
+	<HLIGHT 0>
+	<TELL " attack (" N .ATTACK ") hits ">
+	<HLIGHT ,H-BOLD>
+	<COND (<EQUAL? .DEFENDER ,CURRENT-CHARACTER>
+		<TELL D .DEFENDER>
+	)(ELSE
+		<TELL T .DEFENDER>
+	)>
+	<HLIGHT 0>
+	<TELL " for ">
+	<HLIGHT ,H-BOLD>
+	<TELL N .DAMAGE " damage">
+	<HLIGHT 0>
+	<TELL ,PERIOD-CR>>
+
+; "Calculate combat score"
+<ROUTINE CALCULATE-COMBAT (CHARACTER "OPT" CONTAINER)
+	<COND (<NOT .CONTAINER> <SET CONTAINER ,PLAYER>)>
+	<RETURN <CALCULATE-ABILITY .CHARACTER ,ABILITY-COMBAT .CONTAINER>>>
+
+; "Calculate defense score"
+<ROUTINE CALCULATE-DEFENSE (CHARACTER "OPT" CONTAINER "AUX" RESULT)
+	<COND (<NOT .CONTAINER> <SET CONTAINER ,PLAYER>)>
+	<SET RESULT <GET-RANK .CHARACTER>>
+	<SET RESULT <+ .RESULT <CALCULATE-ABILITY .CHARACTER ,ABILITY-COMBAT .CONTAINER>>>
+	<COND (<AND <N=? .CONTAINER ,PLAYER> <N=? .CHARACTER ,CURRENT-CHARACTER>>
+		<SET RESULT <+ .RESULT <FIND-BEST-LIST ,P?DEFENSE ,WEARBIT <GETP .CHARACTER ,P?POSSESSIONS>>>>
+	)(ELSE
+		<SET RESULT <+ .RESULT <FIND-BEST ,P?DEFENSE ,WEARBIT .CONTAINER>>>
+	)>
+	<COND (<L? .RESULT 1> <SET RESULT 1>)>
+	<RETURN .RESULT>>
+
+; "Wrapper for combat. Sets DOOM on result"
+<ROUTINE CHECK-COMBAT (MONSTER "OPT" STORY (MODIFIER 0) (LOOT NONE) (THRESHOLD 0))
+	<COND (<NOT .STORY> <SET STORY ,HERE>)>
+	<COND (<FIGHT .MONSTER .MODIFIER .THRESHOLD>
+		<PREVENT-DOOM .STORY>
+		<COND (.LOOT <TAKE-ITEM .LOOT>)>
+		<RTRUE>
+	)(ELSE
+		<PUTP .STORY ,P?DOOM T>
+		<RFALSE>
+	)>>
+
+; "Initialize Monster Stats"
+<ROUTINE COMBAT-MONSTER (MONSTER COMBAT DEFENSE STAMINA)
+	<PUT .MONSTER ,P?COMBAT .COMBAT>
+	<PUT .MONSTER ,P?DEFENSE .DEFENSE>
+	<PUT .MONSTER ,P?DEFENSE .STAMINA>>
+
+; "Display combatants' status"
+<ROUTINE COMBAT-STATUS (ROUND MONSTER STAMINA-PLAYER STAMINA-MONSTER)
+	<CRLF>
+	<HLIGHT ,H-BOLD>
+	<TELL "Round " N .ROUND ": ">
+	<HLIGHT 0>
+	<HLIGHT ,H-ITALIC>
+	<TELL D ,CURRENT-CHARACTER> 
+	<HLIGHT 0>
+	<TELL " (STAMINA: " N .STAMINA-PLAYER "), ">
+	<HLIGHT ,H-ITALIC>
+	<TELL CT .MONSTER>
+	<HLIGHT 0>
+	<TELL " (STAMINA: " N .STAMINA-MONSTER ")">
+	<TELL ,PERIOD-CR>
+	<UPDATE-STATUS-LINE>>
+
+<ROUTINE FIGHT (MONSTER "OPT" (MODIFIER 0) (THRESHOLD 0) "AUX" RESULT ATTACK STAMINA-PLAYER COMBAT-PLAYER DEFENSE-PLAYER STAMINA-MONSTER COMBAT-MONSTER DEFENSE-MONSTER (ROUND 0))
+	<SET STAMINA-PLAYER ,STAMINA>
+	<COND (<L=? .STAMINA-PLAYER 0> <HAS-PREVAILED .MONSTER> <RETURN>)>
+	<SET DEFENSE-PLAYER <CALCULATE-DEFENSE ,CURRENT-CHARACTER>>
+	<SET COMBAT-PLAYER <CALCULATE-COMBAT ,CURRENT-CHARACTER>>
+	<COND (<CHECK-ITEM ,POTION-OF-STRENGTH>
+		<CRLF>
+		<TELL "Use the ">
+		<PRINT-ITEM ,POTION-OF-STRENGTH T>
+		<TELL " in this fight (Current COMBAT score: ">
+		<HLIGHT ,H-BOLD>
+		<TELL N .COMBAT-PLAYER>
+		<HLIGHT 0>
+		<TELL ")?">
+		<COND (<YES?>
+			<REMOVE-ITEM ,POTION-OF-STRENGTH ,TEXT-USED F T>
+			<INC .COMBAT-PLAYER>
+		)>
+	)>
+	<COND (<G? .COMBAT-PLAYER 12> <SET .COMBAT-PLAYER 12>)>
+	<SET STAMINA-MONSTER <GETP .MONSTER ,P?STAMINA>>
+	<SET DEFENSE-MONSTER <GETP .MONSTER ,P?DEFENSE>>
+	<SET COMBAT-MONSTER <GETP .MONSTER ,P?COMBAT>>
+	<COND (<G? .COMBAT-MONSTER 12> <SET .COMBAT-MONSTER 12>)>
+	<CRLF>
+	<TELL "Resolving combat between ">
+	<HLIGHT ,H-BOLD>
+	<TELL D ,CURRENT-CHARACTER>
+	<HLIGHT 0>
+	<TELL " (COMBAT: " N .COMBAT-PLAYER " DEFENSE: " N .DEFENSE-PLAYER>
+	<COND (<G? .MODIFIER 0> <TELL ", +" N .MODIFIER " to rolls">)>
+	<TELL ") and ">
+	<HLIGHT ,H-BOLD>
+	<TELL T .MONSTER>
+	<HLIGHT 0>
+	<TELL " (COMBAT: " N .COMBAT-MONSTER " DEFENSE: " N .DEFENSE-MONSTER ")">
+	<TELL ,PERIOD-CR>
+	; "Track Previous Stamina"
+	<SETG PREVIOUS-STAMINA .STAMINA-PLAYER> 
+	<REPEAT ()
+		<INC .ROUND>
+		<COMBAT-STATUS .ROUND .MONSTER .STAMINA-PLAYER .STAMINA-MONSTER>
+		<PRESS-A-KEY>
+		<SET ATTACK <+ <ROLL-DICE 2> .COMBAT-PLAYER .MODIFIER>>
+		<SET RESULT <- .ATTACK .DEFENSE-MONSTER>>
+		<COND (<G? .RESULT 0>
+			<ATTACK-MESSAGE ,CURRENT-CHARACTER .MONSTER .ATTACK .RESULT>
+			<SET STAMINA-MONSTER <- .STAMINA-MONSTER .RESULT>>
+			<COND (<L=? .STAMINA-MONSTER .THRESHOLD> <RETURN>)>
+		)(ELSE
+			<ATTACK-INEFFECTIVE ,CURRENT-CHARACTER>
+		)>
+		<PRESS-A-KEY>
+		<SET ATTACK <+ <ROLL-DICE 2> .COMBAT-MONSTER>>
+		<SET RESULT <- .ATTACK .DEFENSE-PLAYER>>
+		<COND (<G? .RESULT 0>
+			<ATTACK-MESSAGE .MONSTER ,CURRENT-CHARACTER .ATTACK .RESULT>
+			<SET STAMINA-PLAYER <- .STAMINA-PLAYER .RESULT>>
+			<COND (<L? .STAMINA-PLAYER 1> <RETURN>)>
+		)(ELSE
+			<ATTACK-INEFFECTIVE .MONSTER>
+		)>
+		<PRESS-A-KEY>
+		<UPDATE-STATUS-LINE>
+	>
+	<COND (<L? .STAMINA-PLAYER 0> <SET .STAMINA-PLAYER 0>)>
+	<SETG STAMINA .STAMINA-PLAYER>
+	<UPDATE-STATUS-LINE>
+	<COND (<L=? .STAMINA-MONSTER .THRESHOLD>
+		<HAS-PREVAILED ,CURRENT-CHARACTER>
+		<RTRUE>
+	)>
+	<HAS-PREVAILED .MONSTER>
+	<RFALSE>>
+
+<ROUTINE HAS-PREVAILED (CHARACTER)
+	<CRLF>
+	<HLIGHT ,H-BOLD>
+	<COND (<EQUAL? .CHARACTER ,CURRENT-CHARACTER>
+		<TELL D .CHARACTER>
+	)(ELSE
+		<TELL CT .CHARACTER>
+	)>
+	<TELL " ">
+	<COND (<FSET? .CHARACTER ,PLURALBIT> <TELL "have">)(ELSE <TELL "has">)>
+	<TELL " prevailed">
+	<HLIGHT 0>
+	<TELL ,PERIOD-CR>>
+
+<ROUTINE TEST-ABILITY (CHARACTER ABILITY DIFFICULTY "OPT" (MODIFIER 0) "AUX" SCORE (ROLL 0) (RESULT F) (TOTAL 0))
+	<REPEAT ()
+		<SET SCORE <CALCULATE-ABILITY .CHARACTER .ABILITY>>
+		<TELL "Making a ">
+		<HLIGHT ,H-BOLD>
+		<TELL <GET ,ABILITIES .ABILITY>>
+		<HLIGHT 0>
+		<TELL " (" >
+		<HLIGHT ,H-BOLD>
+		<TELL N .SCORE>
+		<HLIGHT 0>
+		<TELL ") roll at ">
+		<HLIGHT ,H-BOLD>
+		<TELL N .DIFFICULTY>
+		<HLIGHT 0>
+		<TELL " difficulty.." ,PERIOD-CR>
+		<SET MODIFIER <+ .MODIFIER <TEST-ABILITY-GOD .ABILITY>>>
+		<SET MODIFIER <+ .MODIFIER <TEST-ABILITY-POTION .ABILITY>>>
+		<COND (<L=? .MODIFIER 0> <PRESS-A-KEY>)>
+		<SET ROLL <ROLL-DICE 2>>
+		<SET TOTAL <+ .SCORE .ROLL .MODIFIER>>
+		<CRLF>
+		<TELL "Rolled (">
+		<HLIGHT ,H-BOLD>
+		<TELL <GET ,ABILITIES .ABILITY> " " N .SCORE>
+		<HLIGHT 0>
+		<TELL ") + ">
+		<HLIGHT ,H-BOLD>
+		<TELL N .ROLL>
+		<HLIGHT 0>
+		<COND (<N=? .MODIFIER 0>
+			<TELL " ">
+			<COND (<G? .MODIFIER 0>
+				<TELL "+ ">
+			)(ELSE
+				<TELL "- ">
+			)>
+			<HLIGHT ,H-BOLD>
+			<COND (<G? .MODIFIER 0>
+				<TELL N .MODIFIER>
+			)(ELSE
+				<TELL N <* .MODIFIER -1>>
+			)>
+			<HLIGHT 0>
+		)>
+		<TELL " = ">
+		<HLIGHT ,H-BOLD>
+		<TELL N .TOTAL>
+		<HLIGHT 0>
+		<TELL " ... ">
+		<COND (<G? .TOTAL .DIFFICULTY>
+			<HLIGHT ,H-BOLD>
+			<TELL "Success!">
+			<SET RESULT T>
+			<HLIGHT 0>
+			<CRLF>
+			<RETURN>
+		)(ELSE
+			<HLIGHT ,H-BOLD>
+			<TELL "Failed!">
+			<HLIGHT 0>
+			<SET RESULT F>
+			<COND (<NOT <TEST-ABILITY-BLESSING .ABILITY>>
+				<RETURN>
+			)>
+			<CRLF>
+		)>
+	>
+	<RETURN .RESULT>>
+
+<ROUTINE TEST-ABILITY-BLESSING (ABILITY "AUX" HAS-BLESSING BLESSING RESULT)
+	<SET RESULT F>
+	<SET HAS-BLESSING T>
+	<COND (<AND <EQUAL? .ABILITY ,ABILITY-CHARISMA> <CHECK-BLESSING ,BLESSING-CHARISMA>>
+		<SET BLESSING ,BLESSING-CHARISMA>
+	)(<AND <EQUAL? .ABILITY ,ABILITY-COMBAT> <CHECK-BLESSING ,BLESSING-COMBAT>>
+		<SET BLESSING ,BLESSING-COMBAT>
+	)(<AND <EQUAL? .ABILITY ,ABILITY-MAGIC> <CHECK-BLESSING ,BLESSING-MAGIC>>
+		<SET BLESSING ,BLESSING-MAGIC>
+	)(<AND <EQUAL? .ABILITY ,ABILITY-SANCTITY> <CHECK-BLESSING ,BLESSING-SANCTITY>>
+		<SET BLESSING ,BLESSING-SANCTITY>
+	)(<AND <EQUAL? .ABILITY ,ABILITY-SCOUTING> <CHECK-BLESSING ,BLESSING-SCOUTING>>
+		<SET BLESSING ,BLESSING-SCOUTING>
+	)(<AND <EQUAL? .ABILITY ,ABILITY-THIEVERY> <CHECK-BLESSING ,BLESSING-THIEVERY>>
+		<SET BLESSING ,BLESSING-THIEVERY>
+	)(<CHECK-BLESSING ,BLESSING-LUCK>
+		<SET BLESSING ,BLESSING-LUCK>
+	)(ELSE
+		<SET HAS-BLESSING F>
+	)>
+	<COND (.HAS-BLESSING
+		<CRLF>
+		<TELL CR "Use " T .BLESSING " blessing to reroll?">
+		<COND (<YES?>
+			<DELETE-BLESSING .BLESSING>
+			<SET .RESULT T>
+		)>
+	)(ELSE
+		<CRLF>
+	)>
+	<RETURN .RESULT>>
+
+<ROUTINE TEST-ABILITY-GOD (ABILITY "AUX" RESULT)
+	<SET RESULT 0>
+	<COND (<EQUAL? .ABILITY ,ABILITY-THIEVERY>
+		<COND (<CHECK-GOD ,GOD-SIG> <INC .RESULT>)>
+	)>
+	<RETURN .RESULT>>
+
+<ROUTINE TEST-ABILITY-POTION (ABILITY "AUX" HAS-POTION POTION RESULT)
+	<SET RESULT 0>
+	<SET HAS-POTION T>
+	<COND (<AND <EQUAL? .ABILITY ,ABILITY-CHARISMA> <CHECK-ITEM ,POTION-OF-COMELINESS>>
+		<SET POTION ,POTION-OF-COMELINESS>
+	)(<AND <EQUAL? .ABILITY ,ABILITY-COMBAT> <CHECK-ITEM ,POTION-OF-STRENGTH>>
+		<SET POTION ,POTION-OF-STRENGTH>
+	)(<AND <EQUAL? .ABILITY ,ABILITY-MAGIC> <CHECK-ITEM ,POTION-OF-INTELLECT>>
+		<SET POTION ,POTION-OF-INTELLECT>
+	)(<AND <EQUAL? .ABILITY ,ABILITY-SANCTITY> <CHECK-ITEM ,POTION-OF-GODLINESS>>
+		<SET POTION ,POTION-OF-GODLINESS>
+	)(<AND <EQUAL? .ABILITY ,ABILITY-SCOUTING> <CHECK-ITEM ,POTION-OF-NATURE>>
+		<SET POTION ,POTION-OF-NATURE>
+	)(<AND <EQUAL? .ABILITY ,ABILITY-THIEVERY> <CHECK-ITEM ,POTION-OF-STEALTH>>
+		<SET POTION ,BLESSING-THIEVERY>
+	)(ELSE
+		<SET HAS-POTION F>
+	)>
+	<COND (.HAS-POTION
+		<TELL CR "Use the ">
+		<PRINT-ITEM .POTION T>
+		<TELL " to add to the roll?">
+		<COND (<YES?>
+			<REMOVE-ITEM .POTION ,TEXT-USED T T>
+			<SET RESULT 1>
+		)>
+	)>
+	<RETURN .RESULT>>
+
+; "Number conversion routines"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE CONVERT-TO-NUMBER (N "OPT" BASE "AUX" INDEX START LEN)
+	<COND (<NOT .BASE> <SET BASE 10>)>
+	<COND (<0? <GETB ,LEXBUF 1>> <RETURN 0>)>
+	<SET INDEX <* .N 4>>
+	<SET START <- <GETB ,LEXBUF <+ .INDEX 1>> 1>>
+	<SET LEN <GETB ,LEXBUF .INDEX>>
+	<RETURN <TO-INTEGER .START .LEN .BASE>>>
+
+<ROUTINE GET-DIGIT (CHARACTER "OPT" BASE "AUX" DIGIT)
+	<COND (<NOT .BASE> <SET BASE 10>)>
+	<SET DIGIT 0>
+	<COND (<AND <G? .BASE 10> <G=? .CHARACTER !\A> <L=? .CHARACTER !\Z>>
+		<SET DIGIT <+ <- .CHARACTER !\A> 10>>
+	)(<AND <G? .BASE 10> <G=? .CHARACTER !\a> <L=? .CHARACTER !\z>>
+		<SET DIGIT <+ <- .CHARACTER !\a> 10>>
+	)(<AND <G=? .CHARACTER !\0> <L=? .CHARACTER !\9>>
+		<SET DIGIT <- .CHARACTER !\0>>
+	)>
+	<COND (<OR <G? .DIGIT <- .BASE 1>> <L? .DIGIT 0>> <RETURN 0>)>
+	<RETURN .DIGIT>>
+
+<ROUTINE POWER (BASE EXPONENT)
+	<COND (<G? .EXPONENT 0>
+		<RETURN <* .BASE <POWER .BASE <- .EXPONENT 1>>>>
+	)(ELSE
+		<RETURN 1>
+	)>>
+
+<ROUTINE TO-INTEGER (START LENGTH "OPT" BASE "AUX" NUMBER CHARACTER SIGN)
+	<COND (<NOT .BASE> <SET BASE 10>)>
+	<SET SIGN 1>
+	<SET NUMBER 0>
+	<DO (I 1 .LENGTH)
+		<SET CHARACTER <GETB ,READBUF <+ .START .I>>>
+		<COND (<OR
+			<AND <G=? .CHARACTER !\0> <L=? .CHARACTER !\9>>
+			<AND <G? .BASE 10> <L=? .BASE 36>
+				<OR 
+					<AND <G=? .CHARACTER !\A> <L=? .CHARACTER !\Z>>
+					<AND <G=? .CHARACTER !\a> <L=? .CHARACTER !\z>>
+				>
+			>>
+			<SET NUMBER <+ .NUMBER <* <GET-DIGIT .CHARACTER .BASE> <POWER .BASE <- .LENGTH .I>>>>>
+		)(<AND <EQUAL? .I 1> <EQUAL? .CHARACTER !\- !\+>>
+			<COND (<EQUAL? .CHARACTER !\->
+				<SET SIGN -1>
+			)>
+		)(ELSE
+			<RETURN 0>
+		)>
+	>
+	<RETURN <* .SIGN .NUMBER>>>
+
+; "Guild routines"
+; ---------------------------------------------------------------------------------------------
+
+<CONSTANT TEXT-GUILD "Guild">
+<CONSTANT TEXT-GUILD-NONE "You have not made any investments!">
+<CONSTANT TEXT-GUILD-BROKE "You do not have enough money!">
+
+<CONSTANT TEXT-INVESTMENT-LOST "You lost the entire sum!">
+<CONSTANT TEXT-INVESTMENT-LOSE50 "You lost 50%">
+<CONSTANT TEXT-INVESTMENT-LOSE10 "You lost 10%">
+<CONSTANT TEXT-INVESTMENT-UNCHANGED "Your investments remain unchanged.">
+<CONSTANT TEXT-INVESTMENT-PROFIT10 "You gain a 10% profit!">
+<CONSTANT TEXT-INVESTMENT-PROFIT50 "You gain a 50% profit!">
+<CONSTANT TEXT-INVESTMENT-DOUBLED "Your investments are doubled!">
+
+<ROUTINE CHECK-INVESTMENTS (STORY "AUX" INVESTMENTS ROLL)
+	<SET INVESTMENTS <GETP .STORY ,P?INVESTMENTS>>
+	<COND (.INVESTMENTS
+		<SET ROLL <ROLL-DICE 2>>
+		<COND (<L=? .ROLL 4>
+			<EMPHASIZE ,TEXT-INVESTMENT-LOST ,TEXT-GUILD>
+			<SET .INVESTMENTS 0>
+		)(<L=? .ROLL 6>
+			<EMPHASIZE ,TEXT-INVESTMENT-LOSE50 ,TEXT-GUILD>
+			<SET .INVESTMENTS </ .INVESTMENTS 2>>
+		)(<L=? .ROLL 8>
+			<EMPHASIZE ,TEXT-INVESTMENT-LOSE10 ,TEXT-GUILD>
+			<SET .INVESTMENTS <- </ .INVESTMENTS 10>>>
+		)(<L=? .ROLL 10>
+			<EMPHASIZE ,TEXT-INVESTMENT-UNCHANGED ,TEXT-GUILD>
+		)(<L=? .ROLL 12>
+			<EMPHASIZE ,TEXT-INVESTMENT-PROFIT10 ,TEXT-GUILD>
+			<SET .INVESTMENTS <+ </ .INVESTMENTS 10>>>
+		)(<L=? .ROLL 14>
+			<EMPHASIZE ,TEXT-INVESTMENT-PROFIT50 ,TEXT-GUILD>
+			<SET .INVESTMENTS <+ </ .INVESTMENTS 2>>>
+		)(ELSE
+			<EMPHASIZE ,TEXT-INVESTMENT-DOUBLED ,TEXT-GUILD>
+			<SET .INVESTMENTS <* .INVESTMENTS 2>>
+		)>
+		<COND (<L? .INVESTMENTS 0> <SET .INVESTMENTS 0>)>
+		<PUTP .STORY ,P?INVESTMENTS .INVESTMENTS>
+	)(ELSE
+		<EMPHASIZE "You have no investments here!" ,TEXT-GUILD>
+	)>>
+
+<ROUTINE GUILD-ACTIVITY ("OPT" STORY (INVEST T) "AUX" KEY MONEY NUMBER PROPERTY FEE)
+	<COND (<NOT .STORY> <SET STORY ,HERE>)>
+	<COND (.INVEST
+		<SET PROPERTY ,P?INVESTMENTS>
+	)(ELSE
+		<SET PROPERTY ,P?MONEY>
+	)>
+	<REPEAT ()
+		<SET MONEY <GETP .STORY .PROPERTY>>
+		<CRLF>
+		<TELL "Current ">
+		<COND (.INVEST
+			<TELL "investments: " N .MONEY CR>
+		)(ELSE
+			<TELL "banked money: " N .MONEY CR>
+		)>
+		<CRLF>
+		<HLIGHT ,H-BOLD>
+		<TELL "1">
+		<HLIGHT 0>
+		<COND (.INVEST
+			<TELL " - Invest (in multiples of 100 " D ,CURRENCY ")" CR>
+		)(ELSE
+			<TELL " - Deposit " D ,CURRENCY CR>
+		)>
+		<HLIGHT ,H-BOLD>
+		<TELL "2">
+		<HLIGHT 0>
+		<TELL " - Withdraw ">
+		<COND (.INVEST
+			<TELL "investments" CR>
+		)(ELSE
+			<TELL D ,CURRENCY " (Guild charges 10%)" CR>
+		)>
+		<HLIGHT ,H-BOLD>
+		<TELL "0">
+		<HLIGHT 0>
+		<TELL " - Bye" CR>
+		<TELL "You are currently carrying: " N ,MONEY " " D ,CURRENCY "." CR>
+		<TELL "Select what to do next: ">
+		<REPEAT ()
+			<SET KEY <INPUT 1>>
+			<COND (<EQUAL? .KEY !\0 !\1 !\2> <RETURN>)>
+		>
+		<COND (<EQUAL? .KEY !\1>
+			<CRLF>
+			<COND (<OR <AND .INVEST <G=? ,MONEY 100>> <NOT .INVEST>>
+				<REPEAT ()
+					<COND (.INVEST
+						<SET NUMBER <GET-NUMBER "How much will you invest" 0 ,MONEY>>
+					)(ELSE
+						<SET NUMBER <GET-NUMBER "How much will you deposit" 0 ,MONEY>>
+					)>
+					<COND (<G? .NUMBER 0>
+						<COND (<AND .INVEST <OR <L? .NUMBER 100> <G? <MOD .NUMBER 100> 0>>>
+							<EMPHASIZE "Only amounts that are multiples of 100 are accepted!">
+							<PRESS-A-KEY>
+						)(ELSE
+							<CRLF>
+							<TELL ,TEXT-SURE>
+							<COND (<YES?>
+								<PUTP .STORY .PROPERTY <+ .MONEY .NUMBER>>
+								<SETG MONEY <- ,MONEY .NUMBER>>
+								<EMPHASIZE ,TEXT-EXCELLENT ,TEXT-GUILD>
+								<UPDATE-STATUS-LINE>
+								<PRESS-A-KEY>
+								<RETURN>
+							)>
+						)>
+					)(ELSE
+						<RETURN>
+					)>
+				>
+			)(.INVEST
+				<CRLF>
+				<EMPHASIZE ,TEXT-GUILD-BROKE ,TEXT-GUILD>
+			)>
+		)(<EQUAL? .KEY !\2>
+			<COND (<G? .MONEY 0>
+				<CRLF>
+				<REPEAT ()
+					<SET NUMBER <GET-NUMBER "How much will you withdraw" 0 .MONEY>>
+					<COND (<G? .NUMBER 0>
+						<CRLF>
+						<TELL ,TEXT-SURE>
+						<COND (<YES?>
+							<PUTP .STORY .PROPERTY <- .MONEY .NUMBER>>
+							<SETG MONEY <+ ,MONEY .NUMBER>>
+							<COND (<NOT .INVEST>
+								<SET FEE </ .NUMBER 10>>
+								<COND (<L? .FEE 0> <SET FEE 1>)>
+								<COST-MONEY .FEE>
+							)>
+							<COND (.INVEST
+								<EMPHASIZE "Please consider investing again in the future!" ,TEXT-GUILD>
+							)(ELSE
+								<EMPHASIZE "Please consider banking with us again in the future!" ,TEXT-GUILD>
+							)>
+							<UPDATE-STATUS-LINE>
+							<PRESS-A-KEY>
+						)>
+					)>
+					<RETURN>
+				>
+			)(ELSE
+				<EMPHASIZE ,TEXT-GUILD-NONE ,TEXT-GUILD>
+				<PRESS-A-KEY>
+			)>
+		)(<EQUAL? .KEY !\0>
+			<CRLF>
+			<TELL CR ,TEXT-SURE>
+			<COND (<YES?>
+				<EMPHASIZE ,TEXT-NEXT-TIME ,TEXT-GUILD>
+				<RETURN>
+			)(ELSE
+				<EMPHASIZE ,TEXT-EXCELLENT ,TEXT-GUILD>
+			)>
+		)>
+		<COND (<L? ,MONEY 100>
+			<EMPHASIZE "Thank you for doing business with us!" ,TEXT-GUILD>
+			<RETURN>
+		)>
+	>>
+
+; "Harbour Master routines"
+; ---------------------------------------------------------------------------------------------
+
+<CONSTANT SHIPS-LIST <LTABLE SHIP-BARQUE SHIP-BRIGANTINE SHIP-GALLEON>>
+
+<OBJECT CARGO-FURS
+	(DESC "Furs")
+	(TYPE 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT CARGO-GRAINS
+	(DESC "Grains")
+	(TYPE 2)
+	(FLAGS TAKEBIT)>
+
+<OBJECT CARGO-METALS
+	(DESC "Metals")
+	(TYPE 3)
+	(FLAGS TAKEBIT)>
+
+<OBJECT CARGO-MINERALS
+	(DESC "Minerals")
+	(TYPE 4)
+	(FLAGS TAKEBIT)>
+
+<OBJECT CARGO-SPICES
+	(DESC "Spices")
+	(TYPE 5)
+	(FLAGS TAKEBIT)>
+
+<OBJECT CARGO-TEXTILES
+	(DESC "Textiles")
+	(TYPE 6)
+	(FLAGS TAKEBIT)>
+
+<OBJECT CARGO-TIMBER
+	(DESC "Timber")
+	(TYPE 7)
+	(FLAGS TAKEBIT)>
+
+<CONSTANT CARGO-LIST <LTABLE CARGO-FURS CARGO-GRAINS CARGO-METALS CARGO-MINERALS CARGO-SPICES CARGO-TEXTILES CARGO-TIMBER>>
+
+<CONSTANT BUY-SELL-CARGO-MENU <LTABLE "Buy goods" "Sell goods">>
+<CONSTANT BUY-SELL-UPGRADE-MENU <LTABLE "Buy ship" "Sell ship" "Upgrade ship">>
+
+<CONSTANT TEXT-NO-SHIPS "You don't own any ships!">
+<CONSTANT TEXT-SHIP-NOT-OWNER "You don't own that ship!">
+
+<CONSTANT HARBOUR-MASTER-MENU <LTABLE "Go to the shipyard" "Book a passage" "View ship manifest" "Visit the market" "Set sail">>
+<CONSTANT TEXT-HARBOUR-MASTER "Harbour Master">
+
+<ROUTINE BOOK-PASSAGE (PASSAGES PRICES DESTINATIONS "AUX" KEY COUNT CHOICE DESTINATION)
+	<SET COUNT <GET .PASSAGES 0>>
+	<SET DESTINATION NONE>
+	<REPEAT ()
+		<EMPHASIZE "You can buy a one-way passage on a ship to the following destinations:">
+		<PRINT-MENU .PASSAGES F F !\0 "Go back" .PRICES>
+		<TELL "Select destination:">
+		<REPEAT ()
+			<SET KEY <INPUT 1>>
+			<COND (<OR <EQUAL? .KEY !\0> <AND <G=? .KEY !\1> <L=? .KEY <+ .COUNT !\0>>>> <RETURN>)>
+		>
+		<CRLF>
+		<COND (<EQUAL? .KEY !\0>
+			<TELL CR ,TEXT-SURE>
+			<COND (<YES?>
+				<SET DESTINATION NONE>
+				<RETURN>
+			)>
+		)(ELSE
+			<CRLF>
+			<SET CHOICE <- .KEY !\0>>
+			<COND (<G=? ,MONEY <GET .PRICES .CHOICE>>
+				<TELL "Book a passage to ">
+				<HLIGHT ,H-BOLD>
+				<TELL <GET .PASSAGES .CHOICE>>
+				<HLIGHT 0>
+				<COND (<G? <GET .PRICES .CHOICE> 0>
+					<TELL " for " N <GET .PRICES .CHOICE> " " D ,CURRENCY "?">
+				)(ELSE
+					<TELL "?">
+				)>
+				<COND (<YES?>
+					<COND (<G? <GET .PRICES .CHOICE> 0>
+						<COST-MONEY <GET .PRICES .CHOICE> ,TEXT-PAID>
+					)>
+					<SET DESTINATION <GET .DESTINATIONS .CHOICE>>
+					<RETURN>
+				)>
+			)(ELSE
+				<CRLF>
+				<HLIGHT ,H-BOLD>
+				<TELL "You cannot afford to book a passage to " <GET .PASSAGES .CHOICE> ,EXCLAMATION-CR>
+				<HLIGHT 0>
+			)>
+		)>
+	>
+	<RETURN .DESTINATION>>
+
+<ROUTINE BUY-CARGO (BUY-PRICES "AUX" (LIMIT 3))
+	<COND (.BUY-PRICES
+		<COND (,CURRENT-SHIP
+			<SET LIMIT <GETP ,CURRENT-SHIP ,P?CAPACITY>>
+		)>
+		<MERCHANT ,CARGO-LIST .BUY-PRICES ,CARGO F .LIMIT>
+	)>>
+
+<ROUTINE BUY-SELL-CARGO (BUY-PRICES SELL-PRICES "AUX" KEY)
+	<REPEAT ()
+		<EMPHASIZE "Market">
+		<PRINT-MENU ,BUY-SELL-CARGO-MENU F F !\0 "Go back">
+		<TELL "What do you want to do?">
+		<REPEAT ()
+			<SET KEY <INPUT 1>>
+			<COND (<EQUAL? .KEY !\0 !\1 !\2> <RETURN>)>
+		>
+		<COND (<EQUAL? .KEY !\0>
+			<CRLF>
+			<TELL CR ,TEXT-SURE>
+			<COND (<YES?> <RETURN>)>
+		)(<EQUAL? .KEY !\1>
+			<CRLF>
+			<BUY-CARGO .BUY-PRICES>
+		)(<EQUAL? .KEY !\2>
+			<CRLF>
+			<COND (<G? <COUNT-CONTAINER ,CARGO> 0>
+				<SELL-CARGO .SELL-PRICES>
+			)(ELSE
+				<EMPHASIZE "You have nothing to sell!">
+			)>
+		)>
+	>>
+
+<ROUTINE BUY-SELL-UPGRADE-SHIP (BUY-PRICES SELL-PRICES UPGRADE-PRICES CARGO-PRICES DOCK "AUX" KEY)
+	<REPEAT ()
+		<EMPHASIZE "Shipyard">
+		<PRINT-MENU ,BUY-SELL-UPGRADE-MENU F F !\0 "Go back">
+		<TELL "What do you want to do?">
+		<REPEAT ()
+			<SET KEY <INPUT 1>>
+			<COND (<EQUAL? .KEY !\0 !\1 !\2 !\3> <RETURN>)>
+		>
+		<COND (<EQUAL? .KEY !\0>
+			<CRLF>
+			<TELL CR ,TEXT-SURE>
+			<COND (<YES?> <RETURN>)>
+		)(<EQUAL? .KEY !\1>
+			<CRLF>
+			<BUY-SHIP .BUY-PRICES .DOCK>
+		)(<EQUAL? .KEY !\2>
+			<CRLF>
+			<SELL-SHIP .SELL-PRICES .CARGO-PRICES>
+		)(<EQUAL? .KEY !\3>
+			<CRLF>
+			<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
+				<UPGRADE-SHIP .UPGRADE-PRICES>
+			)(ELSE
+				<EMPHASIZE ,TEXT-NO-SHIPS>
+			)>
+		)>
+	>>
+
+<ROUTINE BUY-SHIP (BUY-PRICES "OPT" DOCK "AUX" KEY ITEM)
+	<REPEAT ()
+		<EMPHASIZE "Shipyard">
+		<PRINT-MENU ,SHIPS-LIST T T !\0 ,TEXT-BACK .BUY-PRICES>
+		<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
+			<DESCRIBE-PLAYER-SHIPS>
+			<CRLF>
+		)>
+		<TELL "You are carrying " N ,MONEY " " D ,CURRENCY ,PERIOD-CR>
+		<TELL "Which ship shall you buy?">
+		<REPEAT ()
+			<SET KEY <INPUT 1>>
+			<COND (<EQUAL? .KEY !\0 !\1 !\2 !\3> <RETURN>)>
+		>
+		<COND (<EQUAL? .KEY !\0>
+			<CRLF>
+			<TELL CR ,TEXT-SURE>
+			<COND (<YES?> <RETURN>)>
+		)(ELSE
+			<SET ITEM <- .KEY !\0>>
+			<COND (<IN? <GET ,SHIPS-LIST .ITEM> ,SHIPS>
+				<CRLF>
+				<EMPHASIZE "You already own that ship!">
+			)(<G=? ,MONEY <GET .BUY-PRICES .ITEM>>
+				<CRLF>
+				<TELL CR "Buy a " D <GET ,SHIPS-LIST .ITEM> "?">
+				<COND (<YES?>
+					<COST-MONEY <GET .BUY-PRICES .ITEM> ,TEXT-PAID>
+					<MOVE <GET ,SHIPS-LIST .ITEM> ,SHIPS>
+					<PUTP <GET ,SHIPS-LIST .ITEM> ,P?DOCKED .DOCK>
+					<COND (<NOT ,CURRENT-SHIP> <SETG CURRENT-SHIP <GET ,SHIPS-LIST .ITEM>>)>
+					<CRLF>
+					<TELL "You bought a ">
+					<PRINT-ITEM <GET ,SHIPS-LIST .ITEM> T>
+					<TELL ,PERIOD-CR>
+					<UPDATE-STATUS-LINE>
+				)>
+			)(ELSE
+				<CRLF>
+				<EMPHASIZE "You can't afford that ship!">
+			)>
+		)>
+	>>
+
+<ROUTINE SELL-ALL-CARGO (CARGO-PRICES "OPT" CONTAINER "AUX" ITEM TYPE PROFIT)
+	<COND (<NOT .CONTAINER> <SET .CONTAINER ,CARGO>)>
+	<COND (<G? <COUNT-CONTAINER .CONTAINER> 0>
+		<SET PROFIT 0>
+		<SET ITEM <FIRST? .CONTAINER>>
+		<REPEAT ()
+			<COND (<NOT .ITEM> <RETURN>)>
+			<SET TYPE <GETP .ITEM ,P?TYPE>>
+			<COND (<G? .TYPE 0>
+				<SET PROFIT <+ .PROFIT <GET .CARGO-PRICES .TYPE>>>
+			)>
+			<SET ITEM <NEXT? .ITEM>>
+		>
+		<COND (<G? .PROFIT 0>
+			<CRLF>
+			<TELL "You sold: ">
+			<PRINT-CONTAINER .CONTAINER>
+			<RESET-CONTAINER .CONTAINER>
+			<GAIN-MONEY .PROFIT>
+		)>
+	)>>
+
+<ROUTINE SELL-CARGO (SELL-PRICES)
+	<COND (.SELL-PRICES
+		<MERCHANT ,CARGO-LIST .SELL-PRICES ,CARGO T>
+	)>>
+
+<ROUTINE SELL-SHIP (SELL-PRICES CARGO-PRICES "AUX" KEY ITEM)
+	<REPEAT ()
+		<EMPHASIZE "You can sell your ships at these prices" "Shipyard">
+		<PRINT-MENU ,SHIPS-LIST T T !\0 ,TEXT-BACK .SELL-PRICES>
+		<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
+			<DESCRIBE-PLAYER-SHIPS>
+			<CRLF>
+		)>
+		<TELL "Which ship will you sell?">
+		<REPEAT ()
+			<SET KEY <INPUT 1>>
+			<COND (<EQUAL? .KEY !\0 !\1 !\2 !\3> <RETURN>)>
+		>
+		<COND (<EQUAL? .KEY !\0>
+			<CRLF>
+			<TELL CR ,TEXT-SURE>
+			<COND (<YES?> <RETURN>)>
+		)(ELSE
+			<SET ITEM <- .KEY !\0>>
+			<COND (<NOT <IN? <GET ,SHIPS-LIST .ITEM> ,SHIPS>>
+				<CRLF>
+				<EMPHASIZE ,TEXT-SHIP-NOT-OWNER>
+			)(ELSE
+				<CRLF>
+				<TELL CR "Sell " T <GET ,SHIPS-LIST .ITEM> "?">
+				<COND (<YES?>
+					<REMOVE <GET ,SHIPS-LIST .ITEM>>
+					<COND (<EQUAL? ,CURRENT-SHIP <GET ,SHIPS-LIST .ITEM>>
+						<SETG CURRENT-SHIP NONE>
+					)>
+					<CRLF>
+					<TELL "You sold the ">
+					<PRINT-ITEM <GET ,SHIPS-LIST .ITEM> T>
+					<TELL ,PERIOD-CR>
+					<GAIN-MONEY <GET .SELL-PRICES .ITEM>>
+					<COND (<L=? <COUNT-CONTAINER ,SHIPS> 0> <SELL-ALL-CARGO .CARGO-PRICES>)>
+					<PUTP <GET ,SHIPS-LIST .ITEM> ,P?CONDITION ,CONDITION-POOR>
+					<UPDATE-STATUS-LINE>
+				)>
+			)>
+		)>
+	>>
+
+<ROUTINE UPGRADE-SHIP (UPGRADE-PRICES "AUX" CONDITION KEY UPGRADES ITEM)
+	<SET UPGRADES <LTABLE 0 0 0>>
+	<REPEAT ()
+		<DO (I 1 3)
+			<COND (<IN? <GET ,SHIPS-LIST .I> ,SHIPS>
+				<SET CONDITION <GETP <GET ,SHIPS-LIST .I> ,P?CONDITION>>
+				<COND (<N=? .CONDITION ,CONDITION-EXCELLENT>
+					<COND (<L=? .CONDITION <GET .UPGRADE-PRICES 0>>
+						<PUT .UPGRADES .I <GET .UPGRADE-PRICES <+ .CONDITION 1>>>
+					)(ELSE
+						<PUT .UPGRADES .I 0>
+					)>
+				)(ELSE
+					<PUT .UPGRADES .I 0>
+				)>
+			)(ELSE
+				<PUT .UPGRADES .I 0>
+			)>
+		>
+		<EMPHASIZE "You can upgrade ships at the following prices" "Shipyard">
+		<PRINT-MENU ,SHIPS-LIST T T !\0 ,TEXT-BACK .UPGRADES>
+		<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
+			<DESCRIBE-PLAYER-SHIPS>
+			<CRLF>
+		)>
+		<TELL "You are carrying " N ,MONEY " " D ,CURRENCY ,PERIOD-CR>
+		<TELL "Which ship shall you upgrade?">
+		<REPEAT ()
+			<SET KEY <INPUT 1>>
+			<COND (<EQUAL? .KEY !\0 !\1 !\2 !\3> <RETURN>)>
+		>
+		<COND (<EQUAL? .KEY !\0>
+			<CRLF>
+			<TELL CR ,TEXT-SURE>
+			<COND (<YES?>
+				<RETURN>
+			)>
+		)(ELSE
+			<CRLF>
+			<SET .ITEM <- .KEY !\0>>
+			<COND (<IN? <GET ,SHIPS-LIST .ITEM> ,SHIPS>
+				<COND (<EQUAL? <GET .UPGRADES .ITEM> 0>
+					<EMPHASIZE "That ship can no longer be upgraded!">
+				)(<G=? ,MONEY <GET .UPGRADES .ITEM>>
+					<CRLF>
+					<TELL "Upgrade " T <GET ,SHIPS-LIST .ITEM> "?">
+					<COND (<YES?>
+						<CRLF>
+						<SET CONDITION <GETP <GET ,SHIPS-LIST .ITEM> ,P?CONDITION>>
+						<COND (<G=? .CONDITION ,CONDITION-EXCELLENT>
+							<EMPHASIZE "This ship can no longer be upgraded!">
+						)(ELSE
+							<INC .CONDITION>
+							<PUTP <GET ,SHIPS-LIST .ITEM> ,P?CONDITION .CONDITION>
+							<TELL "You upgraded the ">
+							<PRINT-ITEM <GET ,SHIPS-LIST .ITEM> T>
+							<TELL ,PERIOD-CR>
+							<COST-MONEY <GET .UPGRADES .ITEM> ,TEXT-PAID>
+							<UPDATE-STATUS-LINE>
+						)>
+					)>
+				)(ELSE
+					<EMPHASIZE "You can't afford to upgrade this ship!">
+				)>
+			)(ELSE
+				<EMPHASIZE ,TEXT-SHIP-NOT-OWNER>
+			)>
+		)>
+	>>
+
+<ROUTINE VALIDATE-CARGO (SELL-PRICES "AUX" CAPACITY CARGO)
+	<COND (<NOT ,CURRENT-SHIP> <RETURN>)>
+	<SET CAPACITY <GETP ,CURRENT-SHIP ,P?CAPACITY>>
+	<SET CARGO <COUNT-CONTAINER ,CARGO>>
+	<COND (<G? .CARGO .CAPACITY>
+		<EMPHASIZE "Your cargo has exceeded the maximum capacity of your designated ship!">
+		<CRLF>
+		<TELL "Sell the excess cargo?">
+		<COND (<YES?>
+			<STORY-LOSE-CARGO <- .CARGO .CAPACITY>>
+			<SELL-ALL-CARGO .SELL-PRICES ,LOST-STUFF>
+			<RTRUE>
+		)>
+		<RFALSE>
+	)>
+	<RTRUE>>
+
+<ROUTINE VIEW-SHIP-MANIFEST ("AUX" LIST COUNT SHIP KEY)
+	<COND (<L=? <COUNT-CONTAINER ,SHIPS> 0> <RETURN>)>
+	<SET LIST <LTABLE NONE NONE NONE>>
+	<REPEAT ()
+		<EMPHASIZE "Ship manifest">
+		<SET COUNT 0>
+		<DO (I 1 3)
+			<SET SHIP <GET ,SHIPS-LIST .I>>
+			<COND (<IN? .SHIP ,SHIPS>
+				<INC .COUNT>
+				<PUT .LIST .COUNT .SHIP>
+				<HLIGHT ,H-BOLD>
+				<TELL N .COUNT>
+				<HLIGHT 0>
+				<TELL " [">
+				<COND (<EQUAL? ,CURRENT-SHIP .SHIP>
+					<HLIGHT ,H-BOLD>
+					<TELL "X">
+					<HLIGHT 0>
+				)(ELSE
+					<TELL " ">
+				)>
+				<TELL "] - ">
+				<PRINT-ITEM <GET .LIST .COUNT> F>
+				<CRLF>
+			)>
+		>
+		<HLIGHT ,H-BOLD>
+		<TELL "C">
+		<HLIGHT 0>
+		<TELL " - View Cargo" CR>
+		<HLIGHT ,H-BOLD>
+		<TELL "0">
+		<HLIGHT 0>
+		<TELL " - Back" CR>
+		<TELL "Select primary ship: ">
+		<REPEAT ()
+			<SET KEY <INPUT 1>>
+			<COND (<OR <EQUAL? .KEY !\0 !\C !\c> <AND <G=? .KEY !\1> <L=? .KEY <+ .COUNT !\0>>>> <RETURN>)>
+		>
+		<CRLF>
+		<COND (<EQUAL? .KEY !\0>
+			<TELL CR ,TEXT-SURE>
+			<COND (<YES?>
+				<RETURN>
+			)>
+		)(<EQUAL? .KEY !\C !\c>
+			<CRLF>
+			<DESCRIBE-PLAYER-SHIPS>
+			<PRESS-A-KEY>
+		)(ELSE
+			<SET KEY <- .KEY !\0>>
+			<COND (<EQUAL? ,CURRENT-SHIP <GET .LIST .KEY>>
+				<SETG CURRENT-SHIP NONE>
+			)(ELSE
+				<SETG CURRENT-SHIP <GET .LIST .KEY>>
+			)>
+		)>
+		<UPDATE-STATUS-LINE>
+	>>
+
+; "Townhouse routines"
+; ---------------------------------------------------------------------------------------------
+
+<CONSTANT CACHE-MENU <LTABLE "Leave/Take your possessions.">>
+<CONSTANT TEXT-TOWNHOUSE "You can leave possessions and money here to save having to carry them around with you. You can also rest here safely, and recover any Stamina points you have lost.">
+<CONSTANT TOWNHOUSE-MENU <LTABLE "Leave/Take your possessions." "Leave/Withdraw money.">>
+<CONSTANT TOWNHOUSE-MENU-MONEY <LTABLE "Leave some your money here." "Take the money that was kept here.">>
+<CONSTANT TOWNHOUSE-MENU-POSSESSIONS <LTABLE "Leave some of your possessions here." "Take the  items that are kept here.">>
+
+<ROUTINE TOWNHOUSE-MONEY (STORY TOWNHOUSE "AUX" KEY NUMBER MONEY)
+	<REPEAT ()
+		<CRLF>
+		<HLIGHT ,H-BOLD>
+		<TELL D .TOWNHOUSE>
+		<HLIGHT 0>
+		<CRLF>
+		<PRINT-MENU ,TOWNHOUSE-MENU-MONEY F F !\0 "Back">
+		<SET .MONEY <GETP .TOWNHOUSE ,P?MONEY>>
+		<COND (<G? .MONEY 0>
+			<TELL "There are ">
+			<HLIGHT ,H-BOLD>
+			<TELL N .MONEY>
+			<HLIGHT 0>
+			<TELL " " D ,CURRENCY " kept here at ">
+			<HLIGHT ,H-BOLD>
+			<TELL T .TOWNHOUSE ,PERIOD-CR>
+			<HLIGHT 0>
+		)>
+		<TELL "You are carrying " N ,MONEY " " D ,CURRENCY ": ">
+		<REPEAT ()
+			<SET KEY <INPUT 1>>
+			<COND (<EQUAL? .KEY !\0 !\1 !\2> <RETURN>)>
+		>
+		<CRLF>
+		<COND (<EQUAL? .KEY !\0>
+			<RETURN>
+		)(<EQUAL? .KEY !\1>
+			<COND (<G? ,MONEY 0>
+				<SET NUMBER <GET-NUMBER "How much will you leave here" 0 ,MONEY>>
+				<COND (<G? .NUMBER 0>
+					<PUTP .TOWNHOUSE ,P?MONEY <+ .MONEY .NUMBER>>
+					<COST-MONEY .NUMBER "left">
+				)>
+			)(ELSE
+				<CRLF>
+				<HLIGHT ,H-BOLD>
+				<TELL "You are not carrying any " D, CURRENCY ,EXCLAMATION-CR>
+				<HLIGHT 0>
+				<PRESS-A-KEY>
+			)>
+		)(<EQUAL? .KEY !\2>
+			<COND (<G? .MONEY 0>
+				<SET NUMBER <GET-NUMBER "How much will you withdraw" 0 .MONEY>>
+				<COND (<G? .NUMBER 0>
+					<PUTP .TOWNHOUSE ,P?MONEY <- .MONEY .NUMBER>>
+					<GAIN-MONEY .NUMBER>
+				)>
+			)(ELSE
+				<EMPHASIZE "There is nothing to withdraw here!">
+				<PRESS-A-KEY>
+			)>
+		)>
+	>>
+
+<ROUTINE TOWNHOUSE-POSSESSIONS (STORY TOWNHOUSE "AUX" KEY)
+	<REPEAT ()
+		<CRLF>
+		<HLIGHT ,H-BOLD>
+		<TELL D .TOWNHOUSE>
+		<HLIGHT 0>
+		<CRLF>
+		<PRINT-MENU ,TOWNHOUSE-MENU-POSSESSIONS F F !\0 "Back">
+		<DESCRIBE-INVENTORY-MAIN>
+		<TELL "What will you do next?">
+		<REPEAT ()
+			<SET KEY <INPUT 1>>
+			<COND (<EQUAL? .KEY !\0 !\1 !\2> <RETURN>)>
+		>
+		<CRLF>
+		<COND (<EQUAL? .KEY !\0>
+			<RETURN>
+		)(<EQUAL? .KEY !\1>
+			<COND (<G? <COUNT-CONTAINER ,PLAYER> 0>
+				<TOWNHOUSE-STORAGE ,PLAYER .TOWNHOUSE "leave" T>
+			)(ELSE
+				<EMPHASIZE "You are not carrying anything!">
+				<PRESS-A-KEY>
+			)>
+		)(<EQUAL? .KEY !\2>
+			<COND (<G? <COUNT-CONTAINER .TOWNHOUSE> 0>
+				<TOWNHOUSE-STORAGE .TOWNHOUSE ,PLAYER  "take">
+			)(ELSE
+				<EMPHASIZE "Nothing is being kept here!">
+				<PRESS-A-KEY>
+			)>
+		)>
+	>>
+
+<ROUTINE TOWNHOUSE-STORAGE (FROM TO MESSAGE "OPT" (LEAVE F) "AUX" ITEMS KEY CHOICE)
+	<REPEAT ()
+		<SET ITEMS <COUNT-CONTAINER .FROM>>
+		<COND (<L=? .ITEMS 0> <RETURN>)>
+		<CRLF>
+		<HLIGHT ,H-BOLD>
+		<COND (.LEAVE
+			<TELL "You are carrying:">
+		)(ELSE
+			<TELL D .FROM>
+		)>
+		<HLIGHT 0>
+		<CRLF>
+		<PRINT-CONTAINER-MENU .FROM !\0 "Back">
+		<TELL "Choose what items to " .MESSAGE>
+		<COND (.LEAVE
+			<TELL " at ">
+			<HLIGHT ,H-BOLD>
+			<TELL D .TO>
+			<HLIGHT 0>
+			<TELL ": ">
+		)(ELSE
+			<TELL " from ">
+			<HLIGHT ,H-BOLD>
+			<TELL T .FROM>
+			<HLIGHT 0>
+			<TELL ": ">
+		)>
+		<REPEAT ()
+			<SET .KEY <INPUT 1>>
+			<COND (
+				<OR
+					<EQUAL? .KEY !\0>
+					<AND <G=? .KEY !\1> <L=? .KEY !\9> <L=? <- .KEY !\0> .ITEMS>>
+					<AND <G=? .KEY !\A> <L=? .KEY !\J> <L=? <+ <- .KEY !\A> 10> .ITEMS>>
+					<AND <G=? .KEY !\a> <L=? .KEY !\j> <L=? <+ <- .KEY !\a> 10> .ITEMS>>
+				>
+				<RETURN>
+			)>
+		>
+		<CRLF>
+		<COND (<EQUAL? .KEY !\0>
+			<RETURN>
+		)(<OR <AND <G=? .KEY !\1> <L=? .KEY !\9> <L=? <- .KEY !\0> .ITEMS>> <AND <G=? .KEY !\A> <L=? .KEY !\J> <L=? <+ <- .KEY !\A> 10> .ITEMS>> <AND <G=? .KEY !\a> <L=? .KEY !\j> <L=? <+ <- .KEY !\a> 10> .ITEMS>>>
+			<COND (<AND <G=? .KEY !\1> <L=? .KEY !\9> <L=? <- .KEY !\0> .ITEMS>>
+				<SET CHOICE <- .KEY !\0>>
+			)(<AND <G=? .KEY !\A> <L=? .KEY !\J> <L=? <+ <- .KEY !\A> 10> .ITEMS>>
+				<SET CHOICE <+ <- .KEY !\A> 10>>
+			)(<AND <G=? .KEY !\a> <L=? .KEY !\j> <L=? <+ <- .KEY !\a> 10> .ITEMS>>
+				<SET CHOICE <+ <- .KEY !\a> 10>>
+			)>
+			<CRLF>
+			<PRINT-CAP-STR .MESSAGE>
+			<TELL " ">
+			<HLIGHT ,H-BOLD>
+			<PRINT-ITEM <GET-ITEM .CHOICE .FROM> T>
+			<HLIGHT 0>
+			<COND (.LEAVE
+				<TELL " at ">
+				<HLIGHT ,H-BOLD>
+				<TELL T .TO "?">
+			)(ELSE
+				<TELL " from ">
+				<HLIGHT ,H-BOLD>
+				<TELL T .FROM "?">
+			)>
+			<HLIGHT 0>
+			<COND (<YES?>
+				<COND (.LEAVE
+					<MOVE <GET-ITEM .CHOICE .FROM> .TO>	
+				)(ELSE
+					<COND (<EQUAL? .TO ,PLAYER>
+						<COND (<G=? <COUNT-CONTAINER .TO> ,LIMIT-POSSESSIONS>
+							<EMPHASIZE "You are already carrying too many items!">
+						)(ELSE
+							<MOVE <GET-ITEM .CHOICE .FROM> .TO>	
+						)>
+					)>
+				)>
+			)>
+		)>
+	>>
+
+<ROUTINE VISIT-TOWNHOUSE (STORY TOWNHOUSE "OPT" (FATAL F) (CODEWORD NONE) "AUX" ROLL KEY)
+	<COND (<L? ,STAMINA ,MAX-STAMINA> <GAIN-STAMINA <- ,MAX-STAMINA ,STAMINA>>)>
+	<UPDATE-STATUS-LINE>
+	<COND (<NOT <FSET? .TOWNHOUSE ,CACHEBIT>>
+		<SET ROLL <RANDOM-EVENT 2 0 T>>
+		<COND (<L=? .ROLL 9>
+			<COND (<G? <COUNT-CONTAINER .TOWNHOUSE> 0>
+				<EMPHASIZE "Your possessions are safe.">
+			)(ELSE
+				<EMPHASIZE ,NOTHING-HAPPENS>
+			)>
+		)(<L=? .ROLL 11>
+			<COND (<G? <GETP .TOWNHOUSE ,P?MONEY> 0>
+				<EMPHASIZE "A break-in! All the money left here is gone!">
+				<PUTP .TOWNHOUSE ,P?MONEY 0>
+			)(ELSE
+				<EMPHASIZE "Robbers did not find any money here!">
+			)>
+		)(<L=? .ROLL 12>
+			<COND (.FATAL
+				<EMPHASIZE "Earthquake! You lose all possessions you left here and the townhouse is destroyed.">
+				<COND (.CODEWORD <DELETE-CODEWORD .CODEWORD>)>
+				<RESET-CONTAINER .TOWNHOUSE>
+				<GAIN-MONEY <GETP .TOWNHOUSE ,P?MONEY>>
+				<PUTP .TOWNHOUSE ,P?MONEY 0>
+				<RETURN>
+			)(ELSE
+				<COND (<G? <COUNT-CONTAINER .TOWNHOUSE> 0>
+					<EMPHASIZE "Raiding nomads take all your possessions!">
+					<RESET-CONTAINER .TOWNHOUSE>
+				)(ELSE
+					<EMPHASIZE "Raiding nomads did not find anything of value here!">
+				)>
+			)>
+		)>
+		<PRESS-A-KEY>
+	)>
+	<REPEAT ()
+		<CRLF>
+		<HLIGHT ,H-BOLD>
+		<TELL D .TOWNHOUSE>
+		<HLIGHT 0>
+		<CRLF>
+		<PRINT-MENU ,TOWNHOUSE-MENU F F !\0 "You're done here">
+		<TELL "What do you want to do?">
+		<REPEAT ()
+			<SET KEY <INPUT 1>>
+			<COND (<EQUAL? .KEY !\0 !\1 !\2 !\0> <RETURN>)>
+		>
+		<CRLF>
+		<COND (<EQUAL? .KEY !\0>
+			<CRLF>
+			<TELL ,TEXT-SURE>
+			<COND(<YES?>
+				<CRLF>
+				<TELL "You leave your ">
+				<HLIGHT ,H-BOLD>
+				<TELL D .TOWNHOUSE>
+				<HLIGHT 0>
+				<TELL ,PERIOD-CR>
+				<RETURN>
+			)>
+		)(<EQUAL? .KEY !\1>
+			<TOWNHOUSE-POSSESSIONS .STORY .TOWNHOUSE>
+		)(<EQUAL? .KEY !\2>
+			<TOWNHOUSE-MONEY .STORY .TOWNHOUSE>
+		)>
+	>>
+
+; "Tavern"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE VISIT-TAVERN ("OPT" (STORY NONE) (FEE 1) (GAIN 1) "AUX" (DAYS 0) (DIFFERENCE 0) (VISITS))
+	<COND (<NOT .STORY> <SET STORY ,HERE>)>
+	<COND (<L? ,STAMINA ,MAX-STAMINA>
+		<SET DIFFERENCE <- ,MAX-STAMINA ,STAMINA>>
+		<COND (<G=? ,MONEY .FEE>
+			<REPEAT ()
+				<CRLF>
+				<TELL "It costs " N .FEE " per day to regain " N .GAIN " stamina" ,PERIOD-CR>
+				<SET DAYS <GET-NUMBER "How many days will you spend here" 0 .DIFFERENCE>>
+				<COND (<G? .DAYS 0>
+					<COND (<G=? ,MONEY <* .DAYS .FEE>>
+						<GAIN-STAMINA <* .DAYS .GAIN>>
+						<COST-MONEY <* .DAYS .FEE> ,TEXT-PAID>
+						<SET VISITS <GETP .STORY ,P?VISITS>>
+						<SET VISITS <+ .VISITS .DAYS>>
+						<PUTP .STORY ,P?VISITS .VISITS>
+						<RETURN>
+					)(ELSE
+						<EMPHASIZE "You can't afford that!">
+					)>
+				)(ELSE
+					<EMPHASIZE "You decide not to rest here.">
+					<RETURN>
+				)>
+			>
+		)(ELSE
+			<EMPHASIZE "You cannot afford to rest here.">
+		)>
+	)(ELSE
+		<EMPHASIZE "You are not injured and do not need to recover.">
+	)>>
+
+; "Gambling Den routines"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE GAMBLING-DEN (MAX "AUX" BET ROLL)
+	<COND (<G=? ,MONEY .MAX>
+		<CRLF>
+		<TELL "Do you wish to gamble (" N .MAX " " D ,CURRENCY " maximum)?">
+		<COND (<YES?>
+			<REPEAT ()
+				<SET BET <GET-NUMBER "How much will you bet" 1 .MAX>>
+				<REPEAT ()
+					<SET ROLL <ROLL-DICE 2>>
+					<CRLF>
+					<TELL "You rolled " N .ROLL CR>
+					<PRESS-A-KEY>
+					<COND (<NOT <PROCESS-RANDOM-BLESSING>> <RETURN>)>
+				>
+				<COND (<L=? .ROLL 2>
+					<EMPHASIZE "You win five times your bet!">
+					<SETG MONEY <+ ,MONEY <* .BET 5>>>
+				)(<L=? .ROLL 4>
+					<EMPHASIZE "You win twice your bet!">
+					<SETG MONEY <+ ,MONEY <* .BET 2>>>
+				)(<L=? .ROLL 9>
+					<EMPHASIZE "You lost your bet!">
+					<SETG MONEY <- ,MONEY .BET>>
+				)(<L=? .ROLL 11>
+					<EMPHASIZE "You win twice your bet!">
+					<SETG MONEY <+ ,MONEY <* .BET 2>>>
+				)(ELSE
+					<EMPHASIZE "You win five times your bet!">
+					<SETG MONEY <+ ,MONEY <* .BET 5>>>
+				)>
+				<COND (<L? ,MONEY 0> <SETG MONEY 0>)>
+				<UPDATE-STATUS-LINE>
+				<COND (<L? ,MONEY .MAX>
+					<EMPHASIZE "You are thrown out of the Gambling Den!">
+					<RETURN>
+				)>
+				<CRLF>
+				<TELL "Are you ready to leave?">
+				<COND (<YES?> <RETURN>)>
+			>
+		)>
+	)>>
+
+; "Temple Routines"
+; ---------------------------------------------------------------------------------------------
+
+<ROUTINE BECOME-INITIATE (FEE WORSHIP)
+	<COND (<NOT ,GOD>
+		<COND (<G=? ,MONEY .FEE>
+			<CRLF>
+			<TELL ,TEXT-BECOME-INITIATE>
+			<TELL " of " D .WORSHIP "?">
+			<COND (<YES?>
+				<COST-MONEY .FEE ,TEXT-PAID>
+				<SETG GOD .WORSHIP>
+				<UPDATE-STATUS-LINE>
+			)>
+		)(ELSE
+			<CRLF>
+			<HLIGHT ,H-BOLD>
+			<TELL "You cannot afford to become an initiate of " D .WORSHIP " at this time" ,EXCLAMATION-CR>
+			<HLIGHT 0>
+		)>
+	)(ELSE
+		<CRLF>
+		<HLIGHT ,H-BOLD>
+		<TELL "You are already an initiate of " D ,GOD ,EXCLAMATION-CR>
+		<HLIGHT 0>
+	)>>
+
+<ROUTINE BECOME-INITIATE-TYRNAI ("AUX" COMBAT)
+	<SET COMBAT <GETP ,CURRENT-CHARACTER ,P?COMBAT>>
+	<COND (<NOT ,GOD>
+		<COND (<G=? .COMBAT 6>
+			<CRLF>
+			<TELL "Become an Initiate of ">
+			<HLIGHT ,H-BOLD>
+			<TELL D ,GOD-TYRNAI>
+			<HLIGHT 0>
+			<TELL " (COMBAT: ">
+			<HLIGHT ,H-BOLD>
+			<TELL N .COMBAT>
+			<HLIGHT 0>
+			<TELL ")?">
+			<COND (<YES?>
+				<SETG GOD ,GOD-TYRNAI>
+				<CRLF>
+				<HLIGHT ,H-BOLD>
+				<TELL "You have become an Initiate of " D ,GOD ,PERIOD-CR>
+				<HLIGHT 0>
+			)>
+		)(ELSE
+			<CRLF>
+			<TELL "You cannot become an Initiate of ">
+			<HLIGHT ,H-BOLD>
+			<TELL D ,GOD-TYRNAI>
+			<HLIGHT 0>
+			<TELL " at this time. Your combat is score is ">
+			<HLIGHT ,H-BOLD>
+			<TELL N .COMBAT>
+			<HLIGHT 0>
+			<TELL ", lower than the required.">
+		)>
+	)(ELSE
+		<CRLF>
+		<HLIGHT ,H-BOLD>
+		<TELL "You are already an Initiate of " D ,GOD ,EXCLAMATION-CR>
+		<HLIGHT 0>
+	)>>
+
+<ROUTINE GOD-CURE (FEE DISCOUNT INITIATE FLAG "OPT" FLAG2)
+	<COND (<CHECK-GOD .INITIATE> <SET FEE .DISCOUNT>)>
+	<CURE-AILMENTS .FEE .FLAG .FLAG2>>
+
+<ROUTINE PURCHASE-BLESSING (FEE DISCOUNT INITIATE BLESSING)
+	<COND (<NOT .BLESSING> <RETURN>)>
+	<COND (<NOT .INITIATE> <RETURN>)>
+	<COND (<CHECK-GOD .INITIATE> <SET FEE .DISCOUNT>)>
+	<COND (<CHECK-BLESSING .BLESSING>
+		<CRLF>
+		<TELL "You already have the ">
+		<PRINT-ITEM .BLESSING T>
+		<TELL ,EXCLAMATION-CR>
+	)(<G=? ,MONEY .FEE>
+		<CRLF>
+		<TELL "Purchase this blessing for " N .FEE " " D ,CURRENCY "?">
+		<COND (<YES?>
+			<COST-MONEY .FEE ,TEXT-PAID>
+			<GAIN-BLESSING .BLESSING>
+		)>
+	)(ELSE
+		<EMPHASIZE "You cannot afford this blessing at this time.">
+	)>>
+
+<ROUTINE PURCHASE-RESURRECTION (FEE DISCOUNT INITIATE RESURRECTION "OPT" STORY)
+	<COND (<NOT .RESURRECTION> <RETURN>)>
+	<COND (<NOT .INITIATE> <RETURN>)>
+	<COND (<CHECK-GOD .INITIATE> <SET FEE .DISCOUNT>)>
+	<COND (,RESURRECTION-ARRANGEMENTS
+		<CRLF>
+		<TELL "You already have the resurrection arrangement: ">
+		<PRINT-ITEM ,RESURRECTION-ARRANGEMENTS T>
+		<TELL ,EXCLAMATION-CR>
+		<COND (<G=? ,MONEY .FEE>
+			<CRLF>
+			<TELL "Do you wish to cancel this and make a new arrangement?">
+			<COND (<YES?>
+				<COST-MONEY .FEE ,TEXT-PAID>
+				<SETG RESURRECTION-ARRANGEMENTS .RESURRECTION>
+				<EMPHASIZE "You have made resurrection arrangements at this temple.">
+				<COND (.STORY <PUTP .RESURRECTION ,P?CONTINUE .STORY>)>
+			)>
+		)(ELSE
+			<EMPHASIZE "... and you cannot afford to make a new arrangement at this time.">
+		)>
+	)(<G=? ,MONEY .FEE>
+		<CRLF>
+		<TELL "Make resurrection arrangements at this temple for " N .FEE " " D ,CURRENCY "?">
+		<COND (<YES?>
+			<COST-MONEY .FEE ,TEXT-PAID>
+			<SETG RESURRECTION-ARRANGEMENTS .RESURRECTION>
+			<EMPHASIZE "You have made resurrection arrangements at this temple.">
+		)>
+	)(ELSE
+		<EMPHASIZE "You cannot afford to make resurrection arrangements at this time.">
+	)>>
+
+<ROUTINE RENOUNCE-WORSHIP (FEE WORSHIP "AUX" RESURRECTION)
+	<COND (,GOD
+		<COND (<CHECK-GOD .WORSHIP>
+			<COND (<G=? ,MONEY .FEE>
+				<CRLF>
+				<TELL "Renounce the worship of " D .WORSHIP "?">
+				<COND (<YES?>
+					<COND (<G? .FEE 0> <COST-MONEY .FEE ,TEXT-PAID>)>
+					<SETG GOD NONE>
+					<SET RESURRECTION <GETP .WORSHIP ,P?RESURRECTION>>
+					<COND (.RESURRECTION
+						<COND (<EQUAL? .RESURRECTION ,RESURRECTION-ANY>
+							<EMPHASIZE "You lose all outstanding resurrection arrangements!">
+							<SETG RESURRECTION-ARRANGEMENTS NONE>
+						)(<EQUAL? ,RESURRECTION-ARRANGEMENTS .RESURRECTION>
+							<EMPHASIZE "You've lost resurrection arrangements made at this temple!">
+							<SETG RESURRECTION-ARRANGEMENTS NONE>
+						)>
+					)>
+					<UPDATE-STATUS-LINE>
+				)>
+			)(ELSE
+				<EMPHASIZE "You cannot afford to pay the compensation of the priesthood!">
+			)>
+		)(ELSE
+			<CRLF>
+			<HLIGHT ,H-BOLD>
+			<TELL "You are not an initiate of " D .WORSHIP ,EXCLAMATION-CR>
+			<HLIGHT 0>
+		)>
+	)(ELSE
+		<EMPHASIZE "You are not an initiate of any god!">
+	)>>
+
+; "Instructions"
+; ---------------------------------------------------------------------------------------------
+
+<CONSTANT INSTRUCTIONS-HEADER "|HOW TO USE THIS E-ADVENTURE|">
+<CONSTANT INSTRUCTIONS-TEXT "Fabled Lands: War-Torn Kingdom is a digital gamebook -- an interactive game where the choices that you make correspond to numbered sections in the game. In moving through these sections you are creating a unique story for your adventuring persona.||You will begin your adventure by choosing a pre-generated character or a profession (see below)with the ability scores and Stamina that correspond to that profession at 1st Rank.||ABILITIES|---------||You have six abilities. Your initial score in each ability is decided by your choice of profession. Ability scores range from 1 (low ability) to 6 (a high level of ability). Ability scores will change during your adventure but can never be lower than 1 or higher than 12.||CHARISMA the knack of befriending people|COMBAT the skill of fighting|MAGIC the art of casting spells|SANCTITY the gift of divine power and wisdom|SCOUTING the techniques of tracking and wilderness lore|THIEVERY the talent for stealth and lock picking||STAMINA|-------||Stamina is lost when you get hurt. Keep track of your Stamina score throughout your travels and adventures. You must guard against your Stamina score dropping to zero, because if it does you are dead.||Lost Stamina can be recovered by various means, but your Stamina cannot go above its initial score until you advance in Rank.||You start with 9 Stamina points.||RANK|----||You start at 1st Rank. By completing quests and overcoming enemies, you will have the chance to go up in Rank.||You will be told during the course of your adventures when you are entitled to advance in Rank. Characters of higher Rank are tougher, luckier and generally better able to deal with trouble.||POSSESSIONS|-----------||You can carry up to twelve possessions on your person. All characters begin with 16 Shards in cash and the following possessions:||* sword|* leather jerkin (Defence +1)||Remember that you are limited to carrying a total of 12 items, so if you get more than this you'll have to cross something off your inventory or find somewhere to store extra items. There is no limit to how much money you can carry.||DEFENCE|-------||Your Defence score is equal to:||* your COMBAT score|* plus your RANK|* plus the bonus for the armour you're wearing (if any)||Every suit of armour you find will have a Defence bonus listed for it. The higher the bonus, the better the armour. You can carry several suits of armour if you wish -- but because you can wear only one at a time, you only get the Defence bonus of the best armour you are carrying.||To start with, it is just your COMBAT score plus 2 (because you are 1st Rank and have +1 DEFENSE).||It will be updated if you get better armour or increase in Rank or COMBAT ability.||ADDITIONAL HELP|---------------||During action selection and in other parts of the game, pressing '?' brings up a list of additional command keys.">
+<CONSTANT INSTRUCTIONS-PROFESSIONS "PROFESSIONS||Every adventurer has some strengths and some weaknesses. Your choice of profession determines your initial scores in the six abilities.">
+
+<ROUTINE INSTRUCTIONS ()
+	<HLIGHT ,H-BOLD>
+	<TELL ,INSTRUCTIONS-HEADER>
+	<HLIGHT 0>
+	<CRLF>
+	<TELL ,INSTRUCTIONS-TEXT>
+	<CRLF>>
+
+<CONSTANT HELP-TEXT "P - Display player information (abilities, items, codewords)|U - Use or drop an item from your inventory|R - Restore progress from a saved file|S - Save current progress to a file|Q - quit the game">
+
+<ROUTINE DISPLAY-HELP ()
+	<CRLF>
+	<HLIGHT ,H-BOLD>
+	<TELL "Additional Command Keys:">
+	<HLIGHT 0>
+	<CRLF>
+	<TELL CR ,HELP-TEXT>
+	<CRLF>>
+
+; "Story"
+; ---------------------------------------------------------------------------------------------
+
+; "reset routines"
+<ROUTINE RESET-OBJECTS ()
+	<RETURN>>
+
+<ROUTINE RESET-STORY ()
+	<RETURN>>
+
+; "endings"
+<CONSTANT BAD-ENDING "Your adventure ends here.|">
+<CONSTANT GOOD-ENDING "Further adventure awaits.|">
+<CONSTANT ENDING-BLOOD-DARK-SEA "Further adventures await at Fabled Lands 3: Over the Blood-Dark Sea.|">
+<CONSTANT ENDING-CITIES-GOLD-GLORY "Further adventures await at Fabled Lands 2: Cities of Gold and Glory.|">
+<CONSTANT ENDING-PLAINS-HOWLING-DARKNESS "Further adventures await at Fabled Lands 4: The Plains of Howling Darkness.|">
+
+<CONSTANT DIED-IN-COMBAT "You died in combat">
+<CONSTANT DIED-OF-HUNGER "You starved to death">
+<CONSTANT DIED-GREW-WEAKER "You grew weaker and eventually died">
+<CONSTANT DIED-FROM-INJURIES "You died from your injuries">
+<CONSTANT DIED-FROM-COLD "You eventually freeze to death">
+<CONSTANT NOTHING-HAPPENS "Nothing happens.">
+
+<CONSTANT TEXT-YOU-CAN-GO "You can go:">
+<CONSTANT TEXT-YOU-CAN "You can:">
+
+<CONSTANT HAVE-A "You have a">
+<CONSTANT HAVE-AN "You have an">
+<CONSTANT HAVE-THE "You have the">
+<CONSTANT HAVE-CODEWORD "You have the codeword">
+<CONSTANT HAVE-NEITHER "You have neither">
+<CONSTANT HAVE-TITLE "You have the title">
+<CONSTANT IF-NOT "If not">
+<CONSTANT OTHERWISE "Otherwise">
+<CONSTANT YOU-ARE-A "You are a">
+
+<CONSTANT TEXT-ROLL-COMBAT "Make a COMBAT roll">
+<CONSTANT TEXT-ROLL-CHARISMA "Make a CHARISMA roll">
+<CONSTANT TEXT-ROLL-MAGIC "Make a MAGIC roll">
+<CONSTANT TEXT-ROLL-SANCTITY "Make a SANCTITY roll">
+<CONSTANT TEXT-ROLL-SCOUTING "Make a SCOUTING roll">
+<CONSTANT TEXT-ROLL-THIEVERY "Make a THIEVERY roll">
+
+<CONSTANT TEXT-PAID "paid">
+<CONSTANT TEXT-USED "used">
+
+<CONSTANT TEXT-STORM "Storm">
+<CONSTANT TEXT-UNEVENTFUL "An uneventful voyage">
+
+<CONSTANT TEXT-BECOME-INITIATE "Become an Initiate">
+<CONSTANT TEXT-LEAVE-TEMPLE "Leave the temple">
+<CONSTANT TEXT-RENOUNCE-WORSHIP "Renounce worship">
+<CONSTANT TEXT-RESURRECTION-ARRANGEMENTS "Make Resurrection Arrangements">
+<CONSTANT TEXT-SEEK-BLESSING "Seek a blessing">
+<CONSTANT CHOICES-STANDARD-TEMPLE <LTABLE TEXT-BECOME-INITIATE TEXT-RENOUNCE-WORSHIP TEXT-SEEK-BLESSING TEXT-LEAVE-TEMPLE>>
+
+<CONSTANT CHOICES-COMBAT <LTABLE TEXT-ROLL-COMBAT>>
+<CONSTANT CHOICES-CHARISMA <LTABLE TEXT-ROLL-CHARISMA>>
+<CONSTANT CHOICES-MAGIC <LTABLE TEXT-ROLL-MAGIC>>
+<CONSTANT CHOICES-SANCTITY <LTABLE TEXT-ROLL-SANCTITY>>
+<CONSTANT CHOICES-SCOUTING <LTABLE TEXT-ROLL-SCOUTING>>
+<CONSTANT CHOICES-THIEVERY <LTABLE TEXT-ROLL-THIEVERY>>
+<CONSTANT CHOICES-RANDOM <LTABLE TEXT-RANDOM-EVENT>>
+
+<CONSTANT ONE-ABILITY <LTABLE R-TEST-ABILITY>>
+<CONSTANT ONE-RANDOM <LTABLE R-RANDOM>>
+<CONSTANT TWO-ABILITY <LTABLE R-TEST-ABILITY R-TEST-ABILITY>>
+
+<CONSTANT CHOICES-CODEWORD <LTABLE HAVE-CODEWORD IF-NOT>>
+<CONSTANT ONE-CODEWORD <LTABLE R-CODEWORD R-NONE>>
+<CONSTANT ONE-ITEM <LTABLE R-ITEM R-NONE>>
+
+<CONSTANT TEXT-TAKE-MISSION "Take up the mission">
+
+<ROUTINE STORY-GAIN-CARGO (CARGO "OPT" CAPACITY COUNT)
+	<COND (,CURRENT-SHIP
+		<MOVE .CARGO ,CURRENT-SHIP>
+		<SET CAPACITY <GETP ,CURRENT-SHIP ,P?CAPACITY>>
+		<SET COUNT <COUNT-CONTAINER ,CARGO>>
+		<COND (<G? .COUNT .CAPACITY>
+			<DEC .COUNT>
+			<STORY-LOSE-CARGO .COUNT>
+		)>
+	)>>
+
+<ROUTINE STORY-LOSE-BLESSING ("OPT" MAX "AUX" COUNT)
+	<COND (<NOT <ASSIGNED? MAX>> <SET MAX 1>)>
+	<SET COUNT <COUNT-CONTAINER ,BLESSINGS>>
+	<COND (<L=? .COUNT .MAX>
+		<RESET-CARGO>
+	)(ELSE
+		<LOSE-STUFF ,BLESSINGS ,LOST-STUFF "blessing" <- .COUNT .MAX> ,RESET-BLESSINGS>
+	)>>
+
+<ROUTINE STORY-LOSE-CARGO ("OPT" MAX "AUX" COUNT)
+	<COND (<NOT <ASSIGNED? MAX>> <SET MAX 1>)>
+	<SET COUNT <COUNT-CONTAINER ,CARGO>>
+	<COND (<L=? .COUNT .MAX>
+		<RESET-CARGO>
+	)(ELSE
+		<LOSE-STUFF ,CARGO ,LOST-STUFF "cargo" <- .COUNT .MAX> ,RESET-CARGO>
+	)>>
+
+<CONSTANT TEXT-DROWNED "You drowned!">
+<CONSTANT TEXT-DRIFTWOOD "You manage to find some driftwood and make it back to shore">
+<CONSTANT TEXT-SHIPWRECK "Your ship, crew and cargo are lost to the deep, dark sea. Your only thought now is to save yourself.">
+
+<ROUTINE STORY-SHIPWRECK (STORY "AUX" (RANK 1) ROLL LOSS)
+	<SET RANK <GET-RANK ,CURRENT-CHARACTER>>
+	<SET ROLL <RANDOM-EVENT 2>>
+	<COND (<G? .ROLL .RANK>
+		<EMPHASIZE ,TEXT-DROWNED>
+	)(ELSE
+		<RESET-CONTAINER ,CARGO>
+		<REMOVE ,CURRENT-SHIP>
+		<SETG CURRENT-SHIP NONE>
+		<CRLF>
+		<TELL ,TEXT-DRIFTWOOD>
+		<TELL ,PERIOD-CR>
+		<SET LOSS <RANDOM-EVENT 1 0 T>>
+		<LOSE-STAMINA .LOSS ,DIED-GREW-WEAKER .STORY>
+	)>>
+
+<ROUTINE STORY-LOSE-EVERYTHING ("OPT" (VERBOSE T))
+	<COND (.VERBOSE
+		<EMPHASIZE "You've lost all your money and possessions.">
+	)>
+	<RESET-POSSESSIONS>
+	<SETG MONEY 0>
+	<UPDATE-STATUS-LINE>>
+
+<ROUTINE STORY-RESET-CREW ("OPT" CONDITION)
+	<COND (<NOT .CONDITION> <SET .CONDITION ,CONDITION-GOOD>)>
+	<COND (,CURRENT-SHIP <PUTP ,CURRENT-SHIP ,P?CONDITION .CONDITION>)>>
+
+<ROUTINE STORY-ROLL-RANK (STORY "OPT" (MODIFIER -1) "AUX" ROLL (RANK 1))
+	<SET ROLL <RANDOM-EVENT 1 .MODIFIER T>>
+	<SET RANK <GET-RANK ,CURRENT-CHARACTER>>
+	<COND (<L=? .ROLL .RANK> <STORY-JUMP .STORY>)>>
+
+<ROOM STORY-BLOOD-DARK-SEA
+	(DESC "Over the Blood-Dark Sea")
+	(VICTORY ENDING-BLOOD-DARK-SEA)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY-CITIES-GOLD-GLORY
+	(DESC "Cities of Gold and Glory")
+	(VICTORY ENDING-CITIES-GOLD-GLORY)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY-PLAINS-HOWLING-DARKNESS
+	(DESC "Plains of Howling Darkness")
+	(VICTORY ENDING-PLAINS-HOWLING-DARKNESS)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY001
+	(IN ROOMS)
+	(DESC "001")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY002
+	(IN ROOMS)
+	(DESC "002")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY003
+	(IN ROOMS)
+	(DESC "003")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY004
+	(IN ROOMS)
+	(DESC "004")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY005
+	(IN ROOMS)
+	(DESC "005")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY006
+	(IN ROOMS)
+	(DESC "006")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY007
+	(IN ROOMS)
+	(DESC "007")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY008
+	(IN ROOMS)
+	(DESC "008")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY009
+	(IN ROOMS)
+	(DESC "009")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY010
+	(IN ROOMS)
+	(DESC "010")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY011
+	(IN ROOMS)
+	(DESC "011")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY012
+	(IN ROOMS)
+	(DESC "012")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY013
+	(IN ROOMS)
+	(DESC "013")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY014
+	(IN ROOMS)
+	(DESC "014")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY015
+	(IN ROOMS)
+	(DESC "015")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY016
+	(IN ROOMS)
+	(DESC "016")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY017
+	(IN ROOMS)
+	(DESC "017")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY018
+	(IN ROOMS)
+	(DESC "018")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY019
+	(IN ROOMS)
+	(DESC "019")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY020
+	(IN ROOMS)
+	(DESC "020")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY021
+	(IN ROOMS)
+	(DESC "021")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY022
+	(IN ROOMS)
+	(DESC "022")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY023
+	(IN ROOMS)
+	(DESC "023")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY024
+	(IN ROOMS)
+	(DESC "024")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY025
+	(IN ROOMS)
+	(DESC "025")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY026
+	(IN ROOMS)
+	(DESC "026")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY027
+	(IN ROOMS)
+	(DESC "027")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY028
+	(IN ROOMS)
+	(DESC "028")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY029
+	(IN ROOMS)
+	(DESC "029")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY030
+	(IN ROOMS)
+	(DESC "030")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY031
+	(IN ROOMS)
+	(DESC "031")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY032
+	(IN ROOMS)
+	(DESC "032")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY033
+	(IN ROOMS)
+	(DESC "033")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY034
+	(IN ROOMS)
+	(DESC "034")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY035
+	(IN ROOMS)
+	(DESC "035")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY036
+	(IN ROOMS)
+	(DESC "036")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY037
+	(IN ROOMS)
+	(DESC "037")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY038
+	(IN ROOMS)
+	(DESC "038")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY039
+	(IN ROOMS)
+	(DESC "039")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY040
+	(IN ROOMS)
+	(DESC "040")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY041
+	(IN ROOMS)
+	(DESC "041")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY042
+	(IN ROOMS)
+	(DESC "042")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY043
+	(IN ROOMS)
+	(DESC "043")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY044
+	(IN ROOMS)
+	(DESC "044")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY045
+	(IN ROOMS)
+	(DESC "045")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY046
+	(IN ROOMS)
+	(DESC "046")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY047
+	(IN ROOMS)
+	(DESC "047")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY048
+	(IN ROOMS)
+	(DESC "048")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY049
+	(IN ROOMS)
+	(DESC "049")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY050
+	(IN ROOMS)
+	(DESC "050")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY051
+	(IN ROOMS)
+	(DESC "051")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY052
+	(IN ROOMS)
+	(DESC "052")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY053
+	(IN ROOMS)
+	(DESC "053")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY054
+	(IN ROOMS)
+	(DESC "054")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY055
+	(IN ROOMS)
+	(DESC "055")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY056
+	(IN ROOMS)
+	(DESC "056")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY057
+	(IN ROOMS)
+	(DESC "057")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY058
+	(IN ROOMS)
+	(DESC "058")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY059
+	(IN ROOMS)
+	(DESC "059")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY060
+	(IN ROOMS)
+	(DESC "060")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY061
+	(IN ROOMS)
+	(DESC "061")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY062
+	(IN ROOMS)
+	(DESC "062")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY063
+	(IN ROOMS)
+	(DESC "063")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY064
+	(IN ROOMS)
+	(DESC "064")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY065
+	(IN ROOMS)
+	(DESC "065")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY066
+	(IN ROOMS)
+	(DESC "066")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY067
+	(IN ROOMS)
+	(DESC "067")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY068
+	(IN ROOMS)
+	(DESC "068")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY069
+	(IN ROOMS)
+	(DESC "069")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY070
+	(IN ROOMS)
+	(DESC "070")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY071
+	(IN ROOMS)
+	(DESC "071")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY072
+	(IN ROOMS)
+	(DESC "072")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY073
+	(IN ROOMS)
+	(DESC "073")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY074
+	(IN ROOMS)
+	(DESC "074")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY075
+	(IN ROOMS)
+	(DESC "075")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY076
+	(IN ROOMS)
+	(DESC "076")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY077
+	(IN ROOMS)
+	(DESC "077")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY078
+	(IN ROOMS)
+	(DESC "078")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY079
+	(IN ROOMS)
+	(DESC "079")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY080
+	(IN ROOMS)
+	(DESC "080")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY081
+	(IN ROOMS)
+	(DESC "081")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY082
+	(IN ROOMS)
+	(DESC "082")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY083
+	(IN ROOMS)
+	(DESC "083")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY084
+	(IN ROOMS)
+	(DESC "084")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY085
+	(IN ROOMS)
+	(DESC "085")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY086
+	(IN ROOMS)
+	(DESC "086")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY087
+	(IN ROOMS)
+	(DESC "087")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY088
+	(IN ROOMS)
+	(DESC "088")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY089
+	(IN ROOMS)
+	(DESC "089")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY090
+	(IN ROOMS)
+	(DESC "090")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY091
+	(IN ROOMS)
+	(DESC "091")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY092
+	(IN ROOMS)
+	(DESC "092")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY093
+	(IN ROOMS)
+	(DESC "093")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY094
+	(IN ROOMS)
+	(DESC "094")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY095
+	(IN ROOMS)
+	(DESC "095")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY096
+	(IN ROOMS)
+	(DESC "096")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY097
+	(IN ROOMS)
+	(DESC "097")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY098
+	(IN ROOMS)
+	(DESC "098")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY099
+	(IN ROOMS)
+	(DESC "099")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY100
+	(IN ROOMS)
+	(DESC "100")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY101
+	(IN ROOMS)
+	(DESC "101")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY102
+	(IN ROOMS)
+	(DESC "102")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY103
+	(IN ROOMS)
+	(DESC "103")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY104
+	(IN ROOMS)
+	(DESC "104")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY105
+	(IN ROOMS)
+	(DESC "105")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY106
+	(IN ROOMS)
+	(DESC "106")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY107
+	(IN ROOMS)
+	(DESC "107")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY108
+	(IN ROOMS)
+	(DESC "108")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY109
+	(IN ROOMS)
+	(DESC "109")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY110
+	(IN ROOMS)
+	(DESC "110")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY111
+	(IN ROOMS)
+	(DESC "111")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY112
+	(IN ROOMS)
+	(DESC "112")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY113
+	(IN ROOMS)
+	(DESC "113")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY114
+	(IN ROOMS)
+	(DESC "114")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY115
+	(IN ROOMS)
+	(DESC "115")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY116
+	(IN ROOMS)
+	(DESC "116")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY117
+	(IN ROOMS)
+	(DESC "117")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY118
+	(IN ROOMS)
+	(DESC "118")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY119
+	(IN ROOMS)
+	(DESC "119")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY120
+	(IN ROOMS)
+	(DESC "120")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY121
+	(IN ROOMS)
+	(DESC "121")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY122
+	(IN ROOMS)
+	(DESC "122")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY123
+	(IN ROOMS)
+	(DESC "123")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY124
+	(IN ROOMS)
+	(DESC "124")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY125
+	(IN ROOMS)
+	(DESC "125")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY126
+	(IN ROOMS)
+	(DESC "126")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY127
+	(IN ROOMS)
+	(DESC "127")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY128
+	(IN ROOMS)
+	(DESC "128")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY129
+	(IN ROOMS)
+	(DESC "129")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY130
+	(IN ROOMS)
+	(DESC "130")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY131
+	(IN ROOMS)
+	(DESC "131")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY132
+	(IN ROOMS)
+	(DESC "132")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY133
+	(IN ROOMS)
+	(DESC "133")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY134
+	(IN ROOMS)
+	(DESC "134")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY135
+	(IN ROOMS)
+	(DESC "135")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY136
+	(IN ROOMS)
+	(DESC "136")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY137
+	(IN ROOMS)
+	(DESC "137")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY138
+	(IN ROOMS)
+	(DESC "138")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY139
+	(IN ROOMS)
+	(DESC "139")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY140
+	(IN ROOMS)
+	(DESC "140")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY141
+	(IN ROOMS)
+	(DESC "141")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY142
+	(IN ROOMS)
+	(DESC "142")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY143
+	(IN ROOMS)
+	(DESC "143")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY144
+	(IN ROOMS)
+	(DESC "144")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY145
+	(IN ROOMS)
+	(DESC "145")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY146
+	(IN ROOMS)
+	(DESC "146")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY147
+	(IN ROOMS)
+	(DESC "147")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY148
+	(IN ROOMS)
+	(DESC "148")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY149
+	(IN ROOMS)
+	(DESC "149")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY150
+	(IN ROOMS)
+	(DESC "150")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY151
+	(IN ROOMS)
+	(DESC "151")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY152
+	(IN ROOMS)
+	(DESC "152")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY153
+	(IN ROOMS)
+	(DESC "153")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY154
+	(IN ROOMS)
+	(DESC "154")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY155
+	(IN ROOMS)
+	(DESC "155")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY156
+	(IN ROOMS)
+	(DESC "156")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY157
+	(IN ROOMS)
+	(DESC "157")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY158
+	(IN ROOMS)
+	(DESC "158")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY159
+	(IN ROOMS)
+	(DESC "159")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY160
+	(IN ROOMS)
+	(DESC "160")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY161
+	(IN ROOMS)
+	(DESC "161")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY162
+	(IN ROOMS)
+	(DESC "162")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY163
+	(IN ROOMS)
+	(DESC "163")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY164
+	(IN ROOMS)
+	(DESC "164")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY165
+	(IN ROOMS)
+	(DESC "165")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY166
+	(IN ROOMS)
+	(DESC "166")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY167
+	(IN ROOMS)
+	(DESC "167")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY168
+	(IN ROOMS)
+	(DESC "168")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY169
+	(IN ROOMS)
+	(DESC "169")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY170
+	(IN ROOMS)
+	(DESC "170")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY171
+	(IN ROOMS)
+	(DESC "171")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY172
+	(IN ROOMS)
+	(DESC "172")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY173
+	(IN ROOMS)
+	(DESC "173")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY174
+	(IN ROOMS)
+	(DESC "174")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY175
+	(IN ROOMS)
+	(DESC "175")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY176
+	(IN ROOMS)
+	(DESC "176")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY177
+	(IN ROOMS)
+	(DESC "177")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY178
+	(IN ROOMS)
+	(DESC "178")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY179
+	(IN ROOMS)
+	(DESC "179")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY180
+	(IN ROOMS)
+	(DESC "180")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY181
+	(IN ROOMS)
+	(DESC "181")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY182
+	(IN ROOMS)
+	(DESC "182")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY183
+	(IN ROOMS)
+	(DESC "183")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY184
+	(IN ROOMS)
+	(DESC "184")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY185
+	(IN ROOMS)
+	(DESC "185")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY186
+	(IN ROOMS)
+	(DESC "186")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY187
+	(IN ROOMS)
+	(DESC "187")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY188
+	(IN ROOMS)
+	(DESC "188")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY189
+	(IN ROOMS)
+	(DESC "189")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY190
+	(IN ROOMS)
+	(DESC "190")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY191
+	(IN ROOMS)
+	(DESC "191")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY192
+	(IN ROOMS)
+	(DESC "192")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY193
+	(IN ROOMS)
+	(DESC "193")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY194
+	(IN ROOMS)
+	(DESC "194")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY195
+	(IN ROOMS)
+	(DESC "195")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY196
+	(IN ROOMS)
+	(DESC "196")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY197
+	(IN ROOMS)
+	(DESC "197")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY198
+	(IN ROOMS)
+	(DESC "198")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY199
+	(IN ROOMS)
+	(DESC "199")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY200
+	(IN ROOMS)
+	(DESC "200")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY201
+	(IN ROOMS)
+	(DESC "201")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY202
+	(IN ROOMS)
+	(DESC "202")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY203
+	(IN ROOMS)
+	(DESC "203")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY204
+	(IN ROOMS)
+	(DESC "204")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY205
+	(IN ROOMS)
+	(DESC "205")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY206
+	(IN ROOMS)
+	(DESC "206")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY207
+	(IN ROOMS)
+	(DESC "207")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY208
+	(IN ROOMS)
+	(DESC "208")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY209
+	(IN ROOMS)
+	(DESC "209")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY210
+	(IN ROOMS)
+	(DESC "210")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY211
+	(IN ROOMS)
+	(DESC "211")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY212
+	(IN ROOMS)
+	(DESC "212")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY213
+	(IN ROOMS)
+	(DESC "213")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY214
+	(IN ROOMS)
+	(DESC "214")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY215
+	(IN ROOMS)
+	(DESC "215")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY216
+	(IN ROOMS)
+	(DESC "216")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY217
+	(IN ROOMS)
+	(DESC "217")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY218
+	(IN ROOMS)
+	(DESC "218")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY219
+	(IN ROOMS)
+	(DESC "219")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY220
+	(IN ROOMS)
+	(DESC "220")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY221
+	(IN ROOMS)
+	(DESC "221")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY222
+	(IN ROOMS)
+	(DESC "222")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY223
+	(IN ROOMS)
+	(DESC "223")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY224
+	(IN ROOMS)
+	(DESC "224")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY225
+	(IN ROOMS)
+	(DESC "225")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY226
+	(IN ROOMS)
+	(DESC "226")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY227
+	(IN ROOMS)
+	(DESC "227")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY228
+	(IN ROOMS)
+	(DESC "228")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY229
+	(IN ROOMS)
+	(DESC "229")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY230
+	(IN ROOMS)
+	(DESC "230")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY231
+	(IN ROOMS)
+	(DESC "231")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY232
+	(IN ROOMS)
+	(DESC "232")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY233
+	(IN ROOMS)
+	(DESC "233")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY234
+	(IN ROOMS)
+	(DESC "234")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY235
+	(IN ROOMS)
+	(DESC "235")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY236
+	(IN ROOMS)
+	(DESC "236")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY237
+	(IN ROOMS)
+	(DESC "237")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY238
+	(IN ROOMS)
+	(DESC "238")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY239
+	(IN ROOMS)
+	(DESC "239")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY240
+	(IN ROOMS)
+	(DESC "240")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY241
+	(IN ROOMS)
+	(DESC "241")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY242
+	(IN ROOMS)
+	(DESC "242")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY243
+	(IN ROOMS)
+	(DESC "243")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY244
+	(IN ROOMS)
+	(DESC "244")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY245
+	(IN ROOMS)
+	(DESC "245")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY246
+	(IN ROOMS)
+	(DESC "246")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY247
+	(IN ROOMS)
+	(DESC "247")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY248
+	(IN ROOMS)
+	(DESC "248")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY249
+	(IN ROOMS)
+	(DESC "249")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY250
+	(IN ROOMS)
+	(DESC "250")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY251
+	(IN ROOMS)
+	(DESC "251")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY252
+	(IN ROOMS)
+	(DESC "252")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY253
+	(IN ROOMS)
+	(DESC "253")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY254
+	(IN ROOMS)
+	(DESC "254")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY255
+	(IN ROOMS)
+	(DESC "255")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY256
+	(IN ROOMS)
+	(DESC "256")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY257
+	(IN ROOMS)
+	(DESC "257")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY258
+	(IN ROOMS)
+	(DESC "258")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY259
+	(IN ROOMS)
+	(DESC "259")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY260
+	(IN ROOMS)
+	(DESC "260")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY261
+	(IN ROOMS)
+	(DESC "261")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY262
+	(IN ROOMS)
+	(DESC "262")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY263
+	(IN ROOMS)
+	(DESC "263")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY264
+	(IN ROOMS)
+	(DESC "264")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY265
+	(IN ROOMS)
+	(DESC "265")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY266
+	(IN ROOMS)
+	(DESC "266")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY267
+	(IN ROOMS)
+	(DESC "267")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY268
+	(IN ROOMS)
+	(DESC "268")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY269
+	(IN ROOMS)
+	(DESC "269")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY270
+	(IN ROOMS)
+	(DESC "270")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY271
+	(IN ROOMS)
+	(DESC "271")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY272
+	(IN ROOMS)
+	(DESC "272")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY273
+	(IN ROOMS)
+	(DESC "273")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY274
+	(IN ROOMS)
+	(DESC "274")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY275
+	(IN ROOMS)
+	(DESC "275")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY276
+	(IN ROOMS)
+	(DESC "276")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY277
+	(IN ROOMS)
+	(DESC "277")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY278
+	(IN ROOMS)
+	(DESC "278")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY279
+	(IN ROOMS)
+	(DESC "279")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY280
+	(IN ROOMS)
+	(DESC "280")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY281
+	(IN ROOMS)
+	(DESC "281")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY282
+	(IN ROOMS)
+	(DESC "282")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY283
+	(IN ROOMS)
+	(DESC "283")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY284
+	(IN ROOMS)
+	(DESC "284")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY285
+	(IN ROOMS)
+	(DESC "285")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY286
+	(IN ROOMS)
+	(DESC "286")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY287
+	(IN ROOMS)
+	(DESC "287")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY288
+	(IN ROOMS)
+	(DESC "288")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY289
+	(IN ROOMS)
+	(DESC "289")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY290
+	(IN ROOMS)
+	(DESC "290")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY291
+	(IN ROOMS)
+	(DESC "291")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY292
+	(IN ROOMS)
+	(DESC "292")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY293
+	(IN ROOMS)
+	(DESC "293")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY294
+	(IN ROOMS)
+	(DESC "294")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY295
+	(IN ROOMS)
+	(DESC "295")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY296
+	(IN ROOMS)
+	(DESC "296")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY297
+	(IN ROOMS)
+	(DESC "297")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY298
+	(IN ROOMS)
+	(DESC "298")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY299
+	(IN ROOMS)
+	(DESC "299")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY300
+	(IN ROOMS)
+	(DESC "300")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY301
+	(IN ROOMS)
+	(DESC "301")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY302
+	(IN ROOMS)
+	(DESC "302")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY303
+	(IN ROOMS)
+	(DESC "303")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY304
+	(IN ROOMS)
+	(DESC "304")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY305
+	(IN ROOMS)
+	(DESC "305")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY306
+	(IN ROOMS)
+	(DESC "306")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY307
+	(IN ROOMS)
+	(DESC "307")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY308
+	(IN ROOMS)
+	(DESC "308")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY309
+	(IN ROOMS)
+	(DESC "309")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY310
+	(IN ROOMS)
+	(DESC "310")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY311
+	(IN ROOMS)
+	(DESC "311")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY312
+	(IN ROOMS)
+	(DESC "312")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY313
+	(IN ROOMS)
+	(DESC "313")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY314
+	(IN ROOMS)
+	(DESC "314")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY315
+	(IN ROOMS)
+	(DESC "315")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY316
+	(IN ROOMS)
+	(DESC "316")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY317
+	(IN ROOMS)
+	(DESC "317")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY318
+	(IN ROOMS)
+	(DESC "318")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY319
+	(IN ROOMS)
+	(DESC "319")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY320
+	(IN ROOMS)
+	(DESC "320")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY321
+	(IN ROOMS)
+	(DESC "321")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY322
+	(IN ROOMS)
+	(DESC "322")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY323
+	(IN ROOMS)
+	(DESC "323")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY324
+	(IN ROOMS)
+	(DESC "324")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY325
+	(IN ROOMS)
+	(DESC "325")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY326
+	(IN ROOMS)
+	(DESC "326")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY327
+	(IN ROOMS)
+	(DESC "327")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY328
+	(IN ROOMS)
+	(DESC "328")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY329
+	(IN ROOMS)
+	(DESC "329")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY330
+	(IN ROOMS)
+	(DESC "330")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY331
+	(IN ROOMS)
+	(DESC "331")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY332
+	(IN ROOMS)
+	(DESC "332")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY333
+	(IN ROOMS)
+	(DESC "333")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY334
+	(IN ROOMS)
+	(DESC "334")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY335
+	(IN ROOMS)
+	(DESC "335")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY336
+	(IN ROOMS)
+	(DESC "336")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY337
+	(IN ROOMS)
+	(DESC "337")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY338
+	(IN ROOMS)
+	(DESC "338")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY339
+	(IN ROOMS)
+	(DESC "339")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY340
+	(IN ROOMS)
+	(DESC "340")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY341
+	(IN ROOMS)
+	(DESC "341")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY342
+	(IN ROOMS)
+	(DESC "342")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY343
+	(IN ROOMS)
+	(DESC "343")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY344
+	(IN ROOMS)
+	(DESC "344")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY345
+	(IN ROOMS)
+	(DESC "345")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY346
+	(IN ROOMS)
+	(DESC "346")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY347
+	(IN ROOMS)
+	(DESC "347")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY348
+	(IN ROOMS)
+	(DESC "348")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY349
+	(IN ROOMS)
+	(DESC "349")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY350
+	(IN ROOMS)
+	(DESC "350")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY351
+	(IN ROOMS)
+	(DESC "351")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY352
+	(IN ROOMS)
+	(DESC "352")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY353
+	(IN ROOMS)
+	(DESC "353")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY354
+	(IN ROOMS)
+	(DESC "354")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY355
+	(IN ROOMS)
+	(DESC "355")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY356
+	(IN ROOMS)
+	(DESC "356")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY357
+	(IN ROOMS)
+	(DESC "357")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY358
+	(IN ROOMS)
+	(DESC "358")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY359
+	(IN ROOMS)
+	(DESC "359")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY360
+	(IN ROOMS)
+	(DESC "360")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY361
+	(IN ROOMS)
+	(DESC "361")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY362
+	(IN ROOMS)
+	(DESC "362")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY363
+	(IN ROOMS)
+	(DESC "363")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY364
+	(IN ROOMS)
+	(DESC "364")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY365
+	(IN ROOMS)
+	(DESC "365")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY366
+	(IN ROOMS)
+	(DESC "366")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY367
+	(IN ROOMS)
+	(DESC "367")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY368
+	(IN ROOMS)
+	(DESC "368")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY369
+	(IN ROOMS)
+	(DESC "369")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY370
+	(IN ROOMS)
+	(DESC "370")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY371
+	(IN ROOMS)
+	(DESC "371")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY372
+	(IN ROOMS)
+	(DESC "372")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY373
+	(IN ROOMS)
+	(DESC "373")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY374
+	(IN ROOMS)
+	(DESC "374")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY375
+	(IN ROOMS)
+	(DESC "375")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY376
+	(IN ROOMS)
+	(DESC "376")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY377
+	(IN ROOMS)
+	(DESC "377")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY378
+	(IN ROOMS)
+	(DESC "378")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY379
+	(IN ROOMS)
+	(DESC "379")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY380
+	(IN ROOMS)
+	(DESC "380")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY381
+	(IN ROOMS)
+	(DESC "381")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY382
+	(IN ROOMS)
+	(DESC "382")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY383
+	(IN ROOMS)
+	(DESC "383")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY384
+	(IN ROOMS)
+	(DESC "384")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY385
+	(IN ROOMS)
+	(DESC "385")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY386
+	(IN ROOMS)
+	(DESC "386")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY387
+	(IN ROOMS)
+	(DESC "387")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY388
+	(IN ROOMS)
+	(DESC "388")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY389
+	(IN ROOMS)
+	(DESC "389")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY390
+	(IN ROOMS)
+	(DESC "390")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY391
+	(IN ROOMS)
+	(DESC "391")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY392
+	(IN ROOMS)
+	(DESC "392")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY393
+	(IN ROOMS)
+	(DESC "393")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY394
+	(IN ROOMS)
+	(DESC "394")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY395
+	(IN ROOMS)
+	(DESC "395")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY396
+	(IN ROOMS)
+	(DESC "396")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY397
+	(IN ROOMS)
+	(DESC "397")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY398
+	(IN ROOMS)
+	(DESC "398")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY399
+	(IN ROOMS)
+	(DESC "399")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY400
+	(IN ROOMS)
+	(DESC "400")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY401
+	(IN ROOMS)
+	(DESC "401")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY402
+	(IN ROOMS)
+	(DESC "402")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY403
+	(IN ROOMS)
+	(DESC "403")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY404
+	(IN ROOMS)
+	(DESC "404")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY405
+	(IN ROOMS)
+	(DESC "405")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY406
+	(IN ROOMS)
+	(DESC "406")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY407
+	(IN ROOMS)
+	(DESC "407")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY408
+	(IN ROOMS)
+	(DESC "408")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY409
+	(IN ROOMS)
+	(DESC "409")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY410
+	(IN ROOMS)
+	(DESC "410")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY411
+	(IN ROOMS)
+	(DESC "411")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY412
+	(IN ROOMS)
+	(DESC "412")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY413
+	(IN ROOMS)
+	(DESC "413")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY414
+	(IN ROOMS)
+	(DESC "414")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY415
+	(IN ROOMS)
+	(DESC "415")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY416
+	(IN ROOMS)
+	(DESC "416")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY417
+	(IN ROOMS)
+	(DESC "417")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY418
+	(IN ROOMS)
+	(DESC "418")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY419
+	(IN ROOMS)
+	(DESC "419")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY420
+	(IN ROOMS)
+	(DESC "420")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY421
+	(IN ROOMS)
+	(DESC "421")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY422
+	(IN ROOMS)
+	(DESC "422")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY423
+	(IN ROOMS)
+	(DESC "423")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY424
+	(IN ROOMS)
+	(DESC "424")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY425
+	(IN ROOMS)
+	(DESC "425")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY426
+	(IN ROOMS)
+	(DESC "426")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY427
+	(IN ROOMS)
+	(DESC "427")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY428
+	(IN ROOMS)
+	(DESC "428")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY429
+	(IN ROOMS)
+	(DESC "429")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY430
+	(IN ROOMS)
+	(DESC "430")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY431
+	(IN ROOMS)
+	(DESC "431")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY432
+	(IN ROOMS)
+	(DESC "432")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY433
+	(IN ROOMS)
+	(DESC "433")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY434
+	(IN ROOMS)
+	(DESC "434")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY435
+	(IN ROOMS)
+	(DESC "435")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY436
+	(IN ROOMS)
+	(DESC "436")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY437
+	(IN ROOMS)
+	(DESC "437")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY438
+	(IN ROOMS)
+	(DESC "438")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY439
+	(IN ROOMS)
+	(DESC "439")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY440
+	(IN ROOMS)
+	(DESC "440")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY441
+	(IN ROOMS)
+	(DESC "441")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY442
+	(IN ROOMS)
+	(DESC "442")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY443
+	(IN ROOMS)
+	(DESC "443")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY444
+	(IN ROOMS)
+	(DESC "444")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY445
+	(IN ROOMS)
+	(DESC "445")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY446
+	(IN ROOMS)
+	(DESC "446")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY447
+	(IN ROOMS)
+	(DESC "447")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY448
+	(IN ROOMS)
+	(DESC "448")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY449
+	(IN ROOMS)
+	(DESC "449")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY450
+	(IN ROOMS)
+	(DESC "450")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY451
+	(IN ROOMS)
+	(DESC "451")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY452
+	(IN ROOMS)
+	(DESC "452")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY453
+	(IN ROOMS)
+	(DESC "453")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY454
+	(IN ROOMS)
+	(DESC "454")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY455
+	(IN ROOMS)
+	(DESC "455")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY456
+	(IN ROOMS)
+	(DESC "456")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY457
+	(IN ROOMS)
+	(DESC "457")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY458
+	(IN ROOMS)
+	(DESC "458")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY459
+	(IN ROOMS)
+	(DESC "459")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY460
+	(IN ROOMS)
+	(DESC "460")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY461
+	(IN ROOMS)
+	(DESC "461")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY462
+	(IN ROOMS)
+	(DESC "462")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY463
+	(IN ROOMS)
+	(DESC "463")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY464
+	(IN ROOMS)
+	(DESC "464")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY465
+	(IN ROOMS)
+	(DESC "465")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY466
+	(IN ROOMS)
+	(DESC "466")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY467
+	(IN ROOMS)
+	(DESC "467")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY468
+	(IN ROOMS)
+	(DESC "468")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY469
+	(IN ROOMS)
+	(DESC "469")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY470
+	(IN ROOMS)
+	(DESC "470")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY471
+	(IN ROOMS)
+	(DESC "471")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY472
+	(IN ROOMS)
+	(DESC "472")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY473
+	(IN ROOMS)
+	(DESC "473")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY474
+	(IN ROOMS)
+	(DESC "474")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY475
+	(IN ROOMS)
+	(DESC "475")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY476
+	(IN ROOMS)
+	(DESC "476")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY477
+	(IN ROOMS)
+	(DESC "477")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY478
+	(IN ROOMS)
+	(DESC "478")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY479
+	(IN ROOMS)
+	(DESC "479")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY480
+	(IN ROOMS)
+	(DESC "480")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY481
+	(IN ROOMS)
+	(DESC "481")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY482
+	(IN ROOMS)
+	(DESC "482")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY483
+	(IN ROOMS)
+	(DESC "483")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY484
+	(IN ROOMS)
+	(DESC "484")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY485
+	(IN ROOMS)
+	(DESC "485")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY486
+	(IN ROOMS)
+	(DESC "486")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY487
+	(IN ROOMS)
+	(DESC "487")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY488
+	(IN ROOMS)
+	(DESC "488")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY489
+	(IN ROOMS)
+	(DESC "489")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY490
+	(IN ROOMS)
+	(DESC "490")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY491
+	(IN ROOMS)
+	(DESC "491")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY492
+	(IN ROOMS)
+	(DESC "492")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY493
+	(IN ROOMS)
+	(DESC "493")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY494
+	(IN ROOMS)
+	(DESC "494")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY495
+	(IN ROOMS)
+	(DESC "495")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY496
+	(IN ROOMS)
+	(DESC "496")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY497
+	(IN ROOMS)
+	(DESC "497")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY498
+	(IN ROOMS)
+	(DESC "498")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY499
+	(IN ROOMS)
+	(DESC "499")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY500
+	(IN ROOMS)
+	(DESC "500")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY501
+	(IN ROOMS)
+	(DESC "501")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY502
+	(IN ROOMS)
+	(DESC "502")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY503
+	(IN ROOMS)
+	(DESC "503")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY504
+	(IN ROOMS)
+	(DESC "504")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY505
+	(IN ROOMS)
+	(DESC "505")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY506
+	(IN ROOMS)
+	(DESC "506")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY507
+	(IN ROOMS)
+	(DESC "507")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY508
+	(IN ROOMS)
+	(DESC "508")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY509
+	(IN ROOMS)
+	(DESC "509")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY510
+	(IN ROOMS)
+	(DESC "510")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY511
+	(IN ROOMS)
+	(DESC "511")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY512
+	(IN ROOMS)
+	(DESC "512")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY513
+	(IN ROOMS)
+	(DESC "513")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY514
+	(IN ROOMS)
+	(DESC "514")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY515
+	(IN ROOMS)
+	(DESC "515")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY516
+	(IN ROOMS)
+	(DESC "516")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY517
+	(IN ROOMS)
+	(DESC "517")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY518
+	(IN ROOMS)
+	(DESC "518")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY519
+	(IN ROOMS)
+	(DESC "519")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY520
+	(IN ROOMS)
+	(DESC "520")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY521
+	(IN ROOMS)
+	(DESC "521")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY522
+	(IN ROOMS)
+	(DESC "522")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY523
+	(IN ROOMS)
+	(DESC "523")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY524
+	(IN ROOMS)
+	(DESC "524")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY525
+	(IN ROOMS)
+	(DESC "525")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY526
+	(IN ROOMS)
+	(DESC "526")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY527
+	(IN ROOMS)
+	(DESC "527")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY528
+	(IN ROOMS)
+	(DESC "528")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY529
+	(IN ROOMS)
+	(DESC "529")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY530
+	(IN ROOMS)
+	(DESC "530")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY531
+	(IN ROOMS)
+	(DESC "531")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY532
+	(IN ROOMS)
+	(DESC "532")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY533
+	(IN ROOMS)
+	(DESC "533")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY534
+	(IN ROOMS)
+	(DESC "534")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY535
+	(IN ROOMS)
+	(DESC "535")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY536
+	(IN ROOMS)
+	(DESC "536")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY537
+	(IN ROOMS)
+	(DESC "537")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY538
+	(IN ROOMS)
+	(DESC "538")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY539
+	(IN ROOMS)
+	(DESC "539")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY540
+	(IN ROOMS)
+	(DESC "540")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY541
+	(IN ROOMS)
+	(DESC "541")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY542
+	(IN ROOMS)
+	(DESC "542")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY543
+	(IN ROOMS)
+	(DESC "543")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY544
+	(IN ROOMS)
+	(DESC "544")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY545
+	(IN ROOMS)
+	(DESC "545")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY546
+	(IN ROOMS)
+	(DESC "546")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY547
+	(IN ROOMS)
+	(DESC "547")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY548
+	(IN ROOMS)
+	(DESC "548")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY549
+	(IN ROOMS)
+	(DESC "549")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY550
+	(IN ROOMS)
+	(DESC "550")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY551
+	(IN ROOMS)
+	(DESC "551")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY552
+	(IN ROOMS)
+	(DESC "552")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY553
+	(IN ROOMS)
+	(DESC "553")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY554
+	(IN ROOMS)
+	(DESC "554")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY555
+	(IN ROOMS)
+	(DESC "555")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY556
+	(IN ROOMS)
+	(DESC "556")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY557
+	(IN ROOMS)
+	(DESC "557")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY558
+	(IN ROOMS)
+	(DESC "558")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY559
+	(IN ROOMS)
+	(DESC "559")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY560
+	(IN ROOMS)
+	(DESC "560")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY561
+	(IN ROOMS)
+	(DESC "561")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY562
+	(IN ROOMS)
+	(DESC "562")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY563
+	(IN ROOMS)
+	(DESC "563")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY564
+	(IN ROOMS)
+	(DESC "564")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY565
+	(IN ROOMS)
+	(DESC "565")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY566
+	(IN ROOMS)
+	(DESC "566")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY567
+	(IN ROOMS)
+	(DESC "567")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY568
+	(IN ROOMS)
+	(DESC "568")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY569
+	(IN ROOMS)
+	(DESC "569")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY570
+	(IN ROOMS)
+	(DESC "570")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY571
+	(IN ROOMS)
+	(DESC "571")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY572
+	(IN ROOMS)
+	(DESC "572")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY573
+	(IN ROOMS)
+	(DESC "573")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY574
+	(IN ROOMS)
+	(DESC "574")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY575
+	(IN ROOMS)
+	(DESC "575")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY576
+	(IN ROOMS)
+	(DESC "576")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY577
+	(IN ROOMS)
+	(DESC "577")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY578
+	(IN ROOMS)
+	(DESC "578")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY579
+	(IN ROOMS)
+	(DESC "579")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY580
+	(IN ROOMS)
+	(DESC "580")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY581
+	(IN ROOMS)
+	(DESC "581")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY582
+	(IN ROOMS)
+	(DESC "582")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY583
+	(IN ROOMS)
+	(DESC "583")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY584
+	(IN ROOMS)
+	(DESC "584")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY585
+	(IN ROOMS)
+	(DESC "585")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY586
+	(IN ROOMS)
+	(DESC "586")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY587
+	(IN ROOMS)
+	(DESC "587")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY588
+	(IN ROOMS)
+	(DESC "588")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY589
+	(IN ROOMS)
+	(DESC "589")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY590
+	(IN ROOMS)
+	(DESC "590")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY591
+	(IN ROOMS)
+	(DESC "591")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY592
+	(IN ROOMS)
+	(DESC "592")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY593
+	(IN ROOMS)
+	(DESC "593")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY594
+	(IN ROOMS)
+	(DESC "594")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY595
+	(IN ROOMS)
+	(DESC "595")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY596
+	(IN ROOMS)
+	(DESC "596")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY597
+	(IN ROOMS)
+	(DESC "597")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY598
+	(IN ROOMS)
+	(DESC "598")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY599
+	(IN ROOMS)
+	(DESC "599")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY600
+	(IN ROOMS)
+	(DESC "600")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY601
+	(IN ROOMS)
+	(DESC "601")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY602
+	(IN ROOMS)
+	(DESC "602")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY603
+	(IN ROOMS)
+	(DESC "603")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY604
+	(IN ROOMS)
+	(DESC "604")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY605
+	(IN ROOMS)
+	(DESC "605")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY606
+	(IN ROOMS)
+	(DESC "606")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY607
+	(IN ROOMS)
+	(DESC "607")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY608
+	(IN ROOMS)
+	(DESC "608")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY609
+	(IN ROOMS)
+	(DESC "609")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY610
+	(IN ROOMS)
+	(DESC "610")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY611
+	(IN ROOMS)
+	(DESC "611")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY612
+	(IN ROOMS)
+	(DESC "612")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY613
+	(IN ROOMS)
+	(DESC "613")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY614
+	(IN ROOMS)
+	(DESC "614")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY615
+	(IN ROOMS)
+	(DESC "615")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY616
+	(IN ROOMS)
+	(DESC "616")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY617
+	(IN ROOMS)
+	(DESC "617")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY618
+	(IN ROOMS)
+	(DESC "618")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY619
+	(IN ROOMS)
+	(DESC "619")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY620
+	(IN ROOMS)
+	(DESC "620")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY621
+	(IN ROOMS)
+	(DESC "621")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY622
+	(IN ROOMS)
+	(DESC "622")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY623
+	(IN ROOMS)
+	(DESC "623")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY624
+	(IN ROOMS)
+	(DESC "624")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY625
+	(IN ROOMS)
+	(DESC "625")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY626
+	(IN ROOMS)
+	(DESC "626")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY627
+	(IN ROOMS)
+	(DESC "627")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY628
+	(IN ROOMS)
+	(DESC "628")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY629
+	(IN ROOMS)
+	(DESC "629")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY630
+	(IN ROOMS)
+	(DESC "630")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY631
+	(IN ROOMS)
+	(DESC "631")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY632
+	(IN ROOMS)
+	(DESC "632")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY633
+	(IN ROOMS)
+	(DESC "633")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY634
+	(IN ROOMS)
+	(DESC "634")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY635
+	(IN ROOMS)
+	(DESC "635")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY636
+	(IN ROOMS)
+	(DESC "636")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY637
+	(IN ROOMS)
+	(DESC "637")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY638
+	(IN ROOMS)
+	(DESC "638")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY639
+	(IN ROOMS)
+	(DESC "639")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY640
+	(IN ROOMS)
+	(DESC "640")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY641
+	(IN ROOMS)
+	(DESC "641")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY642
+	(IN ROOMS)
+	(DESC "642")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY643
+	(IN ROOMS)
+	(DESC "643")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY644
+	(IN ROOMS)
+	(DESC "644")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY645
+	(IN ROOMS)
+	(DESC "645")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY646
+	(IN ROOMS)
+	(DESC "646")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY647
+	(IN ROOMS)
+	(DESC "647")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY648
+	(IN ROOMS)
+	(DESC "648")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY649
+	(IN ROOMS)
+	(DESC "649")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY650
+	(IN ROOMS)
+	(DESC "650")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY651
+	(IN ROOMS)
+	(DESC "651")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY652
+	(IN ROOMS)
+	(DESC "652")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY653
+	(IN ROOMS)
+	(DESC "653")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY654
+	(IN ROOMS)
+	(DESC "654")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY655
+	(IN ROOMS)
+	(DESC "655")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY656
+	(IN ROOMS)
+	(DESC "656")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY657
+	(IN ROOMS)
+	(DESC "657")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY658
+	(IN ROOMS)
+	(DESC "658")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY659
+	(IN ROOMS)
+	(DESC "659")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY660
+	(IN ROOMS)
+	(DESC "660")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY661
+	(IN ROOMS)
+	(DESC "661")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY662
+	(IN ROOMS)
+	(DESC "662")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY663
+	(IN ROOMS)
+	(DESC "663")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY664
+	(IN ROOMS)
+	(DESC "664")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY665
+	(IN ROOMS)
+	(DESC "665")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY666
+	(IN ROOMS)
+	(DESC "666")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY667
+	(IN ROOMS)
+	(DESC "667")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY668
+	(IN ROOMS)
+	(DESC "668")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY669
+	(IN ROOMS)
+	(DESC "669")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY670
+	(IN ROOMS)
+	(DESC "670")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY671
+	(IN ROOMS)
+	(DESC "671")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY672
+	(IN ROOMS)
+	(DESC "672")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY673
+	(IN ROOMS)
+	(DESC "673")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY674
+	(IN ROOMS)
+	(DESC "674")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY675
+	(IN ROOMS)
+	(DESC "675")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY676
+	(IN ROOMS)
+	(DESC "676")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY677
+	(IN ROOMS)
+	(DESC "677")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY678
+	(IN ROOMS)
+	(DESC "678")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY679
+	(IN ROOMS)
+	(DESC "679")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY680
+	(IN ROOMS)
+	(DESC "680")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY681
+	(IN ROOMS)
+	(DESC "681")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY682
+	(IN ROOMS)
+	(DESC "682")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY683
+	(IN ROOMS)
+	(DESC "683")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY684
+	(IN ROOMS)
+	(DESC "684")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY685
+	(IN ROOMS)
+	(DESC "685")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY686
+	(IN ROOMS)
+	(DESC "686")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY687
+	(IN ROOMS)
+	(DESC "687")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY688
+	(IN ROOMS)
+	(DESC "688")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY689
+	(IN ROOMS)
+	(DESC "689")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY690
+	(IN ROOMS)
+	(DESC "690")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY691
+	(IN ROOMS)
+	(DESC "691")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY692
+	(IN ROOMS)
+	(DESC "692")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY693
+	(IN ROOMS)
+	(DESC "693")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY694
+	(IN ROOMS)
+	(DESC "694")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY695
+	(IN ROOMS)
+	(DESC "695")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY696
+	(IN ROOMS)
+	(DESC "696")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY697
+	(IN ROOMS)
+	(DESC "697")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY698
+	(IN ROOMS)
+	(DESC "698")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY699
+	(IN ROOMS)
+	(DESC "699")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY700
+	(IN ROOMS)
+	(DESC "700")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY701
+	(IN ROOMS)
+	(DESC "701")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY702
+	(IN ROOMS)
+	(DESC "702")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY703
+	(IN ROOMS)
+	(DESC "703")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY704
+	(IN ROOMS)
+	(DESC "704")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY705
+	(IN ROOMS)
+	(DESC "705")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY706
+	(IN ROOMS)
+	(DESC "706")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY707
+	(IN ROOMS)
+	(DESC "707")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY708
+	(IN ROOMS)
+	(DESC "708")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY709
+	(IN ROOMS)
+	(DESC "709")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY710
+	(IN ROOMS)
+	(DESC "710")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY711
+	(IN ROOMS)
+	(DESC "711")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY712
+	(IN ROOMS)
+	(DESC "712")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY713
+	(IN ROOMS)
+	(DESC "713")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY714
+	(IN ROOMS)
+	(DESC "714")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY715
+	(IN ROOMS)
+	(DESC "715")
+	(VISITS 0)
+	(LOCATION NONE)
+	(BACKGROUND NONE)
+	(STORY NONE)
+	(EVENTS NONE)
+	(CHOICES NONE)
+	(DESTINATIONS NONE)
+	(REQUIREMENTS NONE)
+	(TYPES NONE)
+	(CONTINUE NONE)
+	(ITEMS NONE)
+	(CODEWORDS NONE)
+	(TITLES NONE)
+	(INVESTMENTS 0)
+	(MONEY 0)
+	(DOOM F)
+	(VICTORY F)
+	(FLAGS LIGHTBIT)>
+

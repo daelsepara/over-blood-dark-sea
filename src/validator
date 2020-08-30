@@ -1,0 +1,7 @@
+#!/bin/bash
+grep -n '(STORY' bloodsea.zil | grep -v '(STORY TEXT' | grep -v '(STORY NONE)' | grep -v 'STORY-JUMP (STORY)' | grep -v '(STORY "' | grep -v '(STORY JUMP ' | grep -v '(STORY TOWNHOUSE ' | grep -v '(STORY INDEX ' | grep -v 'SET-DESTINATION (STORY DESTINATION'
+grep -n '(CHOICE' bloodsea.zil | grep -v '(CHOICES CHOICES' | grep -v '(CHOICES NONE)' | grep -v '(CHOICES "AUX"' | grep -v '<ROUTINE PRINT-MENU' 
+grep -n '(CONTINUE' bloodsea.zil | grep -v '(CONTINUE STORY' | grep -v '(CONTINUE NONE)'
+grep -n '(DESTINATION' bloodsea.zil | grep -v '(DESTINATIONS <LTABLE ' | grep -v '(DESTINATIONS NONE)' | grep -v 'RESULT (DESTINATION NONE)'
+grep -n '(REQUIREMENTS' bloodsea.zil | grep -v '(REQUIREMENTS NONE)' | grep -v '(REQUIREMENTS <LTABLE ' | grep -v '(REQUIREMENTS STORY' 
+grep -n '(LOCAT' bloodsea.zil | grep -v '(LOCATION LOCATION-' | grep -v 'SET-LOCATION (LOCATION' | grep -v 'CHECK-LOCATION (LOCATION' | grep -v 'GET-LOCATION (LOCATION' | grep -v '(LOCATION NONE)'
