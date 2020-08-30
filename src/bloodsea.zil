@@ -5249,6 +5249,7 @@
 <CONSTANT ENDING-BLOOD-DARK-SEA "Further adventures await at Fabled Lands 3: Over the Blood-Dark Sea.|">
 <CONSTANT ENDING-CITIES-GOLD-GLORY "Further adventures await at Fabled Lands 2: Cities of Gold and Glory.|">
 <CONSTANT ENDING-PLAINS-HOWLING-DARKNESS "Further adventures await at Fabled Lands 4: The Plains of Howling Darkness.|">
+<CONSTANT ENDING-WAR-TORN-KINGDOM "Further adventures await at Fabled Lands 1: The War-Torn Kingdom.|">
 
 <CONSTANT DIED-IN-COMBAT "You died in combat">
 <CONSTANT DIED-OF-HUNGER "You starved to death">
@@ -5387,6 +5388,11 @@
 <ROOM STORY-PLAINS-HOWLING-DARKNESS
 	(DESC "Plains of Howling Darkness")
 	(VICTORY ENDING-PLAINS-HOWLING-DARKNESS)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY-WAR-TORN-KINGDOM
+	(DESC "War-Torn Kingdom")
+	(VICTORY ENDING-WAR-TORN-KINGDOM)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY001
