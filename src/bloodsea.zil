@@ -167,9 +167,10 @@
 <GLOBAL STARTING-POINT STORY001>
 <GLOBAL CURRENT-LOCATION LOCATION-GOLNIR>
 
-<CONSTANT LOCATIONS <LTABLE "Golnir">>
+<CONSTANT LOCATIONS <LTABLE "Golnir" "Sorcerers' Isle">>
 
 <CONSTANT LOCATION-GOLNIR 1>
+<CONSTANT LOCATION-SORCERERS 2>
 
 ; "Gamebook loop"
 ; ---------------------------------------------------------------------------------------------
@@ -2866,7 +2867,7 @@
 	<TELL CR "Thanks for playing" ,PERIOD-CR>
 	<QUIT>>
 
-; "Characters for War-Torn Kingdom"
+; "Characters for Over the Blood-Dark Sea"
 ; ---------------------------------------------------------------------------------------------
 
 <CONSTANT CHARACTERS <LTABLE CHARACTER-JALUDA CHARACTER-ARCADIA CHARACTER-DAMONTIR CHARACTER-SILAS CHARACTER-GREYMALKIN CHARACTER-VARKUNG>>
@@ -3055,9 +3056,11 @@
 	(POSSESSIONS <LTABLE SWORD CHAIN-MAIL MAP>)
 	(FLAGS PERSONBIT)>
 
-; "Codewords for War-Torn-Kingdom"
+; "Codewords for Over the Blood-Dark Sea"
 ; ---------------------------------------------------------------------------------------------
 
+<OBJECT CODEWORD-CADMIUM (DESC "Cadmium")>
+<OBJECT CODEWORD-COSY (DESC "Cosy")>
 
 ; "codewords from other books. Included here only for completeness"
 ; ---------------------------------------------------------------------------------------------
@@ -3101,6 +3104,10 @@
 <OBJECT BATTLE-AXE3
 	(DESC "battle-axe")
 	(COMBAT 3)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT DAGGER
+	(DESC "Dagger")
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT ENCHANTED-SPEAR
@@ -3443,12 +3450,12 @@
 ; ---------------------------------------------------------------------------------------------
 
 <OBJECT RESURRECTION-TYRNAI
-	(DESC "Temple of Tyrnai, The War-Torn Kingdom")
+	(DESC "Temple of Tyrnai, Over the Blood-Dark Sea")
 	(CONTINUE NONE)
 	(FLAGS TAKEBIT)>
 
 <OBJECT RESURRECTION-NAGIL
-	(DESC "Temple of Nagil, The War-Torn Kingdom")
+	(DESC "Temple of Nagil, Over the Blood-Dark Sea")
 	(CONTINUE NONE)
 	(FLAGS TAKEBIT)>
 
@@ -3533,8 +3540,13 @@
 ; "Monsters"
 ; ---------------------------------------------------------------------------------------------
 
+<OBJECT MONSTER-ASSASSIN
+	(DESC "Assassin")
+	(COMBAT 8)
+	(DEFENSE 10)
+	(STAMINA 8)>
 
-; "Titles and Honours for War-Torn Kingdom"
+; "Titles and Honours for Over the Blood-Dark Sea"
 ; ---------------------------------------------------------------------------------------------
 
 
@@ -5211,7 +5223,7 @@
 ; ---------------------------------------------------------------------------------------------
 
 <CONSTANT INSTRUCTIONS-HEADER "|HOW TO USE THIS E-ADVENTURE|">
-<CONSTANT INSTRUCTIONS-TEXT "Fabled Lands: War-Torn Kingdom is a digital gamebook -- an interactive game where the choices that you make correspond to numbered sections in the game. In moving through these sections you are creating a unique story for your adventuring persona.||You will begin your adventure by choosing a pre-generated character or a profession (see below)with the ability scores and Stamina that correspond to that profession at 1st Rank.||ABILITIES|---------||You have six abilities. Your initial score in each ability is decided by your choice of profession. Ability scores range from 1 (low ability) to 6 (a high level of ability). Ability scores will change during your adventure but can never be lower than 1 or higher than 12.||CHARISMA the knack of befriending people|COMBAT the skill of fighting|MAGIC the art of casting spells|SANCTITY the gift of divine power and wisdom|SCOUTING the techniques of tracking and wilderness lore|THIEVERY the talent for stealth and lock picking||STAMINA|-------||Stamina is lost when you get hurt. Keep track of your Stamina score throughout your travels and adventures. You must guard against your Stamina score dropping to zero, because if it does you are dead.||Lost Stamina can be recovered by various means, but your Stamina cannot go above its initial score until you advance in Rank.||You start with 9 Stamina points.||RANK|----||You start at 1st Rank. By completing quests and overcoming enemies, you will have the chance to go up in Rank.||You will be told during the course of your adventures when you are entitled to advance in Rank. Characters of higher Rank are tougher, luckier and generally better able to deal with trouble.||POSSESSIONS|-----------||You can carry up to twelve possessions on your person. All characters begin with 16 Shards in cash and the following possessions:||* sword|* leather jerkin (Defence +1)||Remember that you are limited to carrying a total of 12 items, so if you get more than this you'll have to cross something off your inventory or find somewhere to store extra items. There is no limit to how much money you can carry.||DEFENCE|-------||Your Defence score is equal to:||* your COMBAT score|* plus your RANK|* plus the bonus for the armour you're wearing (if any)||Every suit of armour you find will have a Defence bonus listed for it. The higher the bonus, the better the armour. You can carry several suits of armour if you wish -- but because you can wear only one at a time, you only get the Defence bonus of the best armour you are carrying.||To start with, it is just your COMBAT score plus 2 (because you are 1st Rank and have +1 DEFENSE).||It will be updated if you get better armour or increase in Rank or COMBAT ability.||ADDITIONAL HELP|---------------||During action selection and in other parts of the game, pressing '?' brings up a list of additional command keys.">
+<CONSTANT INSTRUCTIONS-TEXT "Fabled Lands: Over the Blood-Dark sea is a digital gamebook -- an interactive game where the choices that you make correspond to numbered sections in the game. In moving through these sections you are creating a unique story for your adventuring persona.||You will begin your adventure by choosing a pre-generated character or a profession (see below)with the ability scores and Stamina that correspond to that profession at 1st Rank.||ABILITIES|---------||You have six abilities. Your initial score in each ability is decided by your choice of profession. Ability scores range from 1 (low ability) to 6 (a high level of ability). Ability scores will change during your adventure but can never be lower than 1 or higher than 12.||CHARISMA the knack of befriending people|COMBAT the skill of fighting|MAGIC the art of casting spells|SANCTITY the gift of divine power and wisdom|SCOUTING the techniques of tracking and wilderness lore|THIEVERY the talent for stealth and lock picking||STAMINA|-------||Stamina is lost when you get hurt. Keep track of your Stamina score throughout your travels and adventures. You must guard against your Stamina score dropping to zero, because if it does you are dead.||Lost Stamina can be recovered by various means, but your Stamina cannot go above its initial score until you advance in Rank.||You start with 16 Stamina points.||RANK|----||You start at 1st Rank. By completing quests and overcoming enemies, you will have the chance to go up in Rank.||You will be told during the course of your adventures when you are entitled to advance in Rank. Characters of higher Rank are tougher, luckier and generally better able to deal with trouble.||POSSESSIONS|-----------||You can carry up to twelve possessions on your person. All characters begin with 16 Shards in cash and the following possessions:||* sword|* leather jerkin (Defence +1)||Remember that you are limited to carrying a total of 12 items, so if you get more than this you'll have to cross something off your inventory or find somewhere to store extra items. There is no limit to how much money you can carry.||DEFENCE|-------||Your Defence score is equal to:||* your COMBAT score|* plus your RANK|* plus the bonus for the armour you're wearing (if any)||Every suit of armour you find will have a Defence bonus listed for it. The higher the bonus, the better the armour. You can carry several suits of armour if you wish -- but because you can wear only one at a time, you only get the Defence bonus of the best armour you are carrying.||To start with, it is just your COMBAT score plus 2 (because you are 1st Rank and have +1 DEFENSE).||It will be updated if you get better armour or increase in Rank or COMBAT ability.||ADDITIONAL HELP|---------------||During action selection and in other parts of the game, pressing '?' brings up a list of additional command keys.">
 <CONSTANT INSTRUCTIONS-PROFESSIONS "PROFESSIONS||Every adventurer has some strengths and some weaknesses. Your choice of profession determines your initial scores in the six abilities.">
 
 <ROUTINE INSTRUCTIONS ()
@@ -5241,7 +5253,9 @@
 	<RETURN>>
 
 <ROUTINE RESET-STORY ()
-	<RETURN>>
+	<PUTP ,STORY006 ,P?DOOM T>
+	<PUTP ,STORY007 ,P?DOOM T>
+	<PUTP ,STORY010 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -5250,6 +5264,7 @@
 <CONSTANT ENDING-CITIES-GOLD-GLORY "Further adventures await at Fabled Lands 2: Cities of Gold and Glory.|">
 <CONSTANT ENDING-PLAINS-HOWLING-DARKNESS "Further adventures await at Fabled Lands 4: The Plains of Howling Darkness.|">
 <CONSTANT ENDING-WAR-TORN-KINGDOM "Further adventures await at Fabled Lands 1: The War-Torn Kingdom.|">
+<CONSTANT ENDING-SERPENT-KINGS-DOMAIN "Further adventures await at Fabled Lands 7: The Serpent King's Domain.|">
 
 <CONSTANT DIED-IN-COMBAT "You died in combat">
 <CONSTANT DIED-OF-HUNGER "You starved to death">
@@ -5342,11 +5357,12 @@
 <CONSTANT TEXT-DRIFTWOOD "You manage to find some driftwood and make it back to shore">
 <CONSTANT TEXT-SHIPWRECK "Your ship, crew and cargo are lost to the deep, dark sea. Your only thought now is to save yourself.">
 
-<ROUTINE STORY-SHIPWRECK (STORY "AUX" (RANK 1) ROLL LOSS)
+<ROUTINE STORY-SHIPWRECK (STORY "OPT" JUMP-DROWNED JUMP-SURVIVE "AUX" (RANK 1) ROLL LOSS)
 	<SET RANK <GET-RANK ,CURRENT-CHARACTER>>
 	<SET ROLL <RANDOM-EVENT 2>>
 	<COND (<G? .ROLL .RANK>
 		<EMPHASIZE ,TEXT-DROWNED>
+		<COND (.JUMP-DROWNED <STORY-JUMP .JUMP-DROWNED>)>
 	)(ELSE
 		<RESET-CONTAINER ,CARGO>
 		<REMOVE ,CURRENT-SHIP>
@@ -5354,8 +5370,9 @@
 		<CRLF>
 		<TELL ,TEXT-DRIFTWOOD>
 		<TELL ,PERIOD-CR>
-		<SET LOSS <RANDOM-EVENT 1 0 T>>
+		<SET LOSS <RANDOM-EVENT 2 0 T>>
 		<LOSE-STAMINA .LOSS ,DIED-GREW-WEAKER .STORY>
+		<COND (<AND <IS-ALIVE> .JUMP-SURVIVE> <STORY-JUMP .JUMP-SURVIVE>)>
 	)>>
 
 <ROUTINE STORY-LOSE-EVERYTHING ("OPT" (VERBOSE T))
@@ -5370,10 +5387,10 @@
 	<COND (<NOT .CONDITION> <SET .CONDITION ,CONDITION-GOOD>)>
 	<COND (,CURRENT-SHIP <PUTP ,CURRENT-SHIP ,P?CONDITION .CONDITION>)>>
 
-<ROUTINE STORY-ROLL-RANK (STORY "OPT" (MODIFIER -1) "AUX" ROLL (RANK 1))
-	<SET ROLL <RANDOM-EVENT 1 .MODIFIER T>>
+<ROUTINE STORY-ROLL-RANK (STORY "OPT" (MODIFIER 0) "AUX" ROLL (RANK 1))
+	<SET ROLL <RANDOM-EVENT 2 .MODIFIER T>>
 	<SET RANK <GET-RANK ,CURRENT-CHARACTER>>
-	<COND (<L=? .ROLL .RANK> <STORY-JUMP .STORY>)>>
+	<COND (<G? .ROLL .RANK> <STORY-JUMP .STORY>)>>
 
 <ROOM STORY-BLOOD-DARK-SEA
 	(DESC "Over the Blood-Dark Sea")
@@ -5386,12 +5403,17 @@
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY-PLAINS-HOWLING-DARKNESS
-	(DESC "Plains of Howling Darkness")
+	(DESC "The Plains of Howling Darkness")
 	(VICTORY ENDING-PLAINS-HOWLING-DARKNESS)
 	(FLAGS LIGHTBIT)>
 
+<ROOM STORY-SERPENT-KINGS-DOMAIN
+	(DESC "The Serpent King's Domain")
+	(VICTORY ENDING-SERPENT-KINGS-DOMAIN)
+	(FLAGS LIGHTBIT)>
+
 <ROOM STORY-WAR-TORN-KINGDOM
-	(DESC "War-Torn Kingdom")
+	(DESC "The War-Torn Kingdom")
 	(VICTORY ENDING-WAR-TORN-KINGDOM)
 	(FLAGS LIGHTBIT)>
 
@@ -5419,203 +5441,136 @@
 		<STORY-JUMP ,STORY151>
 	)>>
 
+<CONSTANT TEXT002 "You find two important references to the Innis Shoals. The first, in a book on navigation, reads: \"These islands form an effective barrier to the western sea, being ringed with treacherous reefs and racked by constant storms. Only a skilled pilot can bring a ship safely through.\"||The other book deals with matters of religion: \"A numinous essence is thought to pervade the air of this region. For this reason, the archipelago has long been accounted as a holy place and many a hermit has made his home here.\"||All in all, the Innis Shoals hardly sound the place for a holiday. Unless you're a religious maniac, that is.">
+
 <ROOM STORY002
 	(IN ROOMS)
 	(DESC "002")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT002)
+	(CONTINUE STORY368)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT003 "You are sailing a little way south-east of Starspike Island, on the edge of the Sea of Hydras.">
+<CONSTANT CHOICES003 <LTABLE "Go north" "Go south (The Serpent King's Domain)" "Go east" "Go west" "To Starspike Island">>
 
 <ROOM STORY003
 	(IN ROOMS)
 	(DESC "003")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT003)
+	(CHOICES CHOICES003)
+	(DESTINATIONS <LTABLE STORY172 STORY-SERPENT-KINGS-DOMAIN STORY136 STORY302 STORY192>)
+	(TYPES FIVE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT004 "A great white bell of canvas stretches overhead, gathering in the wind as a fisherman's net catches a shoal.||\"We're making good progress,\" observes the helmsman. \"Let's hope this breeze doesn't freshen into a gale, though.\"">
+<CONSTANT CHOICES004 <LTABLE TEXT-RANDOM-EVENT>>
 
 <ROOM STORY004
 	(IN ROOMS)
 	(DESC "004")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT004)
+	(CHOICES CHOICES004)
+	(DESTINATIONS <LTABLE <LTABLE STORY491 STORY024>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 6 12> <LTABLE "Storm" "A safe voyage">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT005 "You return to the ship and waste no time getting under way.||The helmsman stifles a yawn. \"You know, skipper, I felt quite drowsy on the island,\" he says. \"The sea breeze is waking me up. though.\"">
+<CONSTANT CHOICES005 <LTABLE "Steer north" "Steer south" "Steer east" "Steer west">>
 
 <ROOM STORY005
 	(IN ROOMS)
 	(DESC "005")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT005)
+	(EVENTS STORY005-EVENTS)
+	(CHOICES CHOICES005)
+	(DESTINATIONS <LTABLE STORY281 STORY117 STORY153 STORY370>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY005-EVENTS ()
+	<DELETE-CODEWORD ,CODEWORD-COSY>>
+
+<CONSTANT TEXT006 "Helpless in the grip of the storm, the vessel cracks apart. The seawater rushes into the broken shell of the hull, dragging you down. The screams of your crewmen are drowned out by the howl of the storm.">
 
 <ROOM STORY006
 	(IN ROOMS)
 	(DESC "006")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT006)
+	(EVENTS STORY006-EVENTS)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY006-EVENTS ()
+	<STORY-SHIPWRECK ,STORY006 ,STORY123 ,STORY006>>
+
+<CONSTANT TEXT007 "The stowaway is an assassin who bursts from hiding and runs at you brandishing a long curved knife. \"Nivram the Wizard sends his regards, scum!\" he rants.">
 
 <ROOM STORY007
 	(IN ROOMS)
 	(DESC "007")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT007)
+	(EVENTS STORY007-EVENTS)
+	(CONTINUE STORY078)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY007-EVENTS ()
+	<COMBAT-MONSTER ,MONSTER-ASSASSIN 8 10 8>
+	<COND (<CHECK-COMBAT ,MONSTER-ASSASSIN ,STORY010 0 ,DAGGER>
+		<GAIN-MONEY 10>
+	)>>
+
+<CONSTANT TEXT008 "The sun is setting by the time you retrace the priest tracks to a dank cave. A figure in grey robes waits for you. The jewelled rings on his long fingers only serve to make his flesh look still more like ivory.||\"I welcome all who land upon my shore,\" he says in an eerie drone. \"It matters not to me what's port's your home, since now you'll dwell here too for evermore, and feed my veins with blood I'll call my own.\"||Panic and anger send one of the crew mad. He charges up the cave brandishing his knife. He is only a little fat fellow, and you never thought to hear him utter such screams of hatred. The vampire disembowels him at one stroke, laying him open from gorge to groin. Yellow fat spills out with blood and bile and half-digested breakfast. The vampire laps it all up.">
 
 <ROOM STORY008
 	(IN ROOMS)
 	(DESC "008")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT008)
+	(CHOICES CHOICES-MAGIC)
+	(DESTINATIONS <LTABLE STORY028 STORY046>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-MAGIC 14>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT009 "You sail into the coastal waters of Sorcerers' Isle. Here the sea foam takes on an odd pearly glow by moonlight, and strange songs can be heard across the darkling waters.">
+<CONSTANT CHOICES009 <LTABLE "Put into Dweomer harbour" "Sail around the island" "Steer out on to the open sea">>
 
 <ROOM STORY009
 	(IN ROOMS)
 	(DESC "009")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-SORCERERS)
+	(STORY TEXT009)
+	(CHOICES CHOICES009)
+	(DESTINATIONS <LTABLE STORY152 STORY182 STORY122>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT010 "It is getting harder to breathe.">
+<CONSTANT TEXT010-CONTINUED "You fling open the door to find a large chest containing platinum coins to the value of 400 Shards. \"We got the treasure, now let's be getting out of here!\" urges one of your men">
+<CONSTANT CHOICES010 <LTABLE "Take a look along the passage" "Return to the ship">>
 
 <ROOM STORY010
 	(IN ROOMS)
 	(DESC "010")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT010)
+	(EVENTS STORY010-EVENTS)
+	(CHOICES CHOICES010)
+	(DESTINATIONS <LTABLE STORY029 STORY308>)
+	(TYPES TWO-CHOICES)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY010-EVENTS ()
+	<COND (,RUN-ONCE
+		<COND (<NOT <CHECK-CODEWORD ,CODEWORD-CADMIUM>>
+			<LOSE-STAMINA 3 ,DIED-GREW-WEAKER ,STORY010>
+		)>
+	)>
+	<COND (<IS-ALIVE>
+		<CONTINUE-TEXT ,TEXT010-CONTINUED>
+		<COND (,RUN-ONCE <GAIN-MONEY 400>)>
+	)>>
 
 <ROOM STORY011
 	(IN ROOMS)
