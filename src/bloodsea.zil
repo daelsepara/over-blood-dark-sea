@@ -3060,6 +3060,7 @@
 ; ---------------------------------------------------------------------------------------------
 
 <OBJECT CODEWORD-CADMIUM (DESC "Cadmium")>
+<OBJECT CODEWORD-CHURCH (DESC "Church")>
 <OBJECT CODEWORD-COSY (DESC "Cosy")>
 
 ; "codewords from other books. Included here only for completeness"
@@ -3070,135 +3071,163 @@
 
 <OBJECT AXE
 	(DESC "axe")
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT AXE1
 	(DESC "axe")
 	(COMBAT 1)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT AXE2
 	(DESC "axe")
 	(COMBAT 2)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT AXE3
 	(DESC "axe")
 	(COMBAT 3)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT BATTLE-AXE
 	(DESC "battle-axe")
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT BATTLE-AXE1
 	(DESC "battle-axe")
 	(COMBAT 1)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT BATTLE-AXE2
 	(DESC "battle-axe")
 	(COMBAT 2)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT BATTLE-AXE3
 	(DESC "battle-axe")
 	(COMBAT 3)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT DAGGER
 	(DESC "Dagger")
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT ENCHANTED-SPEAR
 	(DESC "enchanted spear")
 	(COMBAT 2)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT ENCHANTED-SWORD
 	(DESC "enchanted sword")
 	(COMBAT 3)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT MACE
 	(DESC "mace")
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT MACE1
 	(DESC "mace")
 	(COMBAT 1)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT MACE2
 	(DESC "mace")
 	(COMBAT 2)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT MACE3
 	(DESC "mace")
 	(COMBAT 3)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT MAGIC-SPEAR
 	(DESC "magic spear")
 	(COMBAT 2)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT SPEAR
 	(DESC "spear")
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT SPEAR1
 	(DESC "spear")
 	(COMBAT 1)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT SPEAR2
 	(DESC "spear")
 	(COMBAT 2)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT SPEAR3
 	(DESC "spear")
 	(COMBAT 3)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT STAFF
 	(DESC "staff")
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT STAFF1
 	(DESC "staff")
 	(COMBAT 1)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT STAFF2
 	(DESC "staff")
 	(COMBAT 2)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT STAFF3
 	(DESC "staff")
 	(COMBAT 3)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT SWORD
 	(DESC "sword")
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT SWORD1
 	(DESC "sword")
 	(COMBAT 1)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT SWORD2
 	(DESC "sword")
 	(COMBAT 2)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 <OBJECT SWORD3
 	(DESC "sword")
 	(COMBAT 3)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
 ; "Armours"
@@ -3207,31 +3236,37 @@
 <OBJECT CHAIN-MAIL
 	(DESC "chain mail")
 	(DEFENSE 3)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEARBIT)>
 
 <OBJECT HEAVY-PLATE
 	(DESC "heavy plate")
 	(DEFENSE 6)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEARBIT)>
 
 <OBJECT LEATHER-ARMOUR
 	(DESC "leather armour")
 	(DEFENSE 1)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEARBIT)>
 
 <OBJECT PLATE-ARMOUR
 	(DESC "plate armour")
 	(DEFENSE 5)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEARBIT)>
 
 <OBJECT RING-MAIL
 	(DESC "ring mail")
 	(DEFENSE 2)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEARBIT)>
 
 <OBJECT SPLINT-ARMOUR
 	(DESC "splint armour")
 	(DEFENSE 4)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT WEARBIT)>
 
 ; Wands
@@ -3240,21 +3275,25 @@
 <OBJECT AMBER-WAND
 	(DESC "amber wand")
 	(MAGIC 1)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT)>
 
 <OBJECT COBALT-WAND
 	(DESC "cobalt wand")
 	(MAGIC 3)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT)>
 
 <OBJECT EBONY-WAND
 	(DESC "ebony wand")
 	(MAGIC 2)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT)>
 
 <OBJECT SELENIUM-WAND
 	(DESC "selenium wand")
 	(MAGIC 3)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT)>
 
 ; "other objects"
@@ -3320,6 +3359,10 @@
 
 <OBJECT MAP
 	(DESC "map")
+	(FLAGS TAKEBIT)>
+
+<OBJECT MARINERS-RUTTIER
+	(DESC "mariner's ruttier")
 	(FLAGS TAKEBIT)>
 
 <OBJECT MONEY-BAG
@@ -5609,224 +5652,141 @@
 		<COND (,RUN-ONCE <GAIN-MONEY 400>)>
 	)>>
 
+<CONSTANT TEXT011 "Using grapnels you climb with several crewmen to the level of the tunnel. It is jet black, drinking in the sunlight.">
+<CONSTANT CHOICES011 <LTABLE "Continue into tunnel" "Use magic" "No source of light">>
+
 <ROOM STORY011
 	(IN ROOMS)
 	(DESC "011")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT011)
+	(CHOICES CHOICES011)
+	(DESTINATIONS <LTABLE STORY178 STORY178 STORY196>)
+	(REQUIREMENTS <LTABLE <LTABLE CANDLE LANTERN> PROFESSION-MAGE NONE>)
+	(TYPES <LTABLE R-ANY R-PROFESSION R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT012 "\"Lucky it turned out to be pretty old,\" remarks the bosun. \"A younger one would have been tough to beat.\"||Leaning against a tree to get your breath back, you merely throw him a withering glare.||A trail winds up the hillside towards the middle of the island. One of the men sees you glance along it and says, \"Shouldn't we be setting sail, captain?\"">
+<CONSTANT CHOICES012 <LTABLE "Explore further inland" "Return to the ship">>
 
 <ROOM STORY012
 	(IN ROOMS)
 	(DESC "012")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT012)
+	(CHOICES CHOICES012)
+	(DESTINATIONS <LTABLE STORY031 STORY125>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT013 "Your vessel is more or less due south of Metriciens. The lookout reports no sight of land in any direction.">
+<CONSTANT CHOICES013 <LTABLE "Steer north (Cities of Gold and Glory)" "Steer south" "Steer east" "Steer west">>
 
 <ROOM STORY013
 	(IN ROOMS)
 	(DESC "013")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT013)
+	(CHOICES CHOICES013)
+	(DESTINATIONS <LTABLE STORY-CITIES-GOLD-GLORY STORY504 STORY402 STORY200>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT014 "The ghost resists your best efforts to dispel it. It is intent on returning to its home port of Smogmaw, and its curse means that you cannot put in at any other port on the way. You must now sail directly for Smogmaw; when you get there, the ghost will leave your ship.">
 
 <ROOM STORY014
 	(IN ROOMS)
 	(DESC "014")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT014)
+	(CONTINUE STORY078)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT015 "\"What's your game?\" says the priestess with a handsome smile.||\"Pardon me?\"||\"Your game.\" She fans the cards. \"Maingauche, Black Death, Stake the Vampire... How about Cudgel?\"||The two of you play several fiercely contested rounds of the game Cudgel, said to be popular among pit fighters in Trefoille.">
 
 <ROOM STORY015
 	(IN ROOMS)
 	(DESC "015")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT015)
+	(EVENTS STORY015-EVENTS)
+	(CONTINUE STORY072)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY015-EVENTS ("AUX" ROLL)
+	<SET ROLL <RANDOM-EVENT 2 0 T>>
+	<COND (<L=? .ROLL 5>
+		<COST-MONEY <ROLL-DICE 2> "lost">
+		<STORY-JUMP ,STORY052>
+	)(<L=? .ROLL 7>
+		<COST-MONEY <ROLL-DICE 1> "lost">
+		<STORY-JUMP ,STORY052>
+	)(<L=? .ROLL 9>
+		<GAIN-MONEY <ROLL-DICE 1>>
+	)(ELSE
+		<GAIN-MONEY <ROLL-DICE 2>>
+	)>>
+
+<CONSTANT TEXT016 "You can take their three swords and the 107 Shards they have in their money pouches. One of them also had a mariner's ruttier tucked into his breeches; he clearly won't have any use for it now.">
 
 <ROOM STORY016
 	(IN ROOMS)
 	(DESC "016")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT016)
+	(EVENTS STORY016-EVENTS)
+	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY016-EVENTS ()
+	<TAKE-QUANTITIES ,SWORD "swords" "How many of the swords will you take" 3>
+	<GAIN-MONEY 107>
+	<KEEP-ITEM ,MARINERS-RUTTIER>
+	<DELETE-CODEWORD ,CODEWORD-CHURCH>>
+
+<CONSTANT TEXT017 "A few days out from Smogmaw the Tidy Sum is overhauled by your own ship. It is with enormous relief that you see the faces of your loyal lads at the rail.||\"Ahoy, you have our skipper!\" calls your first mate to the Sokaran captain. \"Heave to, if you please.\"||The Sokarans don't want a fight. You are paid 150 Shards in compensation and returned to your ship. \"A tidy sum,\" you remark with a smile to the captain as you leave his vessel.">
 
 <ROOM STORY017
 	(IN ROOMS)
 	(DESC "017")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT017)
+	(EVENTS STORY017-EVENTS)
+	(CONTINUE STORY282)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY017-EVENTS ()
+	<GAIN-MONEY 150>
+	<COND (,CURRENT-SHIP <PUTP ,CURRENT-SHIP ,P?DOCKED NONE>)>>
+
+<CONSTANT TEXT018 "The temple of Badogor is just a hut set in a clearing some distance from town. You enter to be instantly assailed by a horde of cultists whose teeth are as sharp as knife-points.">
+<CONSTANT CHOICES018 <LTABLE "Fight your way to safety">>
 
 <ROOM STORY018
 	(IN ROOMS)
 	(DESC "018")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT018)
+	(CHOICES CHOICES018)
+	(DESTINATIONS <LTABLE <LTABLE STORY037 STORY123>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-COMBAT 17>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT019 "The crew amuse themselves by throwing apple cores at a shoal of glider crabs. \"Look lively, you swabs!\" you say to them. \"I'll soon find you chores if you're idle.\"||They return to their duties with alacrity. \"What heading shall I steer, cap'n?\" asks the helmsman.">
+<CONSTANT CHOICES019 <LTABLE "Go west" "Go north" "Go east" "Go south">>
 
 <ROOM STORY019
 	(IN ROOMS)
 	(DESC "019")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT019)
+	(CHOICES CHOICES019)
+	(DESTINATIONS <LTABLE STORY630 STORY081 STORY004 STORY227>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT020 "Did you sell anything at the market that you had previously obtained there for free?">
+<CONSTANT CHOICES020 <LTABLE "If so" IF-NOT>>
 
 <ROOM STORY020
 	(IN ROOMS)
 	(DESC "020")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT020)
+	(CHOICES CHOICES020)
+	(DESTINATIONS <LTABLE STORY372 STORY335>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY021
