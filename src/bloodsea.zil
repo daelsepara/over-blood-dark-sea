@@ -3091,6 +3091,7 @@
 
 <OBJECT CODEWORD-CALCIUM (DESC "Calcium")>
 <OBJECT CODEWORD-CALLID (DESC "Callid")>
+<OBJECT CODEWORD-CATALYST (DESC "Catalyst")>
 <OBJECT CODEWORD-CHILL (DESC "Chill")>
 <OBJECT CODEWORD-CHURCH (DESC "Church")>
 <OBJECT CODEWORD-COSY (DESC "Cosy")>
@@ -6463,6 +6464,7 @@
 	(CHOICES CHOICES054)
 	(DESTINATIONS <LTABLE STORY-SMOGMAW-GOODS STORY044>)
 	(TYPES TWO-CHOICES)
+	(CODEWORDS <LTABLE CODEWORD-CATALYST>)
 	(FLAGS LIGHTBIT)>
 
 <CONSTANT TEXT055 "The weather turns colder. At night there is hoarfrost on the shrouds. \"What lies in these grey waters?\" you ask the navigator.||He frowns. \"Merfolk with tails of hard horn. Creatures like great scorpions or lobsters, bigger than tar barrels. Spirits of death and cold moonlight.\"||You hold up your hand. \"I get the picture, thank you.\"">
