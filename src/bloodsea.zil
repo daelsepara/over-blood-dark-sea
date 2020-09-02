@@ -2386,6 +2386,55 @@
 		>
 	)>>
 
+; "Story - Storm routines"
+; ---------------------------------------------------------------------------------------------
+
+<CONSTANT CHOICES-STORM-FURY <LTABLE "The storm hits with full fury. Great grey waves break across the deck.">>
+<CONSTANT STORY-STORM-REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 4 6 20> <LTABLE "The ship sinks!" "The mast splits!" "You weather the storm!">>>>
+<CONSTANT TEXT-BLESSING-STORM-SAFETY "Your Safety from Storms blessing protected you">
+<CONSTANT TEXT-STORM-SEA "Heavy black clouds race towards you across the sky, whipping the waves into a frenzy. The crew mutter among themselves fearfully.">
+<CONSTANT TEXT-STORM-SUBSIDES "Your ship is thrown about like flotsam and jetsam. When the storm subsides, you take stock. Much has been swept overboard.||Also, the ship has been swept way off course and the mate has no idea where you are. \"We're lost at sea, Cap'n,\" he moans.">
+
+<ROUTINE STORM-AT-SEA (STORY JUMP "AUX" (DICE 1) (ODDS NONE) (PARAMETERS NONE) (CONDITION 0))
+	<COND (<NOT .STORY> <SET STORY ,HERE>)>
+	<RESET-ODDS 1 0 .STORY>
+	<COND (<CHECK-BLESSING ,BLESSING-SAFETY-FROM-STORMS>
+		<CRLF>
+		<TELL "Use the blessing ">
+		<PRINT-ITEM ,BLESSING-SAFETY-FROM-STORMS T>
+		<TELL " for safe passage?">
+		<COND (<YES?>
+			<CRLF>
+			<TELL ,TEXT-BLESSING-STORM-SAFETY>
+			<TELL ,PERIOD-CR>
+			<DELETE-BLESSING ,BLESSING-SAFETY-FROM-STORMS>
+			<STORY-JUMP .JUMP>
+			<RETURN>
+		)>
+	)>
+	<RESET-ODDS 1 0 .STORY>
+	<SET ODDS <GETP .STORY ,P?REQUIREMENTS>>
+	<SET PARAMETERS <GET .ODDS 1>>
+	<COND (<EQUAL? ,CURRENT-SHIP ,SHIP-BRIGANTINE>
+		<SET DICE 2>
+	)(<EQUAL? ,CURRENT-SHIP ,SHIP-GALLEON>
+		<SET DICE 3>
+	)>
+	<PUT .PARAMETERS 1 .DICE>
+	<PUT .PARAMETERS 2 0>
+	<COND (,CURRENT-SHIP
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<COND (.CONDITION
+			<COND (<EQUAL? .CONDITION ,CONDITION-EXCELLENT>
+				<PUT .PARAMETERS 2 1>
+			)(<EQUAL? .CONDITION ,CONDITION-POOR>
+				<PUT .PARAMETERS 2 -1>
+			)>
+		)>
+	)(ELSE
+		<PUT .PARAMETERS 2 -1>
+	)>>
+
 ; "Story - Merchant routines (display)"
 ; ---------------------------------------------------------------------------------------------
 
@@ -3138,6 +3187,8 @@
 <OBJECT CODEWORD-CALCIUM (DESC "Calcium")>
 <OBJECT CODEWORD-CALLID (DESC "Callid")>
 <OBJECT CODEWORD-CATALYST (DESC "Catalyst")>
+<OBJECT CODEWORD-CERTAIN (DESC "Certain")>
+<OBJECT CODEWORD-CERUMEN (DESC "Cerumen")>
 <OBJECT CODEWORD-CHILL (DESC "Chill")>
 <OBJECT CODEWORD-CHURCH (DESC "Church")>
 <OBJECT CODEWORD-COSY (DESC "Cosy")>
@@ -3400,6 +3451,15 @@
 	(SCOUTING 1)
 	(FLAGS TAKEBIT)>
 
+<OBJECT CROSS-STAFF
+	(DESC "cross-staff")
+	(SCOUTING 2)
+	(FLAGS TAKEBIT)>
+
+<OBJECT FRETWORK-KEY
+	(DESC "fretwork key")
+	(FLAGS TAKEBIT)>
+
 <OBJECT GOLD-COMPASS
 	(DESC "gold compass")
 	(SCOUTING 2)
@@ -3462,8 +3522,22 @@
 	(MONEY 500)
 	(FLAGS TAKEBIT)>
 
+<OBJECT PARROT
+	(DESC "parrot")
+	(QUANTITY 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT PARROT-FUNGUS
+	(DESC "parrot fungus")
+	(QUANTITY 1)
+	(FLAGS TAKEBIT)>
+
 <OBJECT PICKAXE
 	(DESC "pickaxe")
+	(FLAGS TAKEBIT)>
+
+<OBJECT PIRATE-CAPTAINS-HEAD
+	(DESC "pirate captain's head")
 	(FLAGS TAKEBIT)>
 
 <OBJECT PLATINUM-EARRING
@@ -3573,6 +3647,16 @@
 
 <OBJECT ROYAL-RING
 	(DESC "royal ring")
+	(FLAGS TAKEBIT)>
+
+<OBJECT SELENIUM-ORE
+	(DESC "selenium ore")
+	(QUANTITY 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT SEXTANT
+	(DESC "sextant")
+	(SCOUTING 3)
 	(FLAGS TAKEBIT)>
 
 <OBJECT SHIPS-DEEDS
@@ -3699,6 +3783,12 @@
 	(COMBAT 6)
 	(DEFENSE 9)
 	(STAMINA 9)>
+
+<OBJECT MONSTER-VAMPIRE
+	(DESC "Vampire")
+	(COMBAT 15)
+	(DEFENSE 18)
+	(STAMINA 18)>
 
 ; "Titles and Honours for Over the Blood-Dark Sea"
 ; ---------------------------------------------------------------------------------------------
@@ -4890,7 +4980,7 @@
 		<UPDATE-STATUS-LINE>
 	>>
 
-; "Townhouse routines"
+; "Shack routines"
 ; ---------------------------------------------------------------------------------------------
 
 <CONSTANT CACHE-MENU <LTABLE "Leave/Take your possessions.">>
@@ -5187,52 +5277,6 @@
 		<EMPHASIZE "You are not injured and do not need to recover.">
 	)>>
 
-; "Gambling Den routines"
-; ---------------------------------------------------------------------------------------------
-
-<ROUTINE GAMBLING-DEN (MAX "AUX" BET ROLL)
-	<COND (<G=? ,MONEY .MAX>
-		<CRLF>
-		<TELL "Do you wish to gamble (" N .MAX " " D ,CURRENCY " maximum)?">
-		<COND (<YES?>
-			<REPEAT ()
-				<SET BET <GET-NUMBER "How much will you bet" 1 .MAX>>
-				<REPEAT ()
-					<SET ROLL <ROLL-DICE 2>>
-					<CRLF>
-					<TELL "You rolled " N .ROLL CR>
-					<PRESS-A-KEY>
-					<COND (<NOT <PROCESS-RANDOM-BLESSING>> <RETURN>)>
-				>
-				<COND (<L=? .ROLL 2>
-					<EMPHASIZE "You win five times your bet!">
-					<SETG MONEY <+ ,MONEY <* .BET 5>>>
-				)(<L=? .ROLL 4>
-					<EMPHASIZE "You win twice your bet!">
-					<SETG MONEY <+ ,MONEY <* .BET 2>>>
-				)(<L=? .ROLL 9>
-					<EMPHASIZE "You lost your bet!">
-					<SETG MONEY <- ,MONEY .BET>>
-				)(<L=? .ROLL 11>
-					<EMPHASIZE "You win twice your bet!">
-					<SETG MONEY <+ ,MONEY <* .BET 2>>>
-				)(ELSE
-					<EMPHASIZE "You win five times your bet!">
-					<SETG MONEY <+ ,MONEY <* .BET 5>>>
-				)>
-				<COND (<L? ,MONEY 0> <SETG MONEY 0>)>
-				<UPDATE-STATUS-LINE>
-				<COND (<L? ,MONEY .MAX>
-					<EMPHASIZE "You are thrown out of the Gambling Den!">
-					<RETURN>
-				)>
-				<CRLF>
-				<TELL "Are you ready to leave?">
-				<COND (<YES?> <RETURN>)>
-			>
-		)>
-	)>>
-
 ; "Temple Routines"
 ; ---------------------------------------------------------------------------------------------
 
@@ -5391,6 +5435,101 @@
 		<EMPHASIZE "You are not an initiate of any god!">
 	)>>
 
+; "Markets"
+; ---------------------------------------------------------------------------------------------
+
+; "Smogmaw Market"
+; ---------------------------------------------------------------------------------------------
+
+<CONSTANT CHOICES-SMOGMAW-BUY <LTABLE "Buy armours/weapons (without COMBAT bonus)" "Buy weapons (with COMBAT bonus)" "Buy other items" "Back">>
+<CONSTANT CHOICES-SMOGMAW-SELL <LTABLE "Sell armours/weapons (without COMBAT bonus)" "Sell weapons (+1 COMBAT)" "Sell weapons (+2 COMBAT)" "Sell weapons (+3 COMBAT)" "Sell other items"  "Back">>
+
+<ROOM SMOGMAW-MARKET-BUY
+	(DESC "086 Smogmaw Market")
+	(CHOICES CHOICES-SMOGMAW-BUY)
+	(DESTINATIONS <LTABLE SMOGMAW-BUY-ARMOURS SMOGMAW-BUY-WEAPONS SMOGMAW-BUY-OTHERS STORY086>)
+	(TYPES FOUR-CHOICES)
+	(FLAGS LIGHTBIT)>
+
+<ROOM SMOGMAW-BUY-ARMOURS
+	(DESC "086 Merchant selling armours/weapons")
+	(EVENTS SMOGMAW-BUYING-ARMOURS)
+	(CONTINUE SMOGMAW-MARKET-BUY)
+	(FLAGS LIGHTBIT)>
+
+<ROOM SMOGMAW-BUY-WEAPONS
+	(DESC "086 Merchant selling weapons")
+	(EVENTS SMOGMAW-BUYING-WEAPONS)
+	(CONTINUE SMOGMAW-MARKET-BUY)
+	(FLAGS LIGHTBIT)>
+
+<ROOM SMOGMAW-BUY-OTHERS
+	(DESC "086 Merchant selling other items")
+	(EVENTS SMOGMAW-BUYING-OTHERS)
+	(CONTINUE SMOGMAW-MARKET-BUY)
+	(FLAGS LIGHTBIT)>
+
+<ROUTINE SMOGMAW-BUYING-ARMOURS ()
+	<MERCHANT <LTABLE LEATHER-ARMOUR RING-MAIL AXE BATTLE-AXE MACE SPEAR STAFF SWORD> <LTABLE 40 150 40 40 40 40 40 40>>>
+
+<ROUTINE SMOGMAW-BUYING-WEAPONS ()
+	<MERCHANT <LTABLE AXE1 BATTLE-AXE1 MACE1 SPEAR1 STAFF1 SWORD1 AXE2 BATTLE-AXE2 MACE2 SPEAR2 STAFF2 SWORD2> <LTABLE 200 200 200 200 200 200 450 450 450 450 450 450>>>
+
+<ROUTINE SMOGMAW-BUYING-OTHERS ()
+	<MERCHANT <LTABLE COMPASS CROSS-STAFF SEXTANT LOCKPICKS HOLY-SYMBOL ROPE LANTERN PARROT PARROT-FUNGUS> <LTABLE 400 800 1200 250 200 40 140 75 150>>>
+
+<ROOM SMOGMAW-MARKET-SELL
+	(DESC "086 Smogmaw Market")
+	(CHOICES CHOICES-SMOGMAW-SELL)
+	(DESTINATIONS <LTABLE SMOGMAW-SELL-ARMOURS SMOGMAW-SELL-WEAPONS1 SMOGMAW-SELL-WEAPONS2 SMOGMAW-SELL-WEAPONS3 SMOGMAW-SELL-OTHERS STORY086>)
+	(TYPES SIX-CHOICES)
+	(FLAGS LIGHTBIT)>
+
+<ROOM SMOGMAW-SELL-ARMOURS
+	(DESC "086 Merchant buying armours/weapons")
+	(EVENTS SMOGMAW-SELLING-ARMOURS)
+	(CONTINUE SMOGMAW-MARKET-SELL)
+	(FLAGS LIGHTBIT)>
+
+<ROOM SMOGMAW-SELL-WEAPONS1
+	(DESC "086 Merchant buying weapons")
+	(EVENTS SMOGMAW-SELLING-WEAPONS1)
+	(CONTINUE SMOGMAW-MARKET-SELL)
+	(FLAGS LIGHTBIT)>
+
+<ROOM SMOGMAW-SELL-WEAPONS2
+	(DESC "086 Merchant buying weapons")
+	(EVENTS SMOGMAW-SELLING-WEAPONS2)
+	(CONTINUE SMOGMAW-MARKET-SELL)
+	(FLAGS LIGHTBIT)>
+
+<ROOM SMOGMAW-SELL-WEAPONS3
+	(DESC "086 Merchant buying weapons")
+	(EVENTS SMOGMAW-SELLING-WEAPONS3)
+	(CONTINUE SMOGMAW-MARKET-SELL)
+	(FLAGS LIGHTBIT)>
+
+<ROOM SMOGMAW-SELL-OTHERS
+	(DESC "086 Merchant buying other items")
+	(EVENTS SMOGMAW-SELLING-OTHERS)
+	(CONTINUE SMOGMAW-MARKET-SELL)
+	(FLAGS LIGHTBIT)>
+
+<ROUTINE SMOGMAW-SELLING-ARMOURS ()
+	<MERCHANT <LTABLE LEATHER-ARMOUR RING-MAIL CHAIN-MAIL AXE BATTLE-AXE MACE SPEAR STAFF SWORD> <LTABLE 35 100 150 35 35 35 35 35 35> ,PLAYER T>>
+
+<ROUTINE SMOGMAW-SELLING-WEAPONS1 ()
+	<MERCHANT <LTABLE AXE1 BATTLE-AXE1 MACE1 SPEAR1 STAFF1 SWORD1> <LTABLE 175 175 175 175 175 175> ,PLAYER T>>
+
+<ROUTINE SMOGMAW-SELLING-WEAPONS2 ()
+	<MERCHANT <LTABLE AXE2 BATTLE-AXE2 MACE2 SPEAR2 STAFF2 SWORD2> <LTABLE 375 375 375 375 375 375> ,PLAYER T>>
+
+<ROUTINE SMOGMAW-SELLING-WEAPONS3 ()
+	<MERCHANT <LTABLE AXE3 BATTLE-AXE3 MACE3 SPEAR3 STAFF3 SWORD3> <LTABLE 750 750 750 750 750 750> ,PLAYER T>>
+
+<ROUTINE SMOGMAW-SELLING-OTHERS ()
+	<MERCHANT <LTABLE COMPASS CROSS-STAFF SEXTANT LOCKPICKS MARINERS-RUTTIER SELENIUM-ORE HOLY-SYMBOL ROPE LANTERN FRETWORK-KEY PARROT PARROT-FUNGUS PIRATE-CAPTAINS-HEAD> <LTABLE 320 640 1000 180 200 350 100 25 100 1000 25 120 75> ,PLAYER T>>
+
 ; "Instructions"
 ; ---------------------------------------------------------------------------------------------
 
@@ -5470,6 +5609,9 @@
 	<PUTP ,CANDLE ,P?QUANTITY 1>
 	<PUTP ,INK-SAC ,P?QUANTITY 1>
 	<PUTP ,LANTERN ,P?QUANTITY 1>
+	<PUTP ,PARROT ,P?QUANTITY 1>
+	<PUTP ,PARROT-FUNGUS ,P?QUANTITY 1>
+	<PUTP ,SELENIUM-ORE ,P?QUANTITY 1>
 	<PUTP ,MONEY-BAG ,P?MONEY 500>
 	<RESET-GEAR>>
 
@@ -5483,7 +5625,8 @@
 	<PUTP ,STORY029 ,P?DOOM T>
 	<PUTP ,STORY037 ,P?DOOM T>
 	<PUTP ,STORY067 ,P?DOOM T>
-	<PUTP ,STORY073 ,P?DOOM T>>
+	<PUTP ,STORY073 ,P?DOOM T>
+	<PUTP ,STORY085 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -6941,224 +7084,148 @@
 <ROUTINE STORY080-EVENTS ()
 	<STORY-RESET-CREW ,CONDITION-POOR>>
 
+<CONSTANT TEXT081 "A strong breeze flutters the sails. The crewmen go about their chores merrily, scrambling through the rigging like carefree monkeys.||\"Five bells,\" intones the mate.">
+
 <ROOM STORY081
 	(IN ROOMS)
 	(DESC "081")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT081)
+	(EVENTS STORY081-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY354 STORY101>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 12> <LTABLE "Pirates" "An uneventful journey">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY081-EVENTS ()
+	<COND (,RUN-ONCE
+		<COND (<L? ,STAMINA ,MAX-STAMINA> <GAIN-STAMINA 1>)>
+	)>>
+
+<CONSTANT TEXT082 "The men start to yawn. \"Great gods, I feel sleepy!\" announces the bosun, rubbing his eyes.||\"Me, too,\" agrees the quartermaster. \"Like I'd been poleaxed.\"||Despite your stern orders, they go to lie down on the stone slabs.||\"Ah, this is a comfy couch,\" murmurs the bosun as he shuts his eyes. \"Permit us to take just a quick nap, skipper.\"">
 
 <ROOM STORY082
 	(IN ROOMS)
 	(DESC "082")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT082)
+	(CHOICES CHOICES-CODEWORD)
+	(DESTINATIONS <LTABLE STORY323 STORY305>)
+	(REQUIREMENTS <LTABLE CODEWORD-CERUMEN NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT083 "The sky is the colour of burning sulphur. Thunder rumbles the heavens, making your crewmen quail. \"The wrath of the gods is upon us!\" shrieks the bosun. \"Say your final prayers, lads!\"">
 
 <ROOM STORY083
 	(IN ROOMS)
 	(DESC "083")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT083)
+	(EVENTS STORY083-EVENTS)
+	(CHOICES CHOICES-STORM-FURY)
+	(DESTINATIONS <LTABLE <LTABLE STORY103 STORY581 STORY060>>)
+	(REQUIREMENTS STORY-STORM-REQUIREMENTS)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY083-EVENTS ()
+	<STORM-AT-SEA ,STORY083 ,STORY060>>
 
 <ROOM STORY084
 	(IN ROOMS)
 	(DESC "084")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY084-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY084-BACKGROUND ()
+	<DELETE-CODEWORD ,CODEWORD-COSY>
+	<COND (<CHECK-VISITS-MORE ,STORY084 1> <RETURN ,STORY433>)>
+	<RETURN ,STORY104>>
+
+<CONSTANT TEXT085 "The vampire screeches like an angry owl and lashes out with its long white talons.||\"Go on, skipper, we're right behind you,\" says the first mate nervously.">
+<CONSTANT TEXT085-ATTACK "The vampire gets a final attack as you run off, inflicting some damage!">
 
 <ROOM STORY085
 	(IN ROOMS)
 	(DESC "085")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT085)
+	(EVENTS STORY085-EVENTS)
+	(CONTINUE STORY195)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY085-EVENTS ()
+	<CRLF>
+	<TELL "Retreat?">
+	<COND (<YES?>
+		<CONTINUE-TEXT ,TEXT085-ATTACK>
+		<LOSE-STAMINA <ROLL-DICE 1> ,DIED-FROM-INJURIES ,STORY085>
+		<COND (<IS-ALIVE> <STORY-JUMP ,STORY041>)>
+	)(ELSE
+		<COMBAT-MONSTER ,MONSTER-VAMPIRE 15 18 18>
+		<CHECK-COMBAT ,MONSTER-VAMPIRE ,STORY085>
+	)>>
+
+<CONSTANT TEXT086 "Smogmaw market comprises a row of flimsy grass-roofed huts where goods are laid out on straw mats.">
+<CONSTANT CHOICES086 <LTABLE "Buy armours/weapons/other items" "Sell armours/weapons/other items" "Leave the market">>
 
 <ROOM STORY086
 	(IN ROOMS)
 	(DESC "086")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-SMOGMAW)
+	(STORY TEXT086)
+	(CHOICES CHOICES086)
+	(DESTINATIONS <LTABLE SMOGMAW-MARKET-BUY SMOGMAW-MARKET-SELL STORY167>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT087 "A small boat comes sailing out of a clear horizon. Its single passenger is a bare-chested man in black breeches who leaps aboard with the lithe grace of a big cat.">
+<CONSTANT CHOICES087 <LTABLE "Challenge the fellow" "Order him seized" "Offer hospitality">>
 
 <ROOM STORY087
 	(IN ROOMS)
 	(DESC "087")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT087)
+	(EVENTS STORY087-EVENTS)
+	(CHOICES CHOICES087)
+	(DESTINATIONS <LTABLE STORY235 STORY197 STORY217>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY087-EVENTS ()
+	<DELETE-CODEWORD ,CODEWORD-CERTAIN>>
+
+<CONSTANT TEXT088 "There is ample fruit and even a little game, in the form of flightless weasel-birds. The trick lies in knowing what is safe to eat and what is toxic.">
 
 <ROOM STORY088
 	(IN ROOMS)
 	(DESC "088")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT088)
+	(CHOICES CHOICES-SCOUTING)
+	(DESTINATIONS <LTABLE <LTABLE STORY144 STORY162>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-SCOUTING 12>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT089 "The witch promises to mend her ways. \"No more vile hocus pocus for me,\" she vows. But the next day she is gone like a ghost, and the helmsman reports that he does not recognize these waters. You have been played for a sucker">
 
 <ROOM STORY089
 	(IN ROOMS)
 	(DESC "089")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT089)
+	(CONTINUE STORY190)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT090 "\"I hope you're well-versed in outdoor survival,\" mutters an old man, displaying the stump of the leg that he lost to a crocodile.">
+<CONSTANT CHOICES090 <LTABLE "Follow the coast east (The Serpent King's Domain)" "Follow the coast west (The Serpent King's Domain)" "South-west into the jungle (The Serpent King's Domain)" "South-east into the jungle (The Serpent King's Domain)" "Follow the riverbank (The Serpent King's Domain)" "Remain in Smogmaw">>
 
 <ROOM STORY090
 	(IN ROOMS)
 	(DESC "090")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT090)
+	(CHOICES CHOICES090)
+	(DESTINATIONS <LTABLE STORY-SERPENT-KINGS-DOMAIN STORY-SERPENT-KINGS-DOMAIN STORY-SERPENT-KINGS-DOMAIN STORY-SERPENT-KINGS-DOMAIN STORY-SERPENT-KINGS-DOMAIN STORY044>)
+	(TYPES SIX-CHOICES)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY091
