@@ -167,10 +167,11 @@
 <GLOBAL STARTING-POINT STORY001>
 <GLOBAL CURRENT-LOCATION LOCATION-GOLNIR>
 
-<CONSTANT LOCATIONS <LTABLE "Golnir" "Sorcerers' Isle">>
+<CONSTANT LOCATIONS <LTABLE "Golnir" "Sorcerers' Isle" "Smogmaw">>
 
 <CONSTANT LOCATION-GOLNIR 1>
 <CONSTANT LOCATION-SORCERERS 2>
+<CONSTANT LOCATION-SMOGMAW 3>
 
 ; "Gamebook loop"
 ; ---------------------------------------------------------------------------------------------
@@ -3059,7 +3060,7 @@
 ; "Codewords for Over the Blood-Dark Sea"
 ; ---------------------------------------------------------------------------------------------
 
-<OBJECT CODEWORD-CADMIUM (DESC "Cadmium")>
+<OBJECT CODEWORD-CALCIUM (DESC "Calcium")>
 <OBJECT CODEWORD-CHURCH (DESC "Church")>
 <OBJECT CODEWORD-COSY (DESC "Cosy")>
 
@@ -3616,6 +3617,7 @@
 ; "Titles and Honours for Over the Blood-Dark Sea"
 ; ---------------------------------------------------------------------------------------------
 
+<OBJECT TITLE-SAVIOUR-VERVAYENS (DESC "Saviour of Vervayens Isle")>
 
 ; "Abilities and Combat"
 ; ---------------------------------------------------------------------------------------------
@@ -5335,7 +5337,8 @@
 <ROUTINE RESET-STORY ()
 	<PUTP ,STORY006 ,P?DOOM T>
 	<PUTP ,STORY007 ,P?DOOM T>
-	<PUTP ,STORY010 ,P?DOOM T>>
+	<PUTP ,STORY010 ,P?DOOM T>
+	<PUTP ,STORY029 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -5643,7 +5646,7 @@
 
 <ROUTINE STORY010-EVENTS ()
 	<COND (,RUN-ONCE
-		<COND (<NOT <CHECK-CODEWORD ,CODEWORD-CADMIUM>>
+		<COND (<NOT <CHECK-CODEWORD ,CODEWORD-CALCIUM>>
 			<LOSE-STAMINA 3 ,DIED-GREW-WEAKER ,STORY010>
 		)>
 	)>
@@ -5789,224 +5792,142 @@
 	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT021 "\"Let's steer clear of Uttaku,\" suggests the first mate with a fearful glance westwards. \"The Uttakin are rank fiends who merely wear the outer guise of men.'\"">
+
 <ROOM STORY021
 	(IN ROOMS)
 	(DESC "021")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT021)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY236 STORY109 STORY039>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 7 12> <LTABLE "Hags in sieves" "A fearsome waterspout" "An uneventful journey">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT022 "\"A Shard for your thoughts,\" you say to the first mate when you find him gazing dourly out across the waves.||\"Far to the south, men say, there's a pit that goes right through the world. In its black depths you can see the stars.\"||You laugh to make light of his mood. \"Well, what of it? Why so glum?\"||\"Don't you know the old saying? Battle not with monsters lest ye become a monster; and if you gaze into the abyss, the abyss also gazes into you.\" He turns away from the rail. \"What course, captain?\"">
+<CONSTANT CHOICES022 <LTABLE "Go north" "Go south" "Go east" "Go west">>
 
 <ROOM STORY022
 	(IN ROOMS)
 	(DESC "022")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT022)
+	(CHOICES CHOICES022)
+	(DESTINATIONS <LTABLE STORY170 STORY079 STORY468 STORY040>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT023 "One of the crew goes mad and hurls himself from the rigging crying, \"Hydras! Hydras! Cut off a head and two more shall take its place!\"||You have his broken body wrapped in a sail and commended to the gods of the sea. Death aboard ship is always a bad omen.">
 
 <ROOM STORY023
 	(IN ROOMS)
 	(DESC "023")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT023)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY083 STORY041 STORY574 STORY105>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 7 10 12> <LTABLE "Storm" "Brooding quiet" "Haunted" "A mysterious island">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT024 "You pore over your charts until late into the night trying to decide where to set your course.">
+<CONSTANT CHOICES024 <LTABLE "Steer west" "Steer east" "Steer south" "Steer north">>
 
 <ROOM STORY024
 	(IN ROOMS)
 	(DESC "024")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY024-BACKGROUND)
+	(STORY TEXT024)
+	(CHOICES CHOICES024)
+	(DESTINATIONS <LTABLE STORY042 STORY303 STORY263 STORY119>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
 
+<ROUTINE STORY024-BACKGROUND ()
+	<COND (<CHECK-TITLE ,TITLE-SAVIOUR-VERVAYENS> <RETURN ,STORY169>)>
+	<RETURN ,STORY024>>
+
+; "TO-DO: track if candle was used in mines and adjust this section"
 <ROOM STORY025
 	(IN ROOMS)
 	(DESC "025")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(EVENTS STORY025-EVENTS)
+	(CONTINUE STORY317)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY025-EVENTS ()
+	<REMOVE-ITEM ,CANDLE ,TEXT-USED F T>>
+
+<CONSTANT TEXT026 "You are swept ashore at the mouth of a wide river. Staggering towards trails of smoke that are rising from beyond a copse of olive-green tropical palms, you arrive at a settlement of many thatched-roof shacks raised on stilts at the river's edge. It is the depot town of Smogmaw, on the great southern continent.">
 
 <ROOM STORY026
 	(IN ROOMS)
 	(DESC "026")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-SMOGMAW)
+	(STORY TEXT026)
+	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT027 "The causeway ends in a massive iron door set into the cliff face. It is studded with huge irregular moonstones that look like chunks of frozen milk. You could not possible open this door on your own.">
 
 <ROOM STORY027
 	(IN ROOMS)
 	(DESC "027")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT027)
+	(EVENTS STORY027-EVENTS)
+	(CONTINUE STORY005)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY027-EVENTS ()
+	<CODEWORD-JUMP ,CODEWORD-COSY ,STORY084>>
+
+<CONSTANT TEXT028 "The vampire speaks in rhyming couplets. Knowing that verse has magic of its own, you know that you might be able to confound it by replying in the same fashion. Vampires are sly and vicious, but easily baffled.">
+<CONSTANT CHOICES028 <LTABLE "Attempt to speak in verse" "Try something else">>
 
 <ROOM STORY028
 	(IN ROOMS)
 	(DESC "028")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT028)
+	(CHOICES CHOICES028)
+	(DESTINATIONS <LTABLE STORY065 STORY046>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT029-BREATHING "You have difficulty breathing.">
+<CONSTANT TEXT029-CONTINUED "You step into a large dark hold. Your eyes have no time to adjust to the gloom before a translucent creature with many frail tentacles comes drifting forwards to exude a gobbet of grey vapour in your face.||\"Don't breathe it in, captain!\" yells one of your men.">
+<CONSTANT CHOICES029 <LTABLE "Inhale" "Exhale">>
 
 <ROOM STORY029
 	(IN ROOMS)
 	(DESC "029")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(EVENTS STORY029-EVENTS)
+	(CHOICES CHOICES029)
+	(DESTINATIONS <LTABLE STORY047 STORY067>)
+	(TYPES TWO-CHOICES)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY029-EVENTS ()
+	<COND (,RUN-ONCE
+		<COND (<CHECK-CODEWORD ,CODEWORD-CALCIUM>
+			<PREVENT-DOOM ,STORY029>
+		)(ELSE
+			<CRLF>
+			<TELL ,TEXT029-BREATHING>
+			<TELL ,PERIOD-CR>
+			<LOSE-STAMINA 4 ,DIED-GREW-WEAKER ,STORY029>
+		)>
+	)>
+	<CONTINUE-TEXT ,TEXT029-CONTINUED>>
+
+<CONSTANT TEXT030 "The closer you get to the uncharted island, the greater your amazement. \"Is it a natural island or a man-made thing?\" wonders the mate.||You can understand why he's baffled: what lies ahead of you is a disk of jet black marble almost half a kilometre across. It rises to a height of a good hundred metres above the water. From high in the smooth black cliffs, sunlight picks out the edges of a tunnel.">
+<CONSTANT CHOICES030 <LTABLE "Ascend to the tunnel" "Sail away">>
 
 <ROOM STORY030
 	(IN ROOMS)
 	(DESC "030")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT030)
+	(CHOICES CHOICES030)
+	(DESTINATIONS <LTABLE STORY011 STORY048>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY031
