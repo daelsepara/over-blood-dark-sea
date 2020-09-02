@@ -28,17 +28,6 @@
 <GLOBAL PERIOD-CR ".|">
 <GLOBAL EXCLAMATION-CR "!|">
 
-<CONSTANT TEXT-AFFLICTED "afflicted">
-<CONSTANT TEXT-EXCELLENT "Excellent!">
-<CONSTANT TEXT-INFECTED "infected">
-<CONSTANT TEXT-POISONED "poisoned">
-<CONSTANT TEXT-SURE "Are you sure?">
-<CONSTANT TEXT-NEXT-TIME "See you next time!">
-<CONSTANT TEXT-RANDOM-EVENT "Random Event">
-<CONSTANT TEXT-BYE "Bye">
-<CONSTANT TEXT-BACK "Go back">
-<CONSTANT TEXT-GOODBYE "Goodbye!">
-
 ; "CHOICES"
 ; ---------------------------------------------------------------------------------------------
 
@@ -177,6 +166,20 @@
 <CONSTANT LOCATION-COPPER 4>
 <CONSTANT LOCATION-DWEOMER 5>
 
+; "Text constants"
+; ---------------------------------------------------------------------------------------------
+
+<CONSTANT TEXT-AFFLICTED "afflicted">
+<CONSTANT TEXT-BYE "Bye">
+<CONSTANT TEXT-EXCELLENT "Excellent!">
+<CONSTANT TEXT-GO-BACK "Go back">
+<CONSTANT TEXT-GOODBYE "Goodbye!">
+<CONSTANT TEXT-INFECTED "infected">
+<CONSTANT TEXT-NEXT-TIME "See you next time!">
+<CONSTANT TEXT-POISONED "poisoned">
+<CONSTANT TEXT-RANDOM-EVENT "Random Event">
+<CONSTANT TEXT-SURE "Are you sure?">
+
 ; "Gamebook loop"
 ; ---------------------------------------------------------------------------------------------
 
@@ -249,6 +252,7 @@
 		<UPDATE-STATUS-LINE>
 	)>>
 
+; "TO-DO: Verify that Resurrection at the Island of Rebirth is used only 3 times"
 <ROUTINE CHECK-DOOM ("AUX" DOOM HAS-ROYAL-RING)
 	<SET DOOM <GETP ,HERE ,P?DOOM>>
 	<COND (.DOOM
@@ -265,7 +269,9 @@
 			)>
 			<SETG STAMINA ,MAX-STAMINA>
 			<STORY-JUMP <GETP ,RESURRECTION-ARRANGEMENTS ,P?CONTINUE>>
-			<SETG RESURRECTION-ARRANGEMENTS NONE>
+			<COND (<N=? ,RESURRECTION-ARRANGEMENTS ,RESURRECTION-ISLAND-REBIRTH>
+				<SETG RESURRECTION-ARRANGEMENTS NONE>
+			)>
 		)(ELSE
 			<PRINT-ENDING ,BAD-ENDING 3>G
 		)>
@@ -1903,6 +1909,14 @@
 <ROUTINE LOSE-MONEY (COST)
 	<COST-MONEY .COST "lose">>
 
+<ROUTINE LOSE-SHIP ()
+	<COND (,CURRENT-SHIP
+		<COND (<CHECK-SHIP ,CURRENT-SHIP>
+			<REMOVE ,CURRENT-SHIP>
+			<SETG CURRENT-SHIP NONE>
+		)>	
+	)>>
+
 <ROUTINE LOSE-STAMINA (DAMAGE MESSAGE STORY)
 	<SETG STAMINA <- ,STAMINA .DAMAGE>>
 	<COND (<L? ,STAMINA 0> <SETG STAMINA 0>)>
@@ -3095,6 +3109,7 @@
 <OBJECT CODEWORD-CHILL (DESC "Chill")>
 <OBJECT CODEWORD-CHURCH (DESC "Church")>
 <OBJECT CODEWORD-COSY (DESC "Cosy")>
+<OBJECT CODEWORD-CYNOSURE (DESC "Cynosure")>
 
 ; "codewords from other books. Included here only for completeness"
 ; ---------------------------------------------------------------------------------------------
@@ -3511,10 +3526,6 @@
 	(QUANTITY 1)
 	(FLAGS TAKEBIT)>
 
-<OBJECT RAT-POISON
-	(DESC "rat poison")
-	(FLAGS TAKEBIT)>
-
 <OBJECT ROPE
 	(DESC "rope")
 	(FLAGS TAKEBIT)>
@@ -3532,25 +3543,8 @@
 	(SANCTITY 2)
 	(FLAGS TAKEBIT)>
 
-<OBJECT SILVER-MEDALLION
-	(DESC "silver medallion")
-	(FLAGS TAKEBIT)>
-
-<OBJECT SILVER-NUGGET
-	(DESC "silver nugget")
-	(FLAGS TAKEBIT)>
-
-<OBJECT SMOLDER-FISH
-	(DESC "smolder fish")
-	(QUANTITY 1)
-	(FLAGS TAKEBIT)>
-
-<OBJECT WILLOW-STAFF
-	(DESC "willow staff")
-	(FLAGS TAKEBIT)>
-
-<OBJECT WOLF-PELT
-	(DESC "wolf pelt")
+<OBJECT WITCH-HAND
+	(DESC "witch's hand")
 	(FLAGS TAKEBIT)>
 
 ; "Resurrections"
@@ -4476,7 +4470,7 @@
 	<SET DESTINATION NONE>
 	<REPEAT ()
 		<EMPHASIZE "You can buy a one-way passage on a ship to the following destinations:">
-		<PRINT-MENU .PASSAGES F F !\0 "Go back" .PRICES>
+		<PRINT-MENU .PASSAGES F F !\0 ,TEXT-GO-BACK .PRICES>
 		<TELL "Select destination:">
 		<REPEAT ()
 			<SET KEY <INPUT 1>>
@@ -4530,7 +4524,7 @@
 <ROUTINE BUY-SELL-CARGO (BUY-PRICES SELL-PRICES "AUX" KEY)
 	<REPEAT ()
 		<EMPHASIZE "Market">
-		<PRINT-MENU ,BUY-SELL-CARGO-MENU F F !\0 "Go back">
+		<PRINT-MENU ,BUY-SELL-CARGO-MENU F F !\0 ,TEXT-GO-BACK>
 		<TELL "What do you want to do?">
 		<REPEAT ()
 			<SET KEY <INPUT 1>>
@@ -4556,7 +4550,7 @@
 <ROUTINE BUY-SELL-UPGRADE-SHIP (BUY-PRICES SELL-PRICES UPGRADE-PRICES CARGO-PRICES DOCK "AUX" KEY)
 	<REPEAT ()
 		<EMPHASIZE "Shipyard">
-		<PRINT-MENU ,BUY-SELL-UPGRADE-MENU F F !\0 "Go back">
+		<PRINT-MENU ,BUY-SELL-UPGRADE-MENU F F !\0 ,TEXT-GO-BACK>
 		<TELL "What do you want to do?">
 		<REPEAT ()
 			<SET KEY <INPUT 1>>
@@ -4571,11 +4565,11 @@
 			<BUY-SHIP .BUY-PRICES .DOCK>
 		)(<EQUAL? .KEY !\2>
 			<CRLF>
-			<SELL-SHIP .SELL-PRICES .CARGO-PRICES>
+			<SELL-SHIP .SELL-PRICES .CARGO-PRICES .DOCK>
 		)(<EQUAL? .KEY !\3>
 			<CRLF>
 			<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
-				<UPGRADE-SHIP .UPGRADE-PRICES>
+				<UPGRADE-SHIP .DOCK .UPGRADE-PRICES>
 			)(ELSE
 				<EMPHASIZE ,TEXT-NO-SHIPS>
 			)>
@@ -4585,7 +4579,7 @@
 <ROUTINE BUY-SHIP (BUY-PRICES "OPT" DOCK "AUX" KEY ITEM)
 	<REPEAT ()
 		<EMPHASIZE "Shipyard">
-		<PRINT-MENU ,SHIPS-LIST T T !\0 ,TEXT-BACK .BUY-PRICES>
+		<PRINT-MENU ,SHIPS-LIST T T !\0 ,TEXT-GO-BACK .BUY-PRICES>
 		<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
 			<DESCRIBE-PLAYER-SHIPS>
 			<CRLF>
@@ -4653,10 +4647,10 @@
 		<MERCHANT ,CARGO-LIST .SELL-PRICES ,CARGO T>
 	)>>
 
-<ROUTINE SELL-SHIP (SELL-PRICES CARGO-PRICES "AUX" KEY ITEM)
+<ROUTINE SELL-SHIP (SELL-PRICES CARGO-PRICES DOCK "AUX" KEY ITEM)
 	<REPEAT ()
 		<EMPHASIZE "You can sell your ships at these prices" "Shipyard">
-		<PRINT-MENU ,SHIPS-LIST T T !\0 ,TEXT-BACK .SELL-PRICES>
+		<PRINT-MENU ,SHIPS-LIST T T !\0 ,TEXT-GO-BACK .SELL-PRICES>
 		<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
 			<DESCRIBE-PLAYER-SHIPS>
 			<CRLF>
@@ -4675,6 +4669,9 @@
 			<COND (<NOT <IN? <GET ,SHIPS-LIST .ITEM> ,SHIPS>>
 				<CRLF>
 				<EMPHASIZE ,TEXT-SHIP-NOT-OWNER>
+			)(<N=? <GETP <GET ,SHIPS-LIST .ITEM> ,P?DOCKED> .DOCK>
+				<CRLF>
+				<EMPHASIZE "That ship is not docked here!">
 			)(ELSE
 				<CRLF>
 				<TELL CR "Sell " T <GET ,SHIPS-LIST .ITEM> "?">
@@ -4696,7 +4693,7 @@
 		)>
 	>>
 
-<ROUTINE UPGRADE-SHIP (UPGRADE-PRICES "AUX" CONDITION KEY UPGRADES ITEM)
+<ROUTINE UPGRADE-SHIP (UPGRADE-PRICES DOCK "AUX" CONDITION KEY UPGRADES ITEM)
 	<SET UPGRADES <LTABLE 0 0 0>>
 	<REPEAT ()
 		<DO (I 1 3)
@@ -4716,7 +4713,7 @@
 			)>
 		>
 		<EMPHASIZE "You can upgrade ships at the following prices" "Shipyard">
-		<PRINT-MENU ,SHIPS-LIST T T !\0 ,TEXT-BACK .UPGRADES>
+		<PRINT-MENU ,SHIPS-LIST T T !\0 ,TEXT-GO-BACK .UPGRADES>
 		<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
 			<DESCRIBE-PLAYER-SHIPS>
 			<CRLF>
@@ -4737,7 +4734,9 @@
 			<CRLF>
 			<SET .ITEM <- .KEY !\0>>
 			<COND (<IN? <GET ,SHIPS-LIST .ITEM> ,SHIPS>
-				<COND (<EQUAL? <GET .UPGRADES .ITEM> 0>
+				<COND (<N=? <GETP <GET ,SHIPS-LIST .ITEM> ,P?DOCKED> .DOCK>
+					<EMPHASIZE "That shipped is not docked here!">
+				)(<EQUAL? <GET .UPGRADES .ITEM> 0>
 					<EMPHASIZE "That ship can no longer be upgraded!">
 				)(<G=? ,MONEY <GET .UPGRADES .ITEM>>
 					<CRLF>
@@ -5377,7 +5376,6 @@
 	<PUTP ,CANDLE ,P?QUANTITY 1>
 	<PUTP ,INK-SAC ,P?QUANTITY 1>
 	<PUTP ,LANTERN ,P?QUANTITY 1>
-	<PUTP ,SMOLDER-FISH ,P?QUANTITY 1>
 	<PUTP ,MONEY-BAG ,P?MONEY 500>>
 
 <ROUTINE RESET-STORY ()
@@ -5387,7 +5385,8 @@
 	<PUTP ,STORY007 ,P?DOOM T>
 	<PUTP ,STORY010 ,P?DOOM T>
 	<PUTP ,STORY029 ,P?DOOM T>
-	<PUTP ,STORY037 ,P?DOOM T>>
+	<PUTP ,STORY037 ,P?DOOM T>
+	<PUTP ,STORY067 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -6543,225 +6542,138 @@
 	(TYPES FIVE-CHOICES)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT061 "An island appears as a dun-coloured smudge hovering mirage-like on the rim of the sea.||\"Copper Island,\" says the helmsman. \"Shall I take her into dock, captain?\"">
+<CONSTANT CHOICES061 <LTABLE "Put in at Copper Island" "Sail on">>
+
 <ROOM STORY061
 	(IN ROOMS)
 	(DESC "061")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT061)
+	(CHOICES CHOICES061)
+	(DESTINATIONS <LTABLE STORY553 STORY019>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT CHOICES062 <LTABLE HAVE-CODEWORD "Press on along the avenue" "Return to the beach">>
 
 <ROOM STORY062
 	(IN ROOMS)
 	(DESC "062")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(CHOICES CHOICES062)
+	(DESTINATIONS <LTABLE STORY082 STORY102 STORY005>)
+	(REQUIREMENTS <LTABLE CODEWORD-COSY NONE NONE>)
+	(TYPES <LTABLE R-CODEWORD R-NONE R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT063 "Several books agree that mermaids can be individually charming, but when encountered in large numbers should be regarded as a grave threat.||\"The collective noun is a Threnody of Mermaids,\" asserts one source, \"and few who hear their song can resist its dread allure. According to popular belief, a troubadour who learned the song used it to cause all the inhabitants of Gutrein, a town in Old Harkuna, to abandon their homes and follow him. The town remains empty to this day.\"||The book goes on to say that mermaids are most frequently encountered to the south of the Ruby River estuary.">
 
 <ROOM STORY063
 	(IN ROOMS)
 	(DESC "063")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT063)
+	(CONTINUE STORY368)
+	(CODEWORDS <LTABLE CODEWORD-CYNOSURE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT064 "You cannot sail the ship alone, nor would it be wise to venture further inland without your crew to back you up. You go back to the beach, where at least there are provisions enough to sustain you for a few weeks.||A storm hits the island only a few days later. You shelter under palm trees until morning, when you discover that your fine ship has been wrecked. All you are able to salvage is a broken plank or two.||As luck would have it, a mercantile barque puts in at the island before your supplies are quite exhausted.||\"We are bound for Ringhorn,\" the captain tells you. \"You're welcome to come along.\"">
+<CONSTANT CHOICES064 <LTABLE "Travel with them to Ringhorn (Cities of Gold and Glory)" "Stay on the island">>
 
 <ROOM STORY064
 	(IN ROOMS)
 	(DESC "064")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT064)
+	(EVENTS STORY064-EVENTS)
+	(CHOICES CHOICES064)
+	(DESTINATIONS <LTABLE STORY-CITIES-GOLD-GLORY STORY177>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY064-EVENTS ()
+	<LOSE-SHIP>>
+
+<CONSTANT TEXT065 "The vampire furrows its bald white brow, perplexed to hear you speaking in verse. It looks like a cat that has caught sight of itself in a mirror. Each time it speaks, you reply with a line that rhymes -- and all the time you are slowly retreating down the beach to the rowboat.">
 
 <ROOM STORY065
 	(IN ROOMS)
 	(DESC "065")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT065)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY085 STORY041>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 9 100> <LTABLE "The vampire attacks" "It watches you depart">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT066 "The sea heaps up. White foam from breaking waves begins to be blown in streaks. \"This is near a gale!\" says the mate.">
 
 <ROOM STORY066
 	(IN ROOMS)
 	(DESC "066")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT066)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY213 STORY155 STORY429>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 8 12> <LTABLE "A storm hits" "The gale blows over" "Suddenly becalmed">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT067 "Spluttering, you strike out at the creature but it drifts off into the bowels of the ship. Your two crewmen are so spooked by now that they refuse to stay, and you realize it would be unwise to linger on your own. Feeling as if hundreds of eyes are watching you through hidden peepholes, you hurry back to the deck.">
 
 <ROOM STORY067
 	(IN ROOMS)
 	(DESC "067")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT067)
+	(EVENTS STORY067-EVENTS)
+	(CONTINUE STORY308)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY067-EVENTS ()
+	<COND (<CHECK-CODEWORD ,CODEWORD-CALCIUM>
+		<PREVENT-DOOM ,STORY067>
+	)(ELSE
+		<LOSE-STAMINA 4 ,DIED-GREW-WEAKER ,STORY067> 
+	)>>
+
+<CONSTANT TEXT068 "The man strides right up to the side of your vessel and hails you as casually as if he were standing on the quayside at Wishport.">
 
 <ROOM STORY068
 	(IN ROOMS)
 	(DESC "068")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT068)
+	(EVENTS STORY068-EVENTS)
+	(CONTINUE STORY617)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY068-EVENTS ()
+	<COND (<CHECK-VISITS-MORE ,STORY068 1> <STORY-JUMP ,STORY635>)>>
+
+<CONSTANT TEXT069 "You step out from the interior of one of the trees as though emerging from an egg.||Your problem now is how to get off the island.">
 
 <ROOM STORY069
 	(IN ROOMS)
 	(DESC "069")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY069-BACKGROUND)
+	(STORY TEXT069)
+	(CONTINUE STORY177)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY069-BACKGROUND ()
+	<COND (<CHECK-VISITS-MORE 2> <SETG RESURRECTION-ARRANGEMENTS NONE>)>
+	<RETURN ,STORY069>>
+
+<CONSTANT TEXT070 "The mate's knife flashes -- a splash of sticky blood, and the witch falls croaking into the sea to sink like a stone. Something flops to the deck. Her hand. It resembles an old white crab.">
 
 <ROOM STORY070
 	(IN ROOMS)
 	(DESC "070")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT070)
+	(EVENTS STORY070-EVENTS)
+	(CONTINUE STORY039)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY070-EVENTS ()
+	<KEEP-ITEM ,WITCH-HAND>>
 
 <ROOM STORY071
 	(IN ROOMS)
