@@ -166,11 +166,11 @@
 <GLOBAL CONTINUE-TO-CHOICES T>
 <GLOBAL RUN-ONCE F>
 <GLOBAL STARTING-POINT STORY001>
-<GLOBAL CURRENT-LOCATION LOCATION-GOLNIR>
+<GLOBAL CURRENT-LOCATION LOCATION-UNKNOWN>
 
-<CONSTANT LOCATIONS <LTABLE "Golnir" "Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer">>
+<CONSTANT LOCATIONS <LTABLE "The Unknown" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer">>
 
-<CONSTANT LOCATION-GOLNIR 1>
+<CONSTANT LOCATION-UNKNOWN 1>
 <CONSTANT LOCATION-SORCERERS 2>
 <CONSTANT LOCATION-SMOGMAW 3>
 <CONSTANT LOCATION-COPPER 4>
@@ -3521,6 +3521,10 @@
 	(DESC "royal ring")
 	(FLAGS TAKEBIT)>
 
+<OBJECT SHIPS-DEEDS
+	(DESC "ship's deeds")
+	(FLAGS TAKEBIT)>
+
 <OBJECT SILVER-HOLY-SYMBOL
 	(DESC "silver holy symbol")
 	(SANCTITY 2)
@@ -5572,7 +5576,7 @@
 <ROOM STORY001
 	(IN ROOMS)
 	(DESC "001")
-	(LOCATION LOCATION-GOLNIR)
+	(LOCATION LOCATION-UNKNOWN)
 	(STORY TEXT001)
 	(EVENTS STORY001-EVENTS)
 	(FLAGS LIGHTBIT)>
@@ -8547,26 +8551,17 @@
 	(VICTORY F)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT151 "You have been washed up in a small harbour. Many fishing boats painted in gay colours lie on the tide-streaked mud. A pretty town of white-washed cottages stretches steeply up from the quayside towards high cliffs.||You climb the harbour steps and explore the streets. You soon discover that the place is under a curse, as all the villagers stand frozen like statues.">
+<CONSTANT CHOICES151 <LTABLE "Take a boat to sea" "Ascend the cliffs" "Pray for guidance" "Rest in one of the houses" "Leave the town">>
+
 <ROOM STORY151
 	(IN ROOMS)
 	(DESC "151")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-DWEOMER)
+	(STORY TEXT151)
+	(CHOICES CHOICES151)
+	(DESTINATIONS <LTABLE STORY411 STORY540 STORY467 STORY524 STORY449>)
+	(TYPES FIVE-CHOICES)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY152
@@ -9119,26 +9114,16 @@
 	(VICTORY F)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT177 "The island appears to have sufficient food and fresh water to sustain you, but it will not be like living in the lap of luxury.">
+<CONSTANT CHOICES177 <LTABLE "Try to survive off the land" "Set to work building a raft" "Pray for deliverance">>
+
 <ROOM STORY177
 	(IN ROOMS)
 	(DESC "177")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT177)
+	(CHOICES CHOICES177)
+	(DESTINATIONS <LTABLE STORY088 STORY108 STORY126>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY178
@@ -12111,26 +12096,13 @@
 	(VICTORY F)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT313 "You drag yourself up a beach of large pebbles, strewn with fronds of seaweed. Lying for a few hours in the weak sunshine goes some way to restoring your strength, and you manage to stagger inland to look for signs of habitation. The landscape is desolate and windswept, but you can see a few sheep grazing on the hillsides.">
+
 <ROOM STORY313
 	(IN ROOMS)
 	(DESC "313")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT313)
+	(CONTINUE STORY436)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY314
@@ -14817,26 +14789,15 @@
 	(VICTORY F)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT436 "You must fend for yourself, surviving on little more than wild berries and cold spring water while you scour the bleak hills.">
+
 <ROOM STORY436
 	(IN ROOMS)
 	(DESC "436")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(CHOICES CHOICES-SCOUTING)
+	(DESTINATIONS <LTABLE <LTABLE STORY546 STORY601>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-SCOUTING 14>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY437
@@ -16335,26 +16296,13 @@
 	(VICTORY F)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT505 "You are on a stretch of shore. Surf pounds on white sand. At the back of the beach is a wall of craggy grey rocks covered with hanging ferns. It is the classic desert island.">
+
 <ROOM STORY505
 	(IN ROOMS)
 	(DESC "505")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT505)
+	(CONTINUE STORY177)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY506
@@ -20823,26 +20771,14 @@
 	(VICTORY F)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT709 "You are swept ashore at the mouth of a wide river. Nearby, impaled on the jagged end of a broken branch, a skeleton in rusting armour dangles at the water's edge. Apparently not all shipwrecked mariners are as lucky as you.||Searching the body, you find a sword (COMBAT +1).||Staggering towards trails of smoke that are rising from beyond a copse of olive-green tropical palms, you arrive at a settlement of many thatched-roofed shacks raised on stilts at the river's edge. It is the depot town of Smogmaw, on the great southern continent.">
+
 <ROOM STORY709
 	(IN ROOMS)
 	(DESC "709")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT709)
+	(CONTINUE STORY044)
+	(ITEMS <LTABLE SWORD1>)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY710
@@ -20933,27 +20869,22 @@
 	(VICTORY F)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT714 "You are washed up on a narrow stretch of beach at the back of a bay surrounded by high mist-shrouded peaks.||A bottle has been swept up on to the shingle beside you. Though your fingers are trembling with cold, you manage to unscrew it. Inside you find a ship's deeds, which you can add to your list of possessions.||After resting to recover your strength, you pick your way up a series of steep paths until you can get a clear view of the island. To the north lies an expanse of glittering blue forest, so there can be no question where you are -- Braelak, the Sorcerers' Isle. Nearer at hand is a tower built of obsidian blocks.">
+<CONSTANT CHOICES714 <LTABLE "Enter the forest" "Go to the tower">>
+
 <ROOM STORY714
 	(IN ROOMS)
 	(DESC "714")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-SORCERERS)
+	(STORY TEXT714)
+	(EVENTS STORY714-EVENTS)
+	(CHOICES CHOICES714)
+	(DESTINATIONS <LTABLE STORY697 STORY426>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY714-EVENTS ()
+	<KEEP-ITEM ,SHIPS-DEEDS>>
 
 <ROOM STORY715
 	(IN ROOMS)
