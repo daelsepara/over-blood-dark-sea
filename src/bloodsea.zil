@@ -51,7 +51,7 @@
 <CONSTANT R-RANK 14> ; "check if location was visited multiple times"
 <CONSTANT R-GAIN-CODEWORD 15> ; "gain codeword (s)"
 <CONSTANT R-PROFESSION 16> ; "check profession"
-<CONSTANT R-DOCK 17> ; "dock at port"
+<CONSTANT R-DOCK 17> ; "dock at port at this port"
 <CONSTANT R-LOCATION 18> ; "test current location"
 <CONSTANT R-LOSE-ITEM 19> ; "lose item"
 <CONSTANT R-WEAPON 20> ; "you have a weapon of a specific combat score"
@@ -136,8 +136,15 @@
 ; "container for ships owned"
 <OBJECT SHIPS (DESC "ships") (FLAGS CONTBIT OPENBIT)>
 
-; "townhouses and/secret caches"
-<OBJECT TOWNHOUSES (DESC "townhouses/secret caches") (FLAGS CONTBIT OPENBIT)>
+; "shacks and/secret caches"
+<OBJECT SHACKS (DESC "shacks/secret caches") (FLAGS CONTBIT OPENBIT)>
+
+; "shacks"
+
+<OBJECT SHACK-SMOGMAW
+	(DESC "Shack at Smogmaw")
+	(MONEY 0)
+	(FLAGS CONTBIT OPENBIT)>
 
 ; "NON-PERSON OBJECTS Properties"
 ; ---------------------------------------------------------------------------------------------
@@ -170,6 +177,7 @@
 ; ---------------------------------------------------------------------------------------------
 
 <CONSTANT TEXT-AFFLICTED "afflicted">
+<CONSTANT TEXT-BACK "Back">
 <CONSTANT TEXT-BYE "Bye">
 <CONSTANT TEXT-EXCELLENT "Excellent!">
 <CONSTANT TEXT-GO-BACK "Go back">
@@ -748,6 +756,25 @@
 	)>
 	<RFALSE>>
 
+<ROUTINE CHECK-DOCKED (DOCK "AUX" SHIP RESULT)
+	<SET RESULT NONE>
+	<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
+		<COND (,CURRENT-SHIP
+			<COND (<EQUAL? <GETP ,CURRENT-SHIP ,P?DOCKED> .DOCK> <RETURN ,CURRENT-SHIP>)>
+		)>
+		<SET SHIP <FIRST? ,SHIPS>>
+		<REPEAT ()
+			<COND (<NOT .SHIP> <RETURN>)>
+			<COND (<IS-DOCKED .DOCK .SHIP>
+				<SET RESULT .SHIP>
+				<RETURN>
+			)>
+			<SET .SHIP <NEXT? .SHIP>>
+		>
+		<RETURN .RESULT>
+	)>
+	<RFALSE>>
+
 <ROUTINE CHECK-ITEM (ITEM "AUX" QUANTITY)
 	<COND (<NOT .ITEM> <RTRUE>)>
 	<SET QUANTITY <GETP .ITEM ,P?QUANTITY>>
@@ -784,6 +811,12 @@
 	)>
 	<RFALSE>>
 
+<ROUTINE CHECK-SHIP (THIS-SHIP)
+	<COND (,CURRENT-SHIP
+		<RETURN <AND <IN? .THIS-SHIP ,SHIPS> <EQUAL? ,CURRENT-SHIP .THIS-SHIP>>>
+	)>
+	<RFALSE>>
+
 <ROUTINE CHECK-STAMINA (AMOUNT)
 	<COND (<G? .AMOUNT 0>
 		<COND (<L=? ,STAMINA .AMOUNT>
@@ -806,15 +839,9 @@
 	>
 	<RTRUE>>
 
-<ROUTINE CHECK-SHIP (THIS-SHIP)
-	<COND (,CURRENT-SHIP
-		<RETURN <AND <IN? .THIS-SHIP ,SHIPS> <EQUAL? ,CURRENT-SHIP .THIS-SHIP>>>
-	)>
-	<RFALSE>>
-
-<ROUTINE CHECK-TOWNHOUSE (TOWNHOUSE)
-	<COND (<NOT .TOWNHOUSE> <RTRUE>)>
-	<RETURN <IN? .TOWNHOUSE ,TOWNHOUSES>>>
+<ROUTINE CHECK-SHACK (SHACK)
+	<COND (<NOT .SHACK> <RTRUE>)>
+	<RETURN <IN? .SHACK ,SHACKS>>>
 
 <ROUTINE CHECK-VISITS-EQUAL ("OPT" LOCATION COUNTER "AUX" VISITS)
 	<COND (<NOT .LOCATION> <SET LOCATION ,HERE>)>
@@ -840,6 +867,11 @@
 	<COND (<NOT .CHARACTER> <SET CHARACTER ,CURRENT-CHARACTER>)>
 	<COND (.CHARACTER <SET RANK <GETP .CHARACTER ,P?RANK>>)>
 	<RETURN .RANK>>
+
+<ROUTINE IS-DOCKED (DOCK "OPT" (SHIP NONE))
+	<COND (<NOT .SHIP> <SET SHIP ,CURRENT-SHIP>)>
+	<COND (.SHIP <RETURN <EQUAL? <GETP .SHIP ,P?DOCKED> .DOCK>>)>
+	<RFALSE>>
 
 <ROUTINE NOT-ALL-ANY (TYPE LIST "OPT" CONTAINER "AUX" COUNT)
 	<COND (<NOT .CONTAINER> <SET CONTAINER ,PLAYER>)>
@@ -1514,7 +1546,7 @@
 		<DESCRIBE-PLAYER-BACKGROUND>
 		<DESCRIBE-PLAYER-STATS>
 		<DESCRIBE-PLAYER-LOCATION>
-		<DESCRIBE-PLAYER-TOWNHOUSES>
+		<DESCRIBE-PLAYER-SHACKS>
 		<DESCRIBE-PLAYER-POSSESSIONS>
 		<DESCRIBE-PLAYER-CODEWORDS>
 		<DESCRIBE-PLAYER-SHIPS>
@@ -1578,7 +1610,7 @@
 	<TELL "Somewhere in " <GET-LOCATION ,CURRENT-LOCATION> CR>>
 
 <ROUTINE DESCRIBE-PLAYER-POSSESSIONS ()
-	<COND (<L=? <COUNT-CONTAINER ,TOWNHOUSES> 0> <CRLF>)>
+	<COND (<L=? <COUNT-CONTAINER ,SHACKS> 0> <CRLF>)>
 	<HLIGHT ,H-BOLD>
 	<TELL "Possessions: ">
 	<HLIGHT 0>
@@ -1664,14 +1696,14 @@
 		<PRINT-CONTAINER ,TITLES-AND-HONOURS>
 	)>>
 
-<ROUTINE DESCRIBE-PLAYER-TOWNHOUSES ()
-	<COND (<G? <COUNT-CONTAINER ,TOWNHOUSES> 0>
+<ROUTINE DESCRIBE-PLAYER-SHACKS ()
+	<COND (<G? <COUNT-CONTAINER ,SHACKS> 0>
 		<CRLF>
 		<HLIGHT ,H-BOLD>
-		<PRINT-CAP-OBJ ,TOWNHOUSES>
+		<PRINT-CAP-OBJ ,SHACKS>
 		<TELL ": ">
 		<HLIGHT 0>
-		<PRINT-CONTAINER ,TOWNHOUSES>
+		<PRINT-CONTAINER ,SHACKS>
 	)>>
 
 <ROUTINE DESCRIBE-PLAYER-WORSHIP ()
@@ -1820,7 +1852,7 @@
 	)>>
 
 <ROUTINE GAIN-CACHE (CACHE)
-	<GAIN-OBJECT .CACHE ,TOWNHOUSES "secret cache" ,CHECK-TOWNHOUSE>>
+	<GAIN-OBJECT .CACHE ,SHACKS "secret cache" ,CHECK-SHACK>>
 
 <ROUTINE GAIN-STAMINA (POINTS "AUX" DIFFERENCE)
 	<COND (<L? ,STAMINA ,MAX-STAMINA>
@@ -1842,8 +1874,8 @@
 <ROUTINE GAIN-TITLE (TITLE)
 	<GAIN-OBJECT .TITLE ,TITLES-AND-HONOURS "title" ,CHECK-TITLE>>
 
-<ROUTINE GAIN-TOWNHOUSE (TOWNHOUSE)
-	<GAIN-OBJECT .TOWNHOUSE ,TOWNHOUSES "townhouse" ,CHECK-TOWNHOUSE>>
+<ROUTINE GAIN-SHACK (SHACK)
+	<GAIN-OBJECT .SHACK ,SHACKS "shack" ,CHECK-SHACK>>
 
 <ROUTINE GET-ITEM (ITEM "OPT" CONTAINER "AUX" ITEMS COUNT)
 	<COND (<NOT .CONTAINER> <SET CONTAINER ,PLAYER>)>
@@ -2684,7 +2716,7 @@
 	<RESET-CODEWORDS>
 	<RESET-POSSESSIONS>
 	<RESET-TITLES>
-	<RESET-TOWNHOUSES>
+	<RESET-SHACKS>
 	<RESET-SHIPS>>
 
 <ROUTINE RESET-POSSESSIONS ()
@@ -2702,8 +2734,8 @@
 <ROUTINE RESET-TITLES ()
 	<RESET-CONTAINER ,TITLES-AND-HONOURS>>
 
-<ROUTINE RESET-TOWNHOUSES ()
-	<RESET-CONTAINER ,TOWNHOUSES>>
+<ROUTINE RESET-SHACKS ()
+	<RESET-CONTAINER ,SHACKS>>
 
 <ROUTINE RESET-SHIPS ()
 	<RESET-CONTAINER ,SHIPS>>
@@ -3373,6 +3405,10 @@
 	(SCOUTING 2)
 	(FLAGS TAKEBIT)>
 
+<OBJECT HEART-SHAPED-LOCKET
+	(DESC "heart-shaped locket")
+	(FLAGS TAKEBIT)>
+
 <OBJECT HOLY-SYMBOL
 	(DESC "holy symbol")
 	(SANCTITY 1)
@@ -3410,6 +3446,11 @@
 
 <OBJECT MAP
 	(DESC "map")
+	(FLAGS TAKEBIT)>
+
+; "TO-DO: implement ASCII-art of MAP-OF-BAZALEK"
+<OBJECT MAP-OF-BAZALEK
+	(DESC "map of Bazalek")
 	(FLAGS TAKEBIT)>
 
 <OBJECT MARINERS-RUTTIER
@@ -3621,7 +3662,7 @@
 <CONSTANT CONDITION-EXCELLENT 3>
 
 <CONSTANT DOCK-SMOGMAW 1>
-<CONSTANT DOCKS NONE>
+<CONSTANT DOCKS <LTABLE "Smogmaw">>
 
 <OBJECT SHIP-BARQUE
 	(DESC "barque")
@@ -3652,6 +3693,12 @@
 	(COMBAT 8)
 	(DEFENSE 10)
 	(STAMINA 8)>
+
+<OBJECT MONSTER-MUTINEER
+	(DESC "Mutineer")
+	(COMBAT 6)
+	(DEFENSE 9)
+	(STAMINA 9)>
 
 ; "Titles and Honours for Over the Blood-Dark Sea"
 ; ---------------------------------------------------------------------------------------------
@@ -3717,7 +3764,7 @@
 <ROUTINE FIND-ALL-ARMOUR ()
 	<RETURN <FIND-ALL-GEAR ,FIND-ARMOUR>>>
 
-; "Finds a weapon/armour on player and in townhouses and caches"
+; "Finds a weapon/armour on player and in shacks and caches"
 <ROUTINE FIND-ALL-GEAR ("OPT" (FIND-ROUTINE NONE) "AUX" RESULT FINAL CACHES)
 	<COND (<NOT .FIND-ROUTINE> <SET FIND-ROUTINE ,FIND-WEAPON>)>
 	<SET FINAL NONE>
@@ -3730,8 +3777,8 @@
 		)>
 	>
 	<COND (.FINAL <RETURN .FINAL>)>
-	<COND (<G? <COUNT-CONTAINER ,TOWNHOUSES> 0>
-		<SET CACHES <FIRST? ,TOWNHOUSES>>
+	<COND (<G? <COUNT-CONTAINER ,SHACKS> 0>
+		<SET CACHES <FIRST? ,SHACKS>>
 		<REPEAT ()
 			<COND (<NOT .CACHES> <RETURN>)>
 			<SET RESULT NONE>
@@ -3748,12 +3795,12 @@
 	)>
 	<RETURN .FINAL>>
 
-; "Finds a weapon/armour on player and in townhouses and caches"
+; "Finds a weapon/armour on player and in shacks and caches"
 <ROUTINE FIND-ALL-MONEY ("AUX" RESULT CACHES)
 	<COND (<G? ,MONEY 0> <RTRUE>)>
 	<SET RESULT 0>
-	<COND (<G? <COUNT-CONTAINER ,TOWNHOUSES> 0>
-		<SET CACHES <FIRST? ,TOWNHOUSES>>
+	<COND (<G? <COUNT-CONTAINER ,SHACKS> 0>
+		<SET CACHES <FIRST? ,SHACKS>>
 		<REPEAT ()
 			<COND (<NOT .CACHES> <RETURN>)>
 			<SET RESULT 0>
@@ -4847,20 +4894,20 @@
 ; ---------------------------------------------------------------------------------------------
 
 <CONSTANT CACHE-MENU <LTABLE "Leave/Take your possessions.">>
-<CONSTANT TEXT-TOWNHOUSE "You can leave possessions and money here to save having to carry them around with you. You can also rest here safely, and recover any Stamina points you have lost.">
-<CONSTANT TOWNHOUSE-MENU <LTABLE "Leave/Take your possessions." "Leave/Withdraw money.">>
-<CONSTANT TOWNHOUSE-MENU-MONEY <LTABLE "Leave some your money here." "Take the money that was kept here.">>
-<CONSTANT TOWNHOUSE-MENU-POSSESSIONS <LTABLE "Leave some of your possessions here." "Take the  items that are kept here.">>
+<CONSTANT TEXT-SHACK "You can leave possessions and money here to save having to carry them around with you. You can also rest here safely, and recover any Stamina points you have lost.">
+<CONSTANT SHACK-MENU <LTABLE "Leave/Take your possessions." "Leave/Withdraw money.">>
+<CONSTANT SHACK-MENU-MONEY <LTABLE "Leave some your money here." "Take the money that was kept here.">>
+<CONSTANT SHACK-MENU-POSSESSIONS <LTABLE "Leave some of your possessions here." "Take the  items that are kept here.">>
 
-<ROUTINE TOWNHOUSE-MONEY (STORY TOWNHOUSE "AUX" KEY NUMBER MONEY)
+<ROUTINE SHACK-MONEY (STORY SHACK "AUX" KEY NUMBER MONEY)
 	<REPEAT ()
 		<CRLF>
 		<HLIGHT ,H-BOLD>
-		<TELL D .TOWNHOUSE>
+		<TELL D .SHACK>
 		<HLIGHT 0>
 		<CRLF>
-		<PRINT-MENU ,TOWNHOUSE-MENU-MONEY F F !\0 "Back">
-		<SET .MONEY <GETP .TOWNHOUSE ,P?MONEY>>
+		<PRINT-MENU ,SHACK-MENU-MONEY F F !\0 "Back">
+		<SET .MONEY <GETP .SHACK ,P?MONEY>>
 		<COND (<G? .MONEY 0>
 			<TELL "There are ">
 			<HLIGHT ,H-BOLD>
@@ -4868,7 +4915,7 @@
 			<HLIGHT 0>
 			<TELL " " D ,CURRENCY " kept here at ">
 			<HLIGHT ,H-BOLD>
-			<TELL T .TOWNHOUSE ,PERIOD-CR>
+			<TELL T .SHACK ,PERIOD-CR>
 			<HLIGHT 0>
 		)>
 		<TELL "You are carrying " N ,MONEY " " D ,CURRENCY ": ">
@@ -4883,7 +4930,7 @@
 			<COND (<G? ,MONEY 0>
 				<SET NUMBER <GET-NUMBER "How much will you leave here" 0 ,MONEY>>
 				<COND (<G? .NUMBER 0>
-					<PUTP .TOWNHOUSE ,P?MONEY <+ .MONEY .NUMBER>>
+					<PUTP .SHACK ,P?MONEY <+ .MONEY .NUMBER>>
 					<COST-MONEY .NUMBER "left">
 				)>
 			)(ELSE
@@ -4897,7 +4944,7 @@
 			<COND (<G? .MONEY 0>
 				<SET NUMBER <GET-NUMBER "How much will you withdraw" 0 .MONEY>>
 				<COND (<G? .NUMBER 0>
-					<PUTP .TOWNHOUSE ,P?MONEY <- .MONEY .NUMBER>>
+					<PUTP .SHACK ,P?MONEY <- .MONEY .NUMBER>>
 					<GAIN-MONEY .NUMBER>
 				)>
 			)(ELSE
@@ -4907,14 +4954,14 @@
 		)>
 	>>
 
-<ROUTINE TOWNHOUSE-POSSESSIONS (STORY TOWNHOUSE "AUX" KEY)
+<ROUTINE SHACK-POSSESSIONS (STORY SHACK "AUX" KEY)
 	<REPEAT ()
 		<CRLF>
 		<HLIGHT ,H-BOLD>
-		<TELL D .TOWNHOUSE>
+		<TELL D .SHACK>
 		<HLIGHT 0>
 		<CRLF>
-		<PRINT-MENU ,TOWNHOUSE-MENU-POSSESSIONS F F !\0 "Back">
+		<PRINT-MENU ,SHACK-MENU-POSSESSIONS F F !\0 "Back">
 		<DESCRIBE-INVENTORY-MAIN>
 		<TELL "What will you do next?">
 		<REPEAT ()
@@ -4926,14 +4973,14 @@
 			<RETURN>
 		)(<EQUAL? .KEY !\1>
 			<COND (<G? <COUNT-CONTAINER ,PLAYER> 0>
-				<TOWNHOUSE-STORAGE ,PLAYER .TOWNHOUSE "leave" T>
+				<SHACK-STORAGE ,PLAYER .SHACK "leave" T>
 			)(ELSE
 				<EMPHASIZE "You are not carrying anything!">
 				<PRESS-A-KEY>
 			)>
 		)(<EQUAL? .KEY !\2>
-			<COND (<G? <COUNT-CONTAINER .TOWNHOUSE> 0>
-				<TOWNHOUSE-STORAGE .TOWNHOUSE ,PLAYER  "take">
+			<COND (<G? <COUNT-CONTAINER .SHACK> 0>
+				<SHACK-STORAGE .SHACK ,PLAYER  "take">
 			)(ELSE
 				<EMPHASIZE "Nothing is being kept here!">
 				<PRESS-A-KEY>
@@ -4941,7 +4988,7 @@
 		)>
 	>>
 
-<ROUTINE TOWNHOUSE-STORAGE (FROM TO MESSAGE "OPT" (LEAVE F) "AUX" ITEMS KEY CHOICE)
+<ROUTINE SHACK-STORAGE (FROM TO MESSAGE "OPT" (LEAVE F) "AUX" ITEMS KEY CHOICE QUANTITY)
 	<REPEAT ()
 		<SET ITEMS <COUNT-CONTAINER .FROM>>
 		<COND (<L=? .ITEMS 0> <RETURN>)>
@@ -4954,7 +5001,7 @@
 		)>
 		<HLIGHT 0>
 		<CRLF>
-		<PRINT-CONTAINER-MENU .FROM !\0 "Back">
+		<PRINT-CONTAINER-MENU .FROM !\0 ,TEXT-BACK>
 		<TELL "Choose what items to " .MESSAGE>
 		<COND (.LEAVE
 			<TELL " at ">
@@ -5016,7 +5063,19 @@
 						<COND (<G=? <COUNT-CONTAINER .TO> ,LIMIT-POSSESSIONS>
 							<EMPHASIZE "You are already carrying too many items!">
 						)(ELSE
-							<MOVE <GET-ITEM .CHOICE .FROM> .TO>	
+							<SET QUANTITY <GETP <GET-ITEM .CHOICE .FROM> ,P?QUANTITY>>
+							<COND (<G? .QUANTITY 1>
+								<COND (<G? <+ <COUNT-CONTAINER .TO> .QUANTITY> ,LIMIT-POSSESSIONS>
+									<CRLF>
+									<TELL "Taking the ">
+									<PRINT-ITEM <GET-ITEM .CHOICE .FROM> T>
+									<TELL " will exceed the " N ,LIMIT-POSSESSIONS " possessions limit" ,EXCLAMATION-CR>
+								)(ELSE
+									<MOVE <GET-ITEM .CHOICE .FROM> .TO>
+								)>
+							)(ELSE
+								<MOVE <GET-ITEM .CHOICE .FROM> .TO>
+							)>
 						)>
 					)>
 				)>
@@ -5024,50 +5083,50 @@
 		)>
 	>>
 
-<ROUTINE VISIT-TOWNHOUSE (STORY TOWNHOUSE "OPT" (FATAL F) (CODEWORD NONE) "AUX" ROLL KEY)
+<ROUTINE VISIT-SHACK (STORY SHACK "OPT" (FATAL F) (CODEWORD NONE) (JUMP NONE) "AUX" ROLL KEY)
 	<COND (<L? ,STAMINA ,MAX-STAMINA> <GAIN-STAMINA <- ,MAX-STAMINA ,STAMINA>>)>
 	<UPDATE-STATUS-LINE>
-	<COND (<NOT <FSET? .TOWNHOUSE ,CACHEBIT>>
+	<COND (<NOT <FSET? .SHACK ,CACHEBIT>>
 		<SET ROLL <RANDOM-EVENT 2 0 T>>
-		<COND (<L=? .ROLL 9>
-			<COND (<G? <COUNT-CONTAINER .TOWNHOUSE> 0>
-				<EMPHASIZE "Your possessions are safe.">
+		<COND (<L=? .ROLL 6>
+			<COND (<G? <COUNT-CONTAINER .SHACK> 0>
+				<EMPHASIZE "Everything is safe.">
 			)(ELSE
 				<EMPHASIZE ,NOTHING-HAPPENS>
 			)>
-		)(<L=? .ROLL 11>
-			<COND (<G? <GETP .TOWNHOUSE ,P?MONEY> 0>
-				<EMPHASIZE "A break-in! All the money left here is gone!">
-				<PUTP .TOWNHOUSE ,P?MONEY 0>
+		)(<L=? .ROLL 8>
+			<COND (<G? <GETP .SHACK ,P?MONEY> 0>
+				<EMPHASIZE "A thief has taken any money left here!">
+				<PUTP .SHACK ,P?MONEY 0>
 			)(ELSE
-				<EMPHASIZE "Robbers did not find any money here!">
+				<EMPHASIZE "The thief did not find any money here!">
 			)>
-		)(<L=? .ROLL 12>
+		)(<L=? .ROLL 10>
 			<COND (.FATAL
-				<EMPHASIZE "Earthquake! You lose all possessions you left here and the townhouse is destroyed.">
+				<EMPHASIZE "Fire has destroyed the shack and its contents!">
 				<COND (.CODEWORD <DELETE-CODEWORD .CODEWORD>)>
-				<RESET-CONTAINER .TOWNHOUSE>
-				<GAIN-MONEY <GETP .TOWNHOUSE ,P?MONEY>>
-				<PUTP .TOWNHOUSE ,P?MONEY 0>
+				<RESET-CONTAINER .SHACK>
+				<GAIN-MONEY <GETP .SHACK ,P?MONEY>>
+				<PUTP .SHACK ,P?MONEY 0>
 				<RETURN>
 			)(ELSE
-				<COND (<G? <COUNT-CONTAINER .TOWNHOUSE> 0>
-					<EMPHASIZE "Raiding nomads take all your possessions!">
-					<RESET-CONTAINER .TOWNHOUSE>
-				)(ELSE
-					<EMPHASIZE "Raiding nomads did not find anything of value here!">
-				)>
+				<EMPHASIZE "Raiders have stolen its contents!">
+				<RESET-CONTAINER .SHACK>
+				<RETURN>
 			)>
+		)(ELSE
+			<EMPHASIZE "Squatters!">
+			<COND (.JUMP <STORY-JUMP .JUMP>)>
 		)>
 		<PRESS-A-KEY>
 	)>
 	<REPEAT ()
 		<CRLF>
 		<HLIGHT ,H-BOLD>
-		<TELL D .TOWNHOUSE>
+		<TELL D .SHACK>
 		<HLIGHT 0>
 		<CRLF>
-		<PRINT-MENU ,TOWNHOUSE-MENU F F !\0 "You're done here">
+		<PRINT-MENU ,SHACK-MENU F F !\0 "You're done here">
 		<TELL "What do you want to do?">
 		<REPEAT ()
 			<SET KEY <INPUT 1>>
@@ -5081,15 +5140,15 @@
 				<CRLF>
 				<TELL "You leave your ">
 				<HLIGHT ,H-BOLD>
-				<TELL D .TOWNHOUSE>
+				<TELL D .SHACK>
 				<HLIGHT 0>
 				<TELL ,PERIOD-CR>
 				<RETURN>
 			)>
 		)(<EQUAL? .KEY !\1>
-			<TOWNHOUSE-POSSESSIONS .STORY .TOWNHOUSE>
+			<SHACK-POSSESSIONS .STORY .SHACK>
 		)(<EQUAL? .KEY !\2>
-			<TOWNHOUSE-MONEY .STORY .TOWNHOUSE>
+			<SHACK-MONEY .STORY .SHACK>
 		)>
 	>>
 
@@ -5362,7 +5421,42 @@
 ; ---------------------------------------------------------------------------------------------
 
 ; "reset routines"
-; "TO-DO: Reset weapon quantities to 1"
+
+<ROUTINE RESET-GEAR ()
+	<PUTP ,AXE ,P?QUANTITY 1>
+	<PUTP ,AXE1 ,P?QUANTITY 1>
+	<PUTP ,AXE2 ,P?QUANTITY 1>
+	<PUTP ,AXE3 ,P?QUANTITY 1>
+	<PUTP ,BATTLE-AXE ,P?QUANTITY 1>
+	<PUTP ,BATTLE-AXE1 ,P?QUANTITY 1>
+	<PUTP ,BATTLE-AXE2 ,P?QUANTITY 1>
+	<PUTP ,BATTLE-AXE3 ,P?QUANTITY 1>
+	<PUTP ,ENCHANTED-SPEAR ,P?QUANTITY 1>
+	<PUTP ,ENCHANTED-SWORD ,P?QUANTITY 1>
+	<PUTP ,MACE ,P?QUANTITY 1>
+	<PUTP ,MACE1 ,P?QUANTITY 1>
+	<PUTP ,MACE2 ,P?QUANTITY 1>
+	<PUTP ,MACE3 ,P?QUANTITY 1>
+	<PUTP ,MAGIC-SPEAR ,P?QUANTITY 1>
+	<PUTP ,SPEAR ,P?QUANTITY 1>
+	<PUTP ,SPEAR1 ,P?QUANTITY 1>
+	<PUTP ,SPEAR2 ,P?QUANTITY 1>
+	<PUTP ,SPEAR3 ,P?QUANTITY 1>
+	<PUTP ,STAFF ,P?QUANTITY 1>
+	<PUTP ,STAFF1 ,P?QUANTITY 1>
+	<PUTP ,STAFF2 ,P?QUANTITY 1>
+	<PUTP ,STAFF3 ,P?QUANTITY 1>
+	<PUTP ,SWORD ,P?QUANTITY 1>
+	<PUTP ,SWORD1 ,P?QUANTITY 1>
+	<PUTP ,SWORD2 ,P?QUANTITY 1>
+	<PUTP ,SWORD3 ,P?QUANTITY 1>
+	<PUTP ,CHAIN-MAIL ,P?QUANTITY 1>
+	<PUTP ,HEAVY-PLATE ,P?QUANTITY 1>
+	<PUTP ,LEATHER-ARMOUR ,P?QUANTITY 1>
+	<PUTP ,PLATE-ARMOUR ,P?QUANTITY 1>
+	<PUTP ,RING-MAIL ,P?QUANTITY 1>
+	<PUTP ,SPLINT-ARMOUR ,P?QUANTITY 1>>
+
 <ROUTINE RESET-OBJECTS ()
 	<FSET ,CHAIN-MAIL ,WORNBIT>
 	<PUTP ,POTION-OF-COMELINESS ,P?QUANTITY 1>
@@ -5376,17 +5470,20 @@
 	<PUTP ,CANDLE ,P?QUANTITY 1>
 	<PUTP ,INK-SAC ,P?QUANTITY 1>
 	<PUTP ,LANTERN ,P?QUANTITY 1>
-	<PUTP ,MONEY-BAG ,P?MONEY 500>>
+	<PUTP ,MONEY-BAG ,P?MONEY 500>
+	<RESET-GEAR>>
 
 <ROUTINE RESET-STORY ()
 	<SETG LOST-SHARDS 0>
+	<RESET-ODDS 2 0 ,STORY079>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUTP ,STORY006 ,P?DOOM T>
 	<PUTP ,STORY007 ,P?DOOM T>
 	<PUTP ,STORY010 ,P?DOOM T>
 	<PUTP ,STORY029 ,P?DOOM T>
 	<PUTP ,STORY037 ,P?DOOM T>
-	<PUTP ,STORY067 ,P?DOOM T>>
+	<PUTP ,STORY067 ,P?DOOM T>
+	<PUTP ,STORY073 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -5587,6 +5684,9 @@
 ; "Locations in Over the Blood-Dark Sea"
 ; ---------------------------------------------------------------------------------------------
 
+<CONSTANT MINE-FOREMAN-BUY <LTABLE 0 200 575 0 950 250 350>>
+<CONSTANT MINE-FOREMAN-SELL <LTABLE 0 180 550 0 900 220 300>>
+
 <ROOM STORY-MINE-FOREMAN
 	(DESC "038 Mine Foreman")
 	(EVENTS STORY-FOREMAN-EVENTS)
@@ -5594,7 +5694,10 @@
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY-FOREMAN-EVENTS ()
-	<BUY-SELL-CARGO <LTABLE 0 200 575 0 950 250 350> <LTABLE 0 180 550 0 900 220 300>>>
+	<BUY-SELL-CARGO ,MINE-FOREMAN-BUY ,MINE-FOREMAN-SELL>>
+
+<CONSTANT SMOGMAW-GOODS-BUY <LTABLE 300 250 850 750 400 250 180>>
+<CONSTANT SMOGMAW-GOODS-SELL <LTABLE 220 200 800 700 320 200 160>>
 
 <ROOM STORY-SMOGMAW-GOODS
 	(DESC "054 Smogmaw (Buy/Sell Cargo)")
@@ -5603,7 +5706,7 @@
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY-SMOGMAW-EVENTS ()
-	<BUY-SELL-CARGO <LTABLE 300 250 850 750 400 250 180> <LTABLE 220 200 800 700 320 200 160>>>
+	<BUY-SELL-CARGO ,SMOGMAW-GOODS-BUY ,SMOGMAW-GOODS-SELL>>
 
 ; "Over the Blood-Dark Sea"
 ; ---------------------------------------------------------------------------------------------
@@ -6307,6 +6410,7 @@
 			<EMPHASIZE "You purchased a shack at Smogmaw.">
 			<COST-MONEY 20 ,TEXT-PAID>
 			<GAIN-CODEWORD ,CODEWORD-SMOGMAW>
+			<GAIN-SHACK ,SHACK-SMOGMAW>
 		)>
 	)>>
 
@@ -6429,27 +6533,8 @@
 	(BACKGROUND STORY053-BACKGROUND)
 	(FLAGS LIGHTBIT)>
 
-<ROUTINE STORY053-BACKGROUND ("AUX" DOCKED DOCKS (IN-SMOGMAW F))
-	<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
-		<COND (,CURRENT-SHIP
-			<SET DOCKED <GETP ,CURRENT-SHIP ,P?DOCKED>>
-			<COND (<EQUAL? .DOCKED ,DOCK-SMOGMAW> <RETURN ,STORY092>)>
-		)>
-		<SET IN-SMOGMAW F>
-		<SET DOCKS <FIRST? ,SHIPS>>
-		<REPEAT ()
-			<COND (<NOT .DOCKS> <RETURN>)>
-			<SET DOCKED <GETP .DOCKS ,P?DOCKED>>
-			<COND (.DOCKED
-				<COND (<EQUAL? .DOCKED ,DOCK-SMOGMAW>
-					<SET IN-SMOGMAW T>
-					<RETURN>
-				)>
-			)>
-			<SET DOCKS <NEXT? .DOCKS>>
-		>
-		<COND (.IN-SMOGMAW <RETURN ,STORY092>)>
-	)>
+<ROUTINE STORY053-BACKGROUND ()
+	<COND (<CHECK-DOCKED ,DOCK-SMOGMAW> <RETURN ,STORY092>)>
 	<RETURN ,STORY073>>
 
 <CONSTANT TEXT054 "Unlike the ramshackle buildings that make up much of the town, the warehouses are stoutly constructed from heavy logs. Not even a spider could squeeze between those mighty timbers -- much less even the stealthiest and slipperiest of thieves.||\"Spices are the principle commodity of the Feathered Lands,\" a merchant tells you. (You must look as if you're just off the boat.)">
@@ -6675,225 +6760,186 @@
 <ROUTINE STORY070-EVENTS ()
 	<KEEP-ITEM ,WITCH-HAND>>
 
+<CONSTANT TEXT071 "You can set sail -- either on to the open ocean or up the wide Nozama river.">
+<CONSTANT TEXT071-DOCKED "You do not have a ship docked here; you will have to buy a ship or pay for passage">
+<CONSTANT CHOICES071 <LTABLE "Put to sea" "Sail upriver (The Serpent King's Domain)" "Remain in Smogmaw">>
+
 <ROOM STORY071
 	(IN ROOMS)
 	(DESC "071")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(EVENTS STORY071-EVENTS)
+	(CHOICES CHOICES071)
+	(DESTINATIONS <LTABLE STORY320 STORY-SERPENT-KINGS-DOMAIN STORY044>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY071-EVENTS ()
+	<COND (<CHECK-DOCKED ,DOCK-SMOGMAW>
+		<REPEAT ()
+			<COND (,CURRENT-SHIP
+				<REPEAT ()
+					<COND (<IS-DOCKED ,DOCK-SMOGMAW>
+						<REPEAT ()
+							<COND (<VALIDATE-CARGO ,SMOGMAW-GOODS-SELL>
+								<RETURN>
+							)(ELSE
+								<EMPHASIZE "You cannot put out to sea unless you dispose of your excess cargo!">
+							)>
+						>
+						<RETURN>
+					)(ELSE
+						<CRLF>
+						<TELL "Your ">
+						<PRINT-ITEM ,CURRENT-SHIP T>
+						<TELL " is not docked at " <GET ,DOCKS ,DOCK-SMOGMAW> ,EXCLAMATION-CR>
+						<VIEW-SHIP-MANIFEST>
+					)>
+				>
+				<RETURN>
+			)(ELSE
+				<EMPHASIZE "You must choose a ship that is docked here!">
+				<VIEW-SHIP-MANIFEST>
+			)>
+		>
+		<CONTINUE-TEXT ,TEXT071>
+	)(ELSE
+		<CONTINUE-TEXT ,TEXT071-DOCKED>
+		<STORY-JUMP ,STORY110>
+	)>>
+
+<CONSTANT TEXT072 "The priestess stretches like a cat, making no effort to stifle a yawn. \"If you'll excuse me, it is time for my siesta.\" She lies back on the divan and closes her eyes. You quietly withdraw from the temple.">
 
 <ROOM STORY072
 	(IN ROOMS)
 	(DESC "072")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT072)
+	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT073 "Luckily they are drunk to the point of staggering, and you can fight one after the other instead of all at once.">
+<CONSTANT TEXT073-BLOWS "You are struck with a final flurry of blows inflicting some damage!">
 
 <ROOM STORY073
 	(IN ROOMS)
 	(DESC "073")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT073)
+	(EVENTS STORY073-EVENTS)
+	(CONTINUE STORY016)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY073-EVENTS ("AUX" COMBAT-SCORES DEFENSE-SCORES STAMINA-SCORES)
+	<SET COMBAT-SCORES <LTABLE 6 5 5>>
+	<SET DEFENSE-SCORES <LTABLE 9 7 7>>
+	<SET STAMINA-SCORES <LTABLE 9 5 6>>
+	<CRLF>
+	<TELL "Try to run off?">
+	<COND (<YES?>
+		<CONTINUE-TEXT ,TEXT073-BLOWS>
+		<LOSE-STAMINA <ROLL-DICE 2> ,DIED-FROM-INJURIES ,STORY073>
+		<COND (<IS-ALIVE> <STORY-JUMP ,STORY044>)>
+	)(ELSE
+		<DO (I 1 3)
+			<PUTP ,STORY073 ,P?DOOM T>
+			<COMBAT-MONSTER ,MONSTER-MUTINEER <GET .COMBAT-SCORES .I> <GET .DEFENSE-SCORES .I> <GET .STAMINA-SCORES .I>>
+			<COND (<NOT <CHECK-COMBAT ,MONSTER-MUTINEER ,STORY073>> <RETURN>)>
+		>
+	)>>
+
+<CONSTANT TEXT074 "The shack consists of a bamboo hut raised above the ground on stout poles to protect it from flooding. The roof is palm thatch. It is simple but comfortable.||You can rest here if injured. You can also leave money and possessions here to save having to carry them around with you.">
 
 <ROOM STORY074
 	(IN ROOMS)
 	(DESC "074")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-SMOGMAW)
+	(STORY TEXT074)
+	(EVENTS STORY074-EVENTS)
+	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY074-EVENTS ()
+	<VISIT-SHACK ,STORY074 ,SHACK-SMOGMAW T ,CODEWORD-SMOGMAW ,STORY113>>
+
+<CONSTANT TEXT075 "The bottle contains a map of Bazalek, which is a small isle in the waters near Disaster Bay.">
 
 <ROOM STORY075
 	(IN ROOMS)
 	(DESC "075")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT075)
+	(CONTINUE STORY352)
+	(ITEMS <LTABLE MAP-OF-BAZALEK>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT076 "The girl takes the heart-shaped locket and turns, disappearing into the undergrowth. You quickly scramble up the rock and search around, but she has gone leaving no trace.||Your first mate calls to tell you they have loaded the rowboat with fresh water and coconuts. It is time to be off.">
 
 <ROOM STORY076
 	(IN ROOMS)
 	(DESC "076")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT076)
+	(EVENTS STORY076-EVENTS)
+	(CONTINUE STORY171)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY076-EVENTS ()
+	<RETURN-ITEM ,HEART-SHAPED-LOCKET T>
+	<GAIN-MONEY 450>>
+
+<CONSTANT TEXT077 "The crewmen seem nervous. The Kingdom of the Reavers is not many leagues to the south-west, and as a consequence pirates abound in these waters.">
 
 <ROOM STORY077
 	(IN ROOMS)
 	(DESC "077")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT077)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY268 STORY322 STORY437>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 6 8 12> <LTABLE "Pirates as feared" "Luck is with you" "Something worse">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT078 "You are at sea close to the great port city of Aku. Westwards lie the first bleak rocky islands of the Innis Shoals.">
+<CONSTANT CHOICES078 <LTABLE "Head for Aku (The Court of Hidden Faces)" "Go west (The Isle of a Thousand Spires)" "Go east" "Strike out south">>
 
 <ROOM STORY078
 	(IN ROOMS)
 	(DESC "078")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT078)
+	(CHOICES CHOICES078)
+	(DESTINATIONS <LTABLE STORY-COURT-HIDDEN-FACES STORY-ISLE-THOUSAND-SPIRES STORY021 STORY096>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT079 "A southerly breeze stirs the sails. Standing at the rail with head tilted back, you bask in the warm sunshine. Is it your imagination, or can you really detect the scent of exotic spices and swaying palm trees carried on the wind?">
 
 <ROOM STORY079
 	(IN ROOMS)
 	(DESC "079")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT079)
+	(EVENTS STORY079-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY186 STORY168 STORY352 STORY056>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 6 9 100> <LTABLE "Catamarans" "An electric storm" "A quiet voyage" "A bottle drifts by">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY079-EVENTS ()
+	<COND (<CHECK-GOD ,GOD-THREE-FORTUNES>
+		<RESET-ODDS 2 1 ,STORY079>
+	)(ELSE
+		<RESET-ODDS 2 0 ,STORY079>
+	)>>
+
+<CONSTANT TEXT080 "Dead men whose bones are crusted with barnacle creep over the rail at night and carry off half your crewmen. You only discover the cause of the disappearances when you question a sailor who had been locked up in the brig for some minor offence. He saw the barnacle men carrying out their ghastly business through a knothole in the brig door. You have no doubt he's telling the truth; his hair has turned pure white.">
 
 <ROOM STORY080
 	(IN ROOMS)
 	(DESC "080")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT080)
+	(EVENTS STORY080-EVENTS)
+	(CONTINUE STORY321)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY080-EVENTS ()
+	<STORY-RESET-CREW ,CONDITION-POOR>>
 
 <ROOM STORY081
 	(IN ROOMS)
