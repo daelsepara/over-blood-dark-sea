@@ -99,6 +99,7 @@
 <CONSTANT LIMIT-POSSESSIONS 12>
 <GLOBAL CURRENT-SHIP NONE>
 <GLOBAL MONEY 0>
+<GLOBAL LOST-SHARDS 0>
 <GLOBAL MAX-STAMINA 9>
 <GLOBAL STAMINA 0>
 <GLOBAL IS-MALE T>
@@ -3624,6 +3625,7 @@
 <CONSTANT CONDITION-GOOD 2>
 <CONSTANT CONDITION-EXCELLENT 3>
 
+<CONSTANT DOCK-SMOGMAW 1>
 <CONSTANT DOCKS NONE>
 
 <OBJECT SHIP-BARQUE
@@ -5378,6 +5380,8 @@
 	<PUTP ,MONEY-BAG ,P?MONEY 500>>
 
 <ROUTINE RESET-STORY ()
+	<SETG LOST-SHARDS 0>
+	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUTP ,STORY006 ,P?DOOM T>
 	<PUTP ,STORY007 ,P?DOOM T>
 	<PUTP ,STORY010 ,P?DOOM T>
@@ -5387,10 +5391,14 @@
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
 <CONSTANT GOOD-ENDING "Further adventure awaits.|">
-<CONSTANT ENDING-BLOOD-DARK-SEA "Further adventures await at Fabled Lands 3: Over the Blood-Dark Sea.|">
 <CONSTANT ENDING-CITIES-GOLD-GLORY "Further adventures await at Fabled Lands 2: Cities of Gold and Glory.|">
+<CONSTANT ENDING-CITY-IN-CLOUDS "Further adventures await at Fabled Lands 11: The City in the Clouds.|">
 <CONSTANT ENDING-COURT-HIDDEN-FACES "Further adventures await at Fabled Lands 5: The Court of Hidden Faces.|">
 <CONSTANT ENDING-ISLE-THOUSAND-SPIRES "Further adventures await at Fabled Lands 9: The Isle of a Thousand Spires.|">
+<CONSTANT ENDING-INTO-THE-UNDERWORLD "Further adventures await at Fabled Lands 12: Into the Underworld.|">
+<CONSTANT ENDING-LEGIONS-OF-LABYRINTH "Further adventures await at Fabled Lands 11: Legions of the Labyrinth.|">
+<CONSTANT ENDING-LORDS-RISING-SUN "Further adventures await at Fabled Lands 6: Lords of the Rising Sun.|">
+<CONSTANT ENDING-LONE-LEVEL-SANDS "Further adventures await at Fabled Lands 8: The Lone and Level Sands.|">
 <CONSTANT ENDING-PLAINS-HOWLING-DARKNESS "Further adventures await at Fabled Lands 4: The Plains of Howling Darkness.|">
 <CONSTANT ENDING-WAR-TORN-KINGDOM "Further adventures await at Fabled Lands 1: The War-Torn Kingdom.|">
 <CONSTANT ENDING-SERPENT-KINGS-DOMAIN "Further adventures await at Fabled Lands 7: The Serpent King's Domain.|">
@@ -5521,14 +5529,14 @@
 	<SET RANK <GET-RANK ,CURRENT-CHARACTER>>
 	<COND (<G? .ROLL .RANK> <STORY-JUMP .STORY>)>>
 
-<ROOM STORY-BLOOD-DARK-SEA
-	(DESC "Over the Blood-Dark Sea")
-	(VICTORY ENDING-BLOOD-DARK-SEA)
-	(FLAGS LIGHTBIT)>
-
 <ROOM STORY-CITIES-GOLD-GLORY
 	(DESC "Cities of Gold and Glory")
 	(VICTORY ENDING-CITIES-GOLD-GLORY)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY-CITY-IN-CLOUDS
+	(DESC "The City in the Clouds")
+	(VICTORY ENDING-CITY-IN-CLOUDS)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY-COURT-HIDDEN-FACES
@@ -5536,9 +5544,29 @@
 	(VICTORY ENDING-COURT-HIDDEN-FACES)
 	(FLAGS LIGHTBIT)>
 
+<ROOM STORY-INTO-THE-UNDERWORLD
+	(DESC "Into the Underworld")
+	(VICTORY ENDING-INTO-THE-UNDERWORLD)
+	(FLAGS LIGHTBIT)>
+
 <ROOM STORY-ISLE-THOUSAND-SPIRES
 	(DESC "The Isle of a Thousand Spires")
 	(VICTORY ENDING-ISLE-THOUSAND-SPIRES)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY-LEGIONS-OF-LABYRINTH
+	(DESC "Legions of the Labyrinth")
+	(VICTORY ENDING-LEGIONS-OF-LABYRINTH)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY-LONE-LEVEL-SANDS
+	(DESC "The Lone and Level Sands")
+	(VICTORY ENDING-LONE-LEVEL-SANDS)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY-LORDS-RISING-SUN
+	(DESC "Lords of the Rising Sun")
+	(VICTORY ENDING-LORDS-RISING-SUN)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY-PLAINS-HOWLING-DARKNESS
@@ -5567,6 +5595,15 @@
 
 <ROUTINE STORY-FOREMAN-EVENTS ()
 	<BUY-SELL-CARGO <LTABLE 0 200 575 0 950 250 350> <LTABLE 0 180 550 0 900 220 300>>>
+
+<ROOM STORY-SMOGMAW-GOODS
+	(DESC "054 Smogmaw (Buy/Sell Cargo)")
+	(EVENTS STORY-SMOGMAW-EVENTS)
+	(CONTINUE STORY054)
+	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY-SMOGMAW-EVENTS ()
+	<BUY-SELL-CARGO <LTABLE 300 250 850 750 400 250 180> <LTABLE 220 200 800 700 320 200 160>>>
 
 ; "Over the Blood-Dark Sea"
 ; ---------------------------------------------------------------------------------------------
@@ -5784,11 +5821,12 @@
 
 <ROUTINE STORY015-EVENTS ("AUX" ROLL)
 	<SET ROLL <RANDOM-EVENT 2 0 T>>
+	<SETG LOST-SHARDS 0>
 	<COND (<L=? .ROLL 5>
-		<LOSE-MONEY <ROLL-DICE 2>>
+		<SETG LOST-SHARDS <ROLL-DICE 2>>
 		<STORY-JUMP ,STORY052>
 	)(<L=? .ROLL 7>
-		<LOSE-MONEY <ROLL-DICE 1>>
+		<SETG LOST-SHARDS <ROLL-DICE 1>>
 		<STORY-JUMP ,STORY052>
 	)(<L=? .ROLL 9>
 		<GAIN-MONEY <ROLL-DICE 1>>
@@ -6351,224 +6389,156 @@
 	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT051 "The cabin boy has been found lying in the bilge of the ship with his head bashed in. A belaying pin was found nearby. Possible suspects for the crime include the second mate, who regularly lost money to the lad at dice, and the sailmaster, who was known to dislike him.||How will you deal with the incident?">
+<CONSTANT CHOICES051 <LTABLE "Accuse the second mate" "Accuse the sailmaster" "Try looking for clues" "Do nothing">>
+
 <ROOM STORY051
 	(IN ROOMS)
 	(DESC "051")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT051)
+	(CHOICES CHOICES051)
+	(DESTINATIONS <LTABLE STORY536 STORY707 STORY499 STORY554>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT052 "The priestess waits to collect her winnings.">
+<CONSTANT CHOICES052 <LTABLE "Pay her what you owe" "Can't or won't pay">>
 
 <ROOM STORY052
 	(IN ROOMS)
 	(DESC "052")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT052)
+	(EVENTS STORY052-EVENTS)
+	(CHOICES CHOICES052)
+	(DESTINATIONS <LTABLE STORY072 STORY091>)
+	(REQUIREMENTS <LTABLE 0 NONE>)
+	(TYPES <LTABLE R-MONEY R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY052-EVENTS ()
+	<COND (,RUN-ONCE
+		<COND (<G? ,LOST-SHARDS 0>
+			<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 ,LOST-SHARDS>
+			<SETG LOST-SHARDS 0>
+		)>
+	)>>
 
 <ROOM STORY053
 	(IN ROOMS)
 	(DESC "053")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY053-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY053-BACKGROUND ("AUX" DOCKED DOCKS (IN-SMOGMAW F))
+	<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
+		<COND (,CURRENT-SHIP
+			<SET DOCKED <GETP ,CURRENT-SHIP ,P?DOCKED>>
+			<COND (<EQUAL? .DOCKED ,DOCK-SMOGMAW> <RETURN ,STORY092>)>
+		)>
+		<SET IN-SMOGMAW F>
+		<SET DOCKS <FIRST? ,SHIPS>>
+		<REPEAT ()
+			<COND (<NOT .DOCKS> <RETURN>)>
+			<SET DOCKED <GETP .DOCKS ,P?DOCKED>>
+			<COND (.DOCKED
+				<COND (<EQUAL? .DOCKED ,DOCK-SMOGMAW>
+					<SET IN-SMOGMAW T>
+					<RETURN>
+				)>
+			)>
+			<SET DOCKS <NEXT? .DOCKS>>
+		>
+		<COND (.IN-SMOGMAW <RETURN ,STORY092>)>
+	)>
+	<RETURN ,STORY073>>
+
+<CONSTANT TEXT054 "Unlike the ramshackle buildings that make up much of the town, the warehouses are stoutly constructed from heavy logs. Not even a spider could squeeze between those mighty timbers -- much less even the stealthiest and slipperiest of thieves.||\"Spices are the principle commodity of the Feathered Lands,\" a merchant tells you. (You must look as if you're just off the boat.)">
+<CONSTANT CHOICES054 <LTABLE "Do business here in Smogmaw (Buy/Sell cargo)" "Your business is finished here">>
 
 <ROOM STORY054
 	(IN ROOMS)
 	(DESC "054")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-SMOGMAW)
+	(STORY TEXT054)
+	(CHOICES CHOICES054)
+	(DESTINATIONS <LTABLE STORY-SMOGMAW-GOODS STORY044>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT055 "The weather turns colder. At night there is hoarfrost on the shrouds. \"What lies in these grey waters?\" you ask the navigator.||He frowns. \"Merfolk with tails of hard horn. Creatures like great scorpions or lobsters, bigger than tar barrels. Spirits of death and cold moonlight.\"||You hold up your hand. \"I get the picture, thank you.\"">
 
 <ROOM STORY055
 	(IN ROOMS)
 	(DESC "055")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT055)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY283 STORY699>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 8 12> <LTABLE "No encounter" "A mysterious island">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY056
 	(IN ROOMS)
 	(DESC "056")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY056-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY056-BACKGROUND ()
+	<COND (<CHECK-VISITS-MORE ,STORY056 1> <RETURN ,STORY094>)>
+	<RETURN ,STORY075>>
+
+<CONSTANT TEXT057 "You put in at an uncharted island. The beach looks a good place to spend a few days resting under the palm trees while your crew get in supplies of fruit and fresh water.">
 
 <ROOM STORY057
 	(IN ROOMS)
 	(DESC "057")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT057)
+	(EVENTS STORY057-EVENTS)
+	(CONTINUE STORY133)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY057-EVENTS ()
+	<COND (<L? ,STAMINA ,MAX-STAMINA>
+		<GAIN-STAMINA <ROLL-DICE 1>>
+	)>
+	<COND (<CHECK-VISITS-MORE ,STORY057 1> <STORY-JUMP ,STORY171>)>>
+
+<CONSTANT TEXT058 "A harsh wind rips down out of the north, scattering ice crystals like dust on the decks.||\"Yon wind comes off the far mountains,\" says the ship's carpenter, a widely travelled man. \"This snow may be from the boughs of the Icicle Woods, or perhaps from the shores of the Rimewater itself.\"||He shivers and stamps off below deck to fetch a tot of warm mulled wine.">
 
 <ROOM STORY058
 	(IN ROOMS)
 	(DESC "058")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT058)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY299 STORY336 STORY078 STORY348>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 6 8 12> <LTABLE "A ghost in the rigging" "Lords of Uttaku" "Nothing of note" "An uninvited passenger">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT059 "At the southern tip of the Innis Shoals lie the Straits of Alvir, by which you can gain passage to the great western ocean.">
+<CONSTANT CHOICES059 <LTABLE "Go west through the Shoals (The Isle of a Thousand Spires)" "Steer along the Straits of Alvir" "Go east" "Go north">>
 
 <ROOM STORY059
 	(IN ROOMS)
 	(DESC "059")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT059)
+	(CHOICES CHOICES059)
+	(DESTINATIONS <LTABLE STORY-ISLE-THOUSAND-SPIRES STORY399 STORY079 STORY096>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT060 "You reckon your position to be at the southern edge of the Sea of Hydras. To the south east lies Gashmuru Gulf -- and beyond, Dangor and the Forbidden Realm.">
+<CONSTANT CHOICES060 <LTABLE "Go south-east (The City in the Clouds)" "Go north-west" "Go east (Lords of the Rising Sun)" "Go north" "Go south-west (The Serpent King's Domain)">>
 
 <ROOM STORY060
 	(IN ROOMS)
 	(DESC "060")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT060)
+	(CHOICES CHOICES060)
+	(DESTINATIONS <LTABLE STORY-CITY-IN-CLOUDS STORY023 STORY-LORDS-RISING-SUN STORY098 STORY-SERPENT-KINGS-DOMAIN>)
+	(TYPES FIVE-CHOICES)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY061
