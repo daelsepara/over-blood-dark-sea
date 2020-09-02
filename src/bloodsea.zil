@@ -167,11 +167,13 @@
 <GLOBAL STARTING-POINT STORY001>
 <GLOBAL CURRENT-LOCATION LOCATION-GOLNIR>
 
-<CONSTANT LOCATIONS <LTABLE "Golnir" "Sorcerers' Isle" "Smogmaw">>
+<CONSTANT LOCATIONS <LTABLE "Golnir" "Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer">>
 
 <CONSTANT LOCATION-GOLNIR 1>
 <CONSTANT LOCATION-SORCERERS 2>
 <CONSTANT LOCATION-SMOGMAW 3>
+<CONSTANT LOCATION-COPPER 4>
+<CONSTANT LOCATION-DWEOMER 5>
 
 ; "Gamebook loop"
 ; ---------------------------------------------------------------------------------------------
@@ -3517,9 +3519,13 @@
 ; "Resurrections"
 ; ---------------------------------------------------------------------------------------------
 
-<OBJECT RESURRECTION-TYRNAI
-	(DESC "Temple of Tyrnai, Over the Blood-Dark Sea")
-	(CONTINUE NONE)
+<OBJECT RESURRECTION-ANY
+	(DESC "Any resurrection arrangement")
+	(FLAGS TAKEBIT)>
+
+<OBJECT RESURRECTION-ISLAND-REBIRTH
+	(DESC "Island of Rebirth, Over the Blood-Dark Sea")
+	(CONTINUE STORY351)
 	(FLAGS TAKEBIT)>
 
 <OBJECT RESURRECTION-NAGIL
@@ -3527,8 +3533,9 @@
 	(CONTINUE NONE)
 	(FLAGS TAKEBIT)>
 
-<OBJECT RESURRECTION-ANY
-	(DESC "Any resurrection arrangement")
+<OBJECT RESURRECTION-TYRNAI
+	(DESC "Temple of Tyrnai, Over the Blood-Dark Sea")
+	(CONTINUE NONE)
 	(FLAGS TAKEBIT)>
 
 ; GODS
@@ -5318,6 +5325,7 @@
 ; ---------------------------------------------------------------------------------------------
 
 ; "reset routines"
+; "TO-DO: Reset weapon quantities to 1"
 <ROUTINE RESET-OBJECTS ()
 	<FSET ,CHAIN-MAIL ,WORNBIT>
 	<PUTP ,POTION-OF-COMELINESS ,P?QUANTITY 1>
@@ -5338,13 +5346,16 @@
 	<PUTP ,STORY006 ,P?DOOM T>
 	<PUTP ,STORY007 ,P?DOOM T>
 	<PUTP ,STORY010 ,P?DOOM T>
-	<PUTP ,STORY029 ,P?DOOM T>>
+	<PUTP ,STORY029 ,P?DOOM T>
+	<PUTP ,STORY037 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
 <CONSTANT GOOD-ENDING "Further adventure awaits.|">
 <CONSTANT ENDING-BLOOD-DARK-SEA "Further adventures await at Fabled Lands 3: Over the Blood-Dark Sea.|">
 <CONSTANT ENDING-CITIES-GOLD-GLORY "Further adventures await at Fabled Lands 2: Cities of Gold and Glory.|">
+<CONSTANT ENDING-COURT-HIDDEN-FACES "Further adventures await at Fabled Lands 5: The Court of Hidden Faces.|">
+<CONSTANT ENDING-ISLE-THOUSAND-SPIRES "Further adventures await at Fabled Lands 9: The Isle of a Thousand Spires.|">
 <CONSTANT ENDING-PLAINS-HOWLING-DARKNESS "Further adventures await at Fabled Lands 4: The Plains of Howling Darkness.|">
 <CONSTANT ENDING-WAR-TORN-KINGDOM "Further adventures await at Fabled Lands 1: The War-Torn Kingdom.|">
 <CONSTANT ENDING-SERPENT-KINGS-DOMAIN "Further adventures await at Fabled Lands 7: The Serpent King's Domain.|">
@@ -5485,6 +5496,16 @@
 	(VICTORY ENDING-CITIES-GOLD-GLORY)
 	(FLAGS LIGHTBIT)>
 
+<ROOM STORY-COURT-HIDDEN-FACES
+	(DESC "The Court of Hidden Faces")
+	(VICTORY ENDING-COURT-HIDDEN-FACES)
+	(FLAGS LIGHTBIT)>
+
+<ROOM STORY-ISLE-THOUSAND-SPIRES
+	(DESC "The Isle of a Thousand Spires")
+	(VICTORY ENDING-ISLE-THOUSAND-SPIRES)
+	(FLAGS LIGHTBIT)>
+
 <ROOM STORY-PLAINS-HOWLING-DARKNESS
 	(DESC "The Plains of Howling Darkness")
 	(VICTORY ENDING-PLAINS-HOWLING-DARKNESS)
@@ -5499,6 +5520,21 @@
 	(DESC "The War-Torn Kingdom")
 	(VICTORY ENDING-WAR-TORN-KINGDOM)
 	(FLAGS LIGHTBIT)>
+
+; "Locations in Over the Blood-Dark Sea"
+; ---------------------------------------------------------------------------------------------
+
+<ROOM STORY-MINE-FOREMAN
+	(DESC "038 Mine Foreman")
+	(EVENTS STORY-FOREMAN-EVENTS)
+	(CONTINUE STORY038)
+	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY-FOREMAN-EVENTS ()
+	<BUY-SELL-CARGO <LTABLE 0 200 575 0 950 250 350> <LTABLE 0 180 550 0 900 220 300>>>
+
+; "Over the Blood-Dark Sea"
+; ---------------------------------------------------------------------------------------------
 
 <CONSTANT TEXT001 "You are alone in an open boat waiting for death.||How your life has changed since the day that you set out from your homeland across the Unbounded Ocean! You had signed on aboard a ship in the hope of visiting a dozen ports, seeing a thousand wonders. But calamity overtook your voyage in the first week, when pirates swooped down upon the vessel. You and a handful of shipmates managed to get the cutter down into the water and were making off, but some of the pirates leapt down from the rail right in your midst. The fighting was hard. You remember little of it now, but when it was over the boat was awash with blood and you were the only one left alive. Of your own ship and the pirates' there was no sign -- the current had carried you out of sight of any living thing.||Best not to think how you've survived since then. At the mercy of the wind and the currents, you have been swept steadily westwards into regions completely unknown to you. Drinking water has been your biggest problem -- you've had to rely on rain and there has been none for days. Your body is weak, your spirits low. Then, just as death seems ready to draw his boat alongside, you see something that kindles new hope. White clouds. Birds turning high above. The grey hump of land on the horizon!||Steering towards the shore, you feel the cutter lurch as it enters rough water. The wind whips up plumes of spindrift and breakers pound the cliffs. The tiller is yanked out of your hands. The little boat is spun around, out of control, and goes plunging towards the coast.||You leap clear at the last second. There is the snap of timber, the roaring crescendo of the waves -- and then silence as you go under. Striking out wildly, you try to swim clear, then suddenly a wave catches you and flings you contemptuously on to the beach.||You are battered and bedraggled, but alive. Now your adventures can begin.">
 
@@ -5714,10 +5750,10 @@
 <ROUTINE STORY015-EVENTS ("AUX" ROLL)
 	<SET ROLL <RANDOM-EVENT 2 0 T>>
 	<COND (<L=? .ROLL 5>
-		<COST-MONEY <ROLL-DICE 2> "lost">
+		<LOSE-MONEY <ROLL-DICE 2>>
 		<STORY-JUMP ,STORY052>
 	)(<L=? .ROLL 7>
-		<COST-MONEY <ROLL-DICE 1> "lost">
+		<LOSE-MONEY <ROLL-DICE 1>>
 		<STORY-JUMP ,STORY052>
 	)(<L=? .ROLL 9>
 		<GAIN-MONEY <ROLL-DICE 1>>
@@ -5930,224 +5966,165 @@
 	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT031 "You climb up the path, which is gentle at first but gets steadily steeper. It is afternoon before you have reached the peak in the centre of the island. None of your men has had the stamina to keep up, so you are alone as you gaze out over the garden of foliage to where a toy ship crewed by ants bobs gently in a pond.||Three ancient trees stand behind you. With a rustling of long leaves, they seem to speak to you: \"If you taste death, it's here you'll be reborn. But heed our warning: three times only can we give you fresh life.\"||The trees fall silent.||You go back to your ship.">
+
 <ROOM STORY031
 	(IN ROOMS)
 	(DESC "031")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT031)
+	(EVENTS STORY031-EVENTS)
+	(CONTINUE STORY125)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY031-EVENTS ()
+	<SETG RESURRECTION-ARRANGEMENTS ,RESURRECTION-ISLAND-REBIRTH>
+	<EMPHASIZE "Upon death, you will now be resurrected on the Island of Rebirth.">>
+
+<CONSTANT TEXT032 "You pore over the charts, reckoning your position to lie dead south of Knucklebones Point.">
+<CONSTANT CHOICES032 <LTABLE "Head for Sorcerers' Isle" "Steer a course for the Unnumbered Isles" "Head north to the mainland (Cities of Gold and Glory)" "Go eastwards">>
 
 <ROOM STORY032
 	(IN ROOMS)
 	(DESC "032")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT032)
+	(CHOICES CHOICES032)
+	(DESTINATIONS <LTABLE STORY504 STORY205 STORY-CITIES-GOLD-GLORY STORY077>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT033 "The crew falls ill.">
+<CONSTANT TEXT033-CONTINUED "Otherwise, the ship drifts untended until you are well enough to handle it -- by which time you are in unknown waters.">
 
 <ROOM STORY033
 	(IN ROOMS)
 	(DESC "033")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT033)
+	(EVENTS STORY033-EVENTS)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY033-EVENTS ("AUX" ROLL)
+	<COND (<CHECK-BLESSING ,BLESSING-IMMUNITY-POISON-DISEASE>
+		<DELETE-BLESSING ,BLESSING-IMMUNITY-POISON-DISEASE>
+		<STORY-JUMP ,STORY116>
+	)(ELSE
+		<CONTINUE-TEXT ,TEXT033-CONTINUED>
+		<SET ROLL <RANDOM-EVENT 2 0 T>>
+		<COND (<L=? .ROLL 4>
+			<STORY-JUMP ,STORY058>
+		)(<L=? .ROLL 6>
+			<STORY-JUMP ,STORY170>
+		)(<EQUAL? .ROLL 7>
+			<STORY-JUMP ,STORY-ISLE-THOUSAND-SPIRES>
+		)(<L=? .ROLL 9>
+			<STORY-JUMP ,STORY370>	
+		)(ELSE
+			<STORY-JUMP ,STORY040>
+		)>
+	)>>
+
+<CONSTANT TEXT034 "\"What shall we play?\" wonders the priestess, pressing the pack of cards against her lower lip. \"Ah, yes, how about a sedate game of Paying the Devil?\"">
 
 <ROOM STORY034
 	(IN ROOMS)
 	(DESC "034")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT034)
+	(EVENTS STORY034-EVENTS)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY034-EVENTS ("AUX" ROLL)
+	<REPEAT ROLL-AGAIN ()
+		<SET ROLL <RANDOM-EVENT 2 0 T>>
+		<COND (<L=? .ROLL 6>
+			<LOSE-MONEY <ROLL-DICE 1>>
+			<STORY-JUMP ,STORY052>
+			<RETURN>
+		)(<EQUAL? .ROLL 7>
+			<AGAIN .ROLL-AGAIN>
+		)(<L=? .ROLL 12>
+			<GAIN-MONEY <ROLL-DICE 1>>
+			<STORY-JUMP ,STORY111>
+			<RETURN>
+		)>
+	>>
+
+<CONSTANT TEXT035 "They look up at you with eyes made bleary by drink.||\"It's our old skipper,\" says Mister Haywood, your erstwhile midshipman.||\"Strike me blind!\" says Fryer, once your trusted first mate. \"I never thought to see you this side of hell.\"">
+<CONSTANT CHOICES035 <LTABLE "Threaten them" "Greet them amicably" "Preach at them">>
 
 <ROOM STORY035
 	(IN ROOMS)
 	(DESC "035")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT035)
+	(CHOICES CHOICES035)
+	(DESTINATIONS <LTABLE STORY053 STORY130 STORY166>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT036 "You rise rapidly from being an ordinary sailor to the rank of trusty midshipman. Eventually, after many months, the captain agrees to give you your freedom. \"You deserve it,\" he says. \"Where shall I put you ashore? How about Old Sokar?\" You notice he disdains to use its new name, Marlock City.">
+<CONSTANT CHOICES036 <LTABLE "Disembark at Copper Island" "Disembark at Dweomer" "Disembark at Old Sokar (The War-Torn Kingdom)">>
 
 <ROOM STORY036
 	(IN ROOMS)
 	(DESC "036")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT036)
+	(CHOICES CHOICES036)
+	(DESTINATIONS <LTABLE STORY099 STORY100 STORY-WAR-TORN-KINGDOM>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT037 "That was one of the hardest fights of your life.">
 
 <ROOM STORY037
 	(IN ROOMS)
 	(DESC "037")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT037)
+	(EVENTS STORY037-EVENTS)
+	(CONTINUE STORY044)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY037-EVENTS ("AUX" ROLL)
+	<LOSE-STAMINA <ROLL-DICE 1> ,DIED-FROM-INJURIES ,STORY037>
+	<COND (<IS-ALIVE>
+		<SET ROLL <RANDOM-EVENT 2 0 T>>
+		<COND (<G? .ROLL <GET-ABILITY-SCORE ,CURRENT-CHARACTER ,ABILITY-COMBAT>>
+			<UPGRADE-ABILITY ,ABILITY-COMBAT 1>
+		)>
+	)>>
+
+<CONSTANT TEXT038 "Perhaps you expected a rugged fellow with arms like anchor cables, but the mine foreman is just a dapper businessmen in an ermine robe. He quotes prices for the various goods that interest him. These prices are for entire Cargo Units. You cannot carry this large a quantity in person, but what ever you buy will be loaded on to your ship if you have one docked here.">
+<CONSTANT CHOICES038 <LTABLE "Do business with the mine foreman (Buy/Sell cargo)" "You have completed your business with the mine foreman">>
 
 <ROOM STORY038
 	(IN ROOMS)
 	(DESC "038")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT038)
+	(CHOICES CHOICES038)
+	(DESTINATIONS <LTABLE STORY-MINE-FOREMAN STORY317>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT039 "You are halfway between the Innis Shoals and Braelak, the Sorcerers' Isle.">
+<CONSTANT CHOICES039 <LTABLE "Go west" "Head for the mainland (The Court of Hidden Faces)" "Go east" "Steer south for open ocean">>
 
 <ROOM STORY039
 	(IN ROOMS)
 	(DESC "039")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT039)
+	(CHOICES CHOICES039)
+	(DESTINATIONS <LTABLE STORY058 STORY-COURT-HIDDEN-FACES STORY129 STORY170>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT040 "The wind freshens and veers to blow from the north-east. You must be careful, or your ship could be blown onto the reefs fringing the Innis archipelago.">
 
 <ROOM STORY040
 	(IN ROOMS)
 	(DESC "040")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT040)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY-ISLE-THOUSAND-SPIRES STORY059 STORY551>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 8 12> <LTABLE "Blown off course" "A peaceful voyage" "A vision in the sunset">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY041
