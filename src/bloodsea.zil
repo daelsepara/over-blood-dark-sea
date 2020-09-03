@@ -5685,7 +5685,8 @@
 	<PUTP ,STORY073 ,P?DOOM T>
 	<PUTP ,STORY085 ,P?DOOM T>
 	<PUTP ,STORY103 ,P?DOOM T>
-	<PUTP ,STORY113 ,P?DOOM T>>
+	<PUTP ,STORY113 ,P?DOOM T>
+	<PUTP ,STORY126 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -7689,224 +7690,134 @@
 	<COND (<CHECK-VISITS-MORE ,STORY120 1> <RETURN ,STORY350>)>
 	<RETURN ,STORY097>>
 
+<CONSTANT TEXT121 "You look up into two pairs of eyes that glitter like onyx. There is a rustling sound, a snake-like hiss, and then you dimly hear these words: \"This one is stricken like the others, my sister...\"||A terrible spell prevents you from moving a muscle. There is a sense of days and nights flitting past in less than a heartbeat. You must summon your fading concentration to shrug off the spell before it is too late.">
+
 <ROOM STORY121
 	(IN ROOMS)
 	(DESC "121")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT121)
+	(CHOICES CHOICES-MAGIC)
+	(DESTINATIONS <LTABLE <LTABLE STORY713 STORY522>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-MAGIC 14>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT122 "You are sailing away from Braelak, the Sorcerers' Isle">
+<CONSTANT CHOICES122 <LTABLE "Go north" "Go south" "Go east" "Go west">>
 
 <ROOM STORY122
 	(IN ROOMS)
 	(DESC "122")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT122)
+	(CHOICES CHOICES122)
+	(DESTINATIONS <LTABLE STORY200 STORY244 STORY504 STORY129>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT123 "You are dead.">
 
 <ROOM STORY123
 	(IN ROOMS)
 	(DESC "123")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT123)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT124 "With no water in the barrels, you have little hope of surviving to reach dry land. You ask your officers to propose a course of action. The first mate recommends you set course for Dweomer and trust to stringent rationing. The navigator thinks you should circle in these waters looking for an island.">
+<CONSTANT CHOICES124 <LTABLE "Head for Dweomer" "Search for an island">>
 
 <ROOM STORY124
 	(IN ROOMS)
 	(DESC "124")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT124)
+	(CHOICES CHOICES124)
+	(DESTINATIONS <LTABLE STORY142 STORY160>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT125 "The sea, which for many days now has been a rich mauve-blue, now begins to take on a rusty colour.||\"It is silt from the Nozama estuary,\" says the navigator. \"The same stuff that gives Lake Firewater its blood-tinged hue.\"">
+<CONSTANT CHOICES125 <LTABLE "Steer south to Smogmaw" "Steer north" "Steer west" "Steer east">>
 
 <ROOM STORY125
 	(IN ROOMS)
 	(DESC "125")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT125)
+	(CHOICES CHOICES125)
+	(DESTINATIONS <LTABLE STORY266 STORY004 STORY227 STORY302>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT126 "You kneel in the sand for days, eating and drinking nothing, until starvation makes strange visions dance before your eyes. Every moment is spent in prayer. The demands of the flesh are first ignored, then forgotten, as you pin all your hopes on divine intervention.">
 
 <ROOM STORY126
 	(IN ROOMS)
 	(DESC "126")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT126)
+	(EVENTS STORY126-EVENTS)
+	(CONTINUE STORY177)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY126-EVENTS ()
+	<COND (<CHECK-GOD ,GOD-ALVIR-VALMIR>
+		<PREVENT-DOOM ,STORY126>
+		<CRLF>
+		<COND (<TEST-ABILITY ,CURRENT-CHARACTER ,ABILITY-SANCTITY 17>
+			<STORY-JUMP ,STORY198>
+		)(ELSE
+			<STORY-JUMP ,STORY123>
+		)>
+	)(ELSE
+		<CONTINUE-TEXT "Your prayers are completely in vain, and finally you give up the attempt.">
+		<LOSE-STAMINA 3 ,DIED-OF-HUNGER ,STORY126>
+	)>>
+
+<CONSTANT TEXT127 "The entire ship's company sinks into a coma. Unlike you, they cannot breathe the thin air up here. You must do something before they are all dead.">
+<CONSTANT CHOICES127 <LTABLE "Use sorcery to save them" "Dive into the sea" "Climb down the side of the ship">>
 
 <ROOM STORY127
 	(IN ROOMS)
 	(DESC "127")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT127)
+	(CHOICES CHOICES127)
+	(DESTINATIONS <LTABLE STORY145 STORY199 STORY219>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT128 "You see an old man wading ankle-deep in mud as he crosses from one tavern to another. His reason for not using the boardwalks is that dogs use them too -- \"The mud is more sanitary!\" he explains.||Regarding your enquiry about Smogmaw's temples, he mentions four: \"There is the shrine to Alvir and Valmir, the temple of the Three Fortunes, a shrine to Glimbinki the Plumed One, and somewhere there's a fane sacred to Badogor.\"||\"Who?\"||He puts his finger to his lips. \"Sssh. The Unspoken One.\"">
+<CONSTANT CHOICES128 <LTABLE "Visit the temple of the Three Fortunes" "Visit the shrine of Alvir and Valmir" "Visit Glimbinki's shrine" "Look for Badogor's fane" "Consider your other options">>
 
 <ROOM STORY128
 	(IN ROOMS)
 	(DESC "128")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT128)
+	(CHOICES CHOICES128)
+	(DESTINATIONS <LTABLE STORY146 STORY503 STORY259 STORY333 STORY044>)
+	(TYPES FIVE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT129 "Green sea flashes under trails of frothy white; looking north, you have the coast in sight.||The mate's gaze is fixed, not on land, but on the deep swelling waves. \"How many skulls gaze up from the ocean bed?\" he wonders. \"How many sunken hulks, weed-choked and silent, lie rotting on the wet sands? Ah, it's always when we're nearly home that my fancies turn morbid.\"">
 
 <ROOM STORY129
 	(IN ROOMS)
 	(DESC "129")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT129)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY381 STORY475 STORY273>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 6 11 12> <LTABLE "The High King's banner" "Plain sailing" "An uncanny awakening">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT130 "You sit down and start drinking with them. Your aim is to lull their suspicions until they are soundly drunk and then make a reckoning for their crime.">
 
 <ROOM STORY130
 	(IN ROOMS)
 	(DESC "130")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT130)
+	(CHOICES CHOICES-CHARISMA)
+	(DESTINATIONS <LTABLE <LTABLE STORY148 STORY073>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-CHARISMA 11>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY131
