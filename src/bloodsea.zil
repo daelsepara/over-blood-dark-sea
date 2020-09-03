@@ -166,13 +166,15 @@
 <GLOBAL STARTING-POINT STORY001>
 <GLOBAL CURRENT-LOCATION LOCATION-UNKNOWN>
 
-<CONSTANT LOCATIONS <LTABLE "The Unknown" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer">>
+<CONSTANT LOCATIONS <LTABLE "The Unknown" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens">>
 
 <CONSTANT LOCATION-UNKNOWN 1>
 <CONSTANT LOCATION-SORCERERS 2>
 <CONSTANT LOCATION-SMOGMAW 3>
 <CONSTANT LOCATION-COPPER 4>
 <CONSTANT LOCATION-DWEOMER 5>
+<CONSTANT LOCATION-FIDDLER 6>
+<CONSTANT LOCATION-METRICIENS 7>
 
 ; "Text constants"
 ; ---------------------------------------------------------------------------------------------
@@ -3743,6 +3745,9 @@
 <OBJECT GOD-MAKA
 	(DESC "Maka")>
 
+<OBJECT GOD-MOLHERN
+	(DESC "Molhern, the God of Craftsmen")>
+
 <OBJECT GOD-NAGIL
 	(DESC "Nagil, the God of Death")
 	(RESURRECTION RESURRECTION-ANY)>
@@ -5665,6 +5670,7 @@
 	<SETG LOST-SHARDS 0>
 	<RESET-ODDS 2 0 ,STORY079>
 	<RESET-ODDS 1 0 ,STORY083>
+	<RESET-ODDS 2 0 ,STORY108>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUTP ,STORY006 ,P?DOOM T>
 	<PUTP ,STORY007 ,P?DOOM T>
@@ -5673,7 +5679,8 @@
 	<PUTP ,STORY037 ,P?DOOM T>
 	<PUTP ,STORY067 ,P?DOOM T>
 	<PUTP ,STORY073 ,P?DOOM T>
-	<PUTP ,STORY085 ,P?DOOM T>>
+	<PUTP ,STORY085 ,P?DOOM T>
+	<PUTP ,STORY103 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -5778,10 +5785,11 @@
 	)>>
 
 <CONSTANT TEXT-DROWNED "You drowned!">
-<CONSTANT TEXT-DRIFTWOOD "You manage to find some driftwood and make it back to shore">
-<CONSTANT TEXT-SHIPWRECK "Your ship, crew and cargo are lost to the deep, dark sea. Your only thought now is to save yourself.">
+<CONSTANT TEXT-SWEPT-MIRACULOUSLY "You are swept miraculously to the shore">
+<CONSTANT TEXT-SHIPWRECK "Helpless in the grip of the storm, the vessel cracks apart. The seawater rushes into the broken shell of the hull, dragging you down. The screams of your crewmen are drowned out by the howl of the storm.||They are lost forever. You can think of nothing not but saving yourself.">
 
 <ROUTINE STORY-SHIPWRECK (STORY "OPT" JUMP-DROWNED JUMP-SURVIVE "AUX" (RANK 1) ROLL LOSS)
+	<PUTP .STORY ,P?DOOM T>
 	<SET RANK <GET-RANK ,CURRENT-CHARACTER>>
 	<SET ROLL <RANDOM-EVENT 2>>
 	<COND (<G? .ROLL .RANK>
@@ -5792,7 +5800,7 @@
 		<REMOVE ,CURRENT-SHIP>
 		<SETG CURRENT-SHIP NONE>
 		<CRLF>
-		<TELL ,TEXT-DRIFTWOOD>
+		<TELL ,TEXT-SWEPT-MIRACULOUSLY>
 		<TELL ,PERIOD-CR>
 		<SET LOSS <RANDOM-EVENT 2 0 T>>
 		<LOSE-STAMINA .LOSS ,DIED-GREW-WEAKER .STORY>
@@ -5975,12 +5983,10 @@
 <ROUTINE STORY005-EVENTS ()
 	<DELETE-CODEWORD ,CODEWORD-COSY>>
 
-<CONSTANT TEXT006 "Helpless in the grip of the storm, the vessel cracks apart. The seawater rushes into the broken shell of the hull, dragging you down. The screams of your crewmen are drowned out by the howl of the storm.">
-
 <ROOM STORY006
 	(IN ROOMS)
 	(DESC "006")
-	(STORY TEXT006)
+	(STORY TEXT-SHIPWRECK)
 	(EVENTS STORY006-EVENTS)
 	(DOOM T)
 	(FLAGS LIGHTBIT)>
@@ -7412,224 +7418,142 @@
 	(TYPES <LTABLE R-DOCKED R-NONE R-NONE R-NONE>)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT101 "\"See those myriad islands?\" says the navigator, pointing to numerous rocky shores scattered in the east beyond a pall of haze.||You nod. \"The Unnumbered Isles. We're due south of Old Sokar - or Marlock City, as it is now called.\"">
+<CONSTANT CHOICES101 <LTABLE "Go west" "Go east" "Go north" "Go south">>
+
 <ROOM STORY101
 	(IN ROOMS)
 	(DESC "101")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT101)
+	(CHOICES CHOICES101)
+	(DESTINATIONS <LTABLE STORY205 STORY119 STORY077 STORY042>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT102 "With each step your eyelids are getting heavier. You yawn and stretch, feeling utterly weary. Those stone couches look so comfortable.">
+<CONSTANT CHOICES102 <LTABLE "Stay awake" TEXT-ROLL-MAGIC>>
 
 <ROOM STORY102
 	(IN ROOMS)
 	(DESC "102")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT102)
+	(CHOICES CHOICES102)
+	(DESTINATIONS <LTABLE STORY027 <LTABLE STORY027 STORY582>>)
+	(REQUIREMENTS <LTABLE CODEWORD-CHILL <LTABLE ABILITY-MAGIC 18>>)
+	(TYPES <LTABLE R-CODEWORD R-TEST-ABILITY>)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY103
 	(IN ROOMS)
 	(DESC "103")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT-SHIPWRECK)
+	(EVENTS STORY103-EVENTS)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY103-EVENTS ()
+	<STORY-SHIPWRECK ,STORY103 ,STORY123 ,STORY-SERPENT-KINGS-DOMAIN>>
+
+<CONSTANT TEXT104 "The combined strength of all your men is just enough to push the iron doors open. Within lies a hidden valley entirely surrounded by high cliffs -- a paradise of bubbling brooks, emerald lawns, fruit trees and scented flowers. Strewn all around are gold, silver and gems as plentiful as pebbles in a merchant's garden. With wild cries of delight, your men stuff their pockets with all they can carry.||You yourself pick up jewels worth 5000 Shards. The air here is so clean and fresh.||A cold breeze shakes the boughs of the trees. Leaves fall, curling on the grass.||\"We've let Time into Paradise,\" reckons the mate. \"Let's not linger here.\"">
 
 <ROOM STORY104
 	(IN ROOMS)
 	(DESC "104")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT104)
+	(EVENTS STORY104-EVENTS)
+	(CONTINUE STORY005)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY104-EVENTS ()
+	<GAIN-MONEY 5000>
+	<COND (<L? ,STAMINA ,MAX-STAMINA>
+		<EMPHASIZE "Your stamina has fully recovered.">
+		<SETG STAMINA ,MAX-STAMINA>
+		<UPDATE-STATUS-LINE>
+	)(ELSE
+		<UPGRADE-STAMINA <ROLL-DICE 1>>
+	)>>
 
 <ROOM STORY105
 	(IN ROOMS)
 	(DESC "105")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY105-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY105-BACKGROUND ()
+	<COND (<CHECK-VISITS-MORE ,STORY105 1> <RETURN ,STORY159>)>
+	<RETURN ,STORY338>>
+
+<CONSTANT TEXT106 "The helmsman goes mad in the middle of the night, possibly as a result of smoking tobacco mixed with mauve lotus. By the time anyone notices, he has had plenty of time to work mischief.">
 
 <ROOM STORY106
 	(IN ROOMS)
 	(DESC "106")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT106)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY024 STORY124 STORY212>>)
+	(REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 2 4 6> <LTABLE "Lost at sea" "Out of drinking water" "Run aground">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT107 "\"Land ahoy!\" cries the lookout. It is Fiddler's Green, the island gifted to you by the herald of the sea gods.">
+<CONSTANT CHOICES107 <LTABLE "Put in at the island" "Sail on">>
 
 <ROOM STORY107
 	(IN ROOMS)
 	(DESC "107")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-FIDDLER)
+	(STORY TEXT107)
+	(CHOICES CHOICES107)
+	(DESTINATIONS <LTABLE STORY143 STORY125>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT108 "You tie bundles of saplings together using rope made of plaited palm leaves Hollow gourds help to provide buoyancy. Commending your soul to the gods, you push the little raft out from shore and climb aboard. It is not so much like sailing as swimming with the aid of a float.">
 
 <ROOM STORY108
 	(IN ROOMS)
 	(DESC "108")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT108)
+	(EVENTS STORY108-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY123 STORY158 STORY180>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 8 100> <LTABLE "The raft sinks" "Picked up at sea" "You reach land">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY108-EVENTS ()
+	<COND (<CHECK-GOD ,GOD-MOLHERN>
+		<RESET-ODDS 2 2 ,STORY108>
+	)(ELSE
+		<RESET-ODDS 2 0 ,STORY108>
+	)>>
+
+<CONSTANT TEXT109 "An unexplained waterspout erupts from the surface of the sea, carrying your vessel high up into the sky. The sailors cringe in dismay and cling to the rigging for safety.||\"Gods above!\" cries the cook as he sees the clouds go past. \"We're airborne!\"||The mate clutches his throat. \"It's getting hard to breathe...\" he says before slumping to the deck.">
+<CONSTANT CHOICES109 <LTABLE "You are not affected" OTHERWISE>>
 
 <ROOM STORY109
 	(IN ROOMS)
 	(DESC "109")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT109)
+	(CHOICES CHOICES109)
+	(DESTINATIONS <LTABLE STORY127 STORY123>)
+	(REQUIREMENTS <LTABLE CODEWORD-CALCIUM NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT110 "Several skippers have loaded their cargoes and are ready to depart for ports in the north. You can get passage to Dweomer, Yellowport or Metriciens, for 35 Shards in each case. There is also a merchant who intends to go upriver to trade with the natives of the interior; he will take you along for 5 Shards. Alternatively, you could buy a ship of your own.">
+<CONSTANT CHOICES110 <LTABLE "Pay the fare to Yellowport" "Pay the fare to Dweomer" "Pay the fare to Metriciens" "Accompany the merchant upriver (The Serpent King's Domain)" "Buy a ship" "Stay in Smogmaw">>
 
 <ROOM STORY110
 	(IN ROOMS)
 	(DESC "110")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT110)
+	(CHOICES CHOICES110)
+	(DESTINATIONS <LTABLE STORY224 STORY242 STORY260 STORY-SERPENT-KINGS-DOMAIN STORY712 STORY044>)
+	(REQUIREMENTS <LTABLE 35 35 35 5 NONE NONE>)
+	(TYPES <LTABLE R-MONEY R-MONEY R-MONEY R-MONEY R-NONE R-NONE>)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY111
