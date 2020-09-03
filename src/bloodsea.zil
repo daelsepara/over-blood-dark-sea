@@ -166,7 +166,7 @@
 <GLOBAL STARTING-POINT STORY001>
 <GLOBAL CURRENT-LOCATION LOCATION-UNKNOWN>
 
-<CONSTANT LOCATIONS <LTABLE "The Unknown" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens">>
+<CONSTANT LOCATIONS <LTABLE "The Unknown" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "The Fortress of The Reaver King">>
 
 <CONSTANT LOCATION-UNKNOWN 1>
 <CONSTANT LOCATION-SORCERERS 2>
@@ -175,6 +175,7 @@
 <CONSTANT LOCATION-DWEOMER 5>
 <CONSTANT LOCATION-FIDDLER 6>
 <CONSTANT LOCATION-METRICIENS 7>
+<CONSTANT LOCATION-REAVER 8>
 
 ; "Text constants"
 ; ---------------------------------------------------------------------------------------------
@@ -1438,19 +1439,21 @@
 	)>>
 
 <ROUTINE COST-MONEY (COST "OPT" REASON)
-	<CRLF>
-	<HLIGHT ,H-BOLD>
-	<TELL "You ">
-	<COND (.REASON
-		<TELL .REASON>
-	)(ELSE
-		<TELL "are charged">
-	)>
-	<TELL " " N .COST " " D ,CURRENCY ,PERIOD-CR>
-	<HLIGHT 0>
-	<SETG MONEY <- ,MONEY .COST>>
-	<COND (<L? ,MONEY 0> <SETG MONEY 0>)>
-	<UPDATE-STATUS-LINE>>
+	<COND (<G? .COST 0>
+		<CRLF>
+		<HLIGHT ,H-BOLD>
+		<TELL "You ">
+		<COND (.REASON
+			<TELL .REASON>
+		)(ELSE
+			<TELL "are charged">
+		)>
+		<TELL " " N .COST " " D ,CURRENCY ,PERIOD-CR>
+		<HLIGHT 0>
+		<SETG MONEY <- ,MONEY .COST>>
+		<COND (<L? ,MONEY 0> <SETG MONEY 0>)>
+		<UPDATE-STATUS-LINE>
+	)>>
 
 <ROUTINE COUNT-BLESSINGS (ITEM "AUX" (ITEMS 0) (BLESSINGS 0) (PROPERTY NONE))
 	<COND (.ITEM
@@ -3221,6 +3224,7 @@
 <OBJECT CODEWORD-CITRUS (DESC "Citrus")>
 <OBJECT CODEWORD-CHURCH (DESC "Church")>
 <OBJECT CODEWORD-COSY (DESC "Cosy")>
+<OBJECT CODEWORD-CUTLASS (DESC "Cutlass")>
 <OBJECT CODEWORD-CYNOSURE (DESC "Cynosure")>
 
 ; "codewords from other books. Included here only for completeness"
@@ -5680,7 +5684,8 @@
 	<PUTP ,STORY067 ,P?DOOM T>
 	<PUTP ,STORY073 ,P?DOOM T>
 	<PUTP ,STORY085 ,P?DOOM T>
-	<PUTP ,STORY103 ,P?DOOM T>>
+	<PUTP ,STORY103 ,P?DOOM T>
+	<PUTP ,STORY113 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -7556,225 +7561,133 @@
 	(TYPES <LTABLE R-MONEY R-MONEY R-MONEY R-MONEY R-NONE R-NONE>)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT111 "The priestess asks you if you wish to become an initiate of the Three Fortunes.">
+
 <ROOM STORY111
 	(IN ROOMS)
 	(DESC "111")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT111)
+	(EVENTS STORY111-EVENTS)
+	(CONTINUE STORY256)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY111-EVENTS ()
+	<COND (<CHECK-GOD ,GOD-THREE-FORTUNES>
+		<STORY-JUMP ,STORY044>
+	)(ELSE
+		<BECOME-INITIATE 0 ,GOD-THREE-FORTUNES>
+		<COND (<NOT <CHECK-GOD ,GOD-THREE-FORTUNES>>
+			<STORY-JUMP ,STORY044>
+		)>
+	)>>
+
+<CONSTANT TEXT112 "Your former crewmen soon back down when they see two burly natives in feather cloaks and full warpaint getting up to stand beside you.||\"This is the friend of Moon of Evening,\" says one of the natives, shaking his spear at the frightened mutineers. \"You cause trouble and you will sleep with the piranhas!\"||The three hurry off. \"They won't come in here again,\" says the other native.">
 
 <ROOM STORY112
 	(IN ROOMS)
 	(DESC "112")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT112)
+	(EVENTS STORY112-EVENTS)
+	(CONTINUE STORY314)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY112-EVENTS ()
+	<DELETE-CODEWORD ,CODEWORD-CHURCH>>
+
+<CONSTANT TEXT113 "The squatters cannot see why they shouldn't use your property while you're away at sea. A vigorous two-fisted argument soon sets them straight, but you get a bloody nose and a black eye in the process of evicting them. You throw them in the mud at the side of the river before striding back to your shack.">
 
 <ROOM STORY113
 	(IN ROOMS)
 	(DESC "113")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT113)
+	(EVENTS STORY113-EVENTS)
+	(CONTINUE STORY074)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY113-EVENTS ()
+	<LOSE-STAMINA <ROLL-DICE 1> ,DIED-FROM-INJURIES ,STORY113>>
+
+<CONSTANT TEXT114 "You are taken before the Reaver King in his grim fortress which stands at the back of the secluded cove where the pirates have their base. Many a captain in the world's navies would pay dearly to know the location of this place, the secret harbour from which the dread Reavers swoop out to prey on passing ships.">
 
 <ROOM STORY114
 	(IN ROOMS)
 	(DESC "114")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-REAVER)
+	(STORY TEXT114)
+	(CHOICES CHOICES-CODEWORD)
+	(DESTINATIONS <LTABLE STORY473 STORY233>)
+	(REQUIREMENTS <LTABLE CODEWORD-CUTLASS NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT115 "The portrait is of your old foe Kaschuv the Deathless. He'll have to choose another soubriquet now you've found and released his soul from the magic locket in which he kept it secure.||The first mate calls to tell you the supplies are stowed aboard. It is time to set sail.">
 
 <ROOM STORY115
 	(IN ROOMS)
 	(DESC "115")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT115)
+	(CONTINUE STORY171)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT116 "The mate joins you at the rail and the two of you watch the sun sink beyond the rocky peaks of the Innis archipelago.||\"What lies there in the west?\" wonders the mate. \"Are you for finding out, skipper? Say the word and I'll set a course for the Sea of Stilts.\"">
+<CONSTANT CHOICES116 <LTABLE "Travel west (The Isle of a Thousand Spires)" "Go south" "Go north" "Head east">>
 
 <ROOM STORY116
 	(IN ROOMS)
 	(DESC "116")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT116)
+	(CHOICES CHOICES116)
+	(DESTINATIONS <LTABLE STORY-ISLE-THOUSAND-SPIRES STORY040 STORY058 STORY370>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT117 "The grey bulk of an island can be seen to the north. \"Why is it called the Sleeping Isle?\" you hear the cabin boy ask the first mate.||\"Why, lad, it's because a curse puts anyone who goes ashore off to sleep for a hundred years,\" is the mate's reply.">
 
 <ROOM STORY117
 	(IN ROOMS)
 	(DESC "117")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT117)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY496 STORY135 STORY465>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 9 12> <LTABLE "A flying horseman" "An uneventful voyage" "The Kraken wakes">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT118 "The lookout spots an island off the starboard bow. Nothing is recorded on the charts for this region, but perhaps that isn't surprising. Few ships return from the dread Sea of Hydras.">
+<CONSTANT CHOICES118 <LTABLE "Explore the island" "Sail on">>
 
 <ROOM STORY118
 	(IN ROOMS)
 	(DESC "118")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT118)
+	(CHOICES CHOICES118)
+	(DESTINATIONS <LTABLE STORY413 STORY278>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT119 "You have a good day's sailing, but at dusk a heavy gloom swathes the sunset in a welter of bloody reds, golds, charcoal grey and livid purple. It looks like a bruise in the western sky.||\"Let's hope that's no harbinger of a storm,\" says the mate.">
 
 <ROOM STORY119
 	(IN ROOMS)
 	(DESC "119")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT119)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY213 STORY137 STORY533>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 7 12> <LTABLE "Worsening weather" "A quiet night" "A ship's lanterns">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY120
 	(IN ROOMS)
 	(DESC "120")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY120-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY120-BACKGROUND ()
+	<COND (<CHECK-VISITS-MORE ,STORY120 1> <RETURN ,STORY350>)>
+	<RETURN ,STORY097>>
 
 <ROOM STORY121
 	(IN ROOMS)
