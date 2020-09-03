@@ -2421,7 +2421,10 @@
 ; ---------------------------------------------------------------------------------------------
 
 <CONSTANT CHOICES-STORM-FURY <LTABLE "The storm hits with full fury. Great grey waves break across the deck.">>
-<CONSTANT STORY-STORM-REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 4 6 20> <LTABLE "The ship sinks!" "The mast splits!" "You weather the storm!">>>>
+<CONSTANT CHOICES-HURRICANE-STRIKES <LTABLE "The hurricane strikes.">>
+<CONSTANT STORM-OUTCOMES <LTABLE "The ship sinks!" "The mast splits!" "You weather the storm!">>
+<CONSTANT STORY-STORM-REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 4 6 19> STORM-OUTCOMES>>>
+<CONSTANT STORY-HURRICANE-REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 5 7 19> STORM-OUTCOMES>>>
 <CONSTANT TEXT-BLESSING-STORM-SAFETY "Your Safety from Storms blessing protected you">
 <CONSTANT TEXT-STORM-SEA "Heavy black clouds race towards you across the sky, whipping the waves into a frenzy. The crew mutter among themselves fearfully.">
 <CONSTANT TEXT-STORM-SUBSIDES "Your ship is thrown about like flotsam and jetsam. When the storm subsides, you take stock. Much has been swept overboard.||Also, the ship has been swept way off course and the mate has no idea where you are. \"We're lost at sea, Cap'n,\" he moans.">
@@ -7820,224 +7823,143 @@
 	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT131 "You order your men below and tell them to secure the hatches, knowing that the mermaid's singing will otherwise draw them to their doom.||\"But what about the wheel, skipper?\" asks the helmsman. \"If I leave it untended who knows where we'll end up?\"||He has a point. If you have a length of rope you could lash yourself to the wheel. Otherwise you'll have to go below with the others or stay on deck and take your chances.">
+<CONSTANT CHOICES131 <LTABLE "Tie yourself to the wheel" "Go below with the crew" "Remain on deck">>
+
 <ROOM STORY131
 	(IN ROOMS)
 	(DESC "131")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT131)
+	(CHOICES CHOICES131)
+	(DESTINATIONS <LTABLE STORY353 STORY439 STORY149>)
+	(REQUIREMENTS <LTABLE ROPE NONE NONE>)
+	(TYPES <LTABLE R-ITEM R-NONE R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT132 "It is with mounting excitement that you recognize this island as the one marked on the map.||Digging at the spot marked, you find a chest containing a handsome haul.">
 
 <ROOM STORY132
 	(IN ROOMS)
 	(DESC "132")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT132)
+	(EVENTS STORY132-EVENTS)
+	(CONTINUE STORY150)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY132-EVENTS ("AUX" ROLL REWARDS-MONEY REWARDS-ITEMS)
+	<SET REWARDS-MONEY <LTABLE 100 400 200 300 1000 200>>
+	<SET REWARDS-ITEMS <LTABLE SWORD3 COMPASS PLATE-ARMOUR EBONY-WAND CANDLE PIRATE-CAPTAINS-HEAD>>
+	<SET ROLL <RANDOM-EVENT 1 0 T>>
+	<GAIN-MONEY <GET .REWARDS-MONEY .ROLL>>
+	<TAKE-ITEM <GET .REWARDS-ITEMS .ROLL>>
+	<REMOVE-ITEM ,TREASURE-MAP ,TEXT-USED T T>>
+
+<CONSTANT TEXT133 "You find a half-buried chest under a stand of trees at the back of a beach of ash-grey sand. Inside is treasure worth 450 Shards and a heart-shaped locket.||Just as you are about to open the locket, you hear a voice calling you and look up to see a beautiful girl wearing garlands of flowers. She reaches down from the rock on which she's standing and asks you to return the locket to her.">
+<CONSTANT CHOICES133 <LTABLE "Give it to her" "Refuse">>
 
 <ROOM STORY133
 	(IN ROOMS)
 	(DESC "133")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT133)
+	(EVENTS STORY133-EVENTS)
+	(CHOICES CHOICES133)
+	(DESTINATIONS <LTABLE STORY076 STORY095>)
+	(REQUIREMENTS <LTABLE HEART-SHAPED-LOCKET NONE>)
+	(TYPES ONE-ITEM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY133-EVENTS ()
+	<GAIN-MONEY 450>
+	<TAKE-ITEM ,HEART-SHAPED-LOCKET>
+	<COND (<NOT <CHECK-ITEM ,HEART-SHAPED-LOCKET>> <STORY-JUMP ,STORY076>)>>
+
+<CONSTANT TEXT134 "If you have a ship docked at Smogmaw you can either put to sea or sail upriver. Alternatively you may be able to hire passage aboard a merchant ship. In either case you will need to go to the quayside. It is also possible to travel on from here on foot, of course, but you are warned that the hinterland consists of wild jungle and dangerous marshes.">
+<CONSTANT CHOICES134 <LTABLE "Go to the quayside" "Travel overland" "Remain in Smogmaw">>
 
 <ROOM STORY134
 	(IN ROOMS)
 	(DESC "134")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT134)
+	(CHOICES CHOICES134)
+	(DESTINATIONS <LTABLE STORY071 STORY090 STORY044>)
+	(REQUIREMENTS <LTABLE DOCK-SMOGMAW NONE NONE>)
+	(TYPES <LTABLE R-DOCKED R-NONE R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT135 "Your current position is south of the Sleeping Isle. The bottom edges of your charts show a fancifully drawn morass of swampland and rank jungle -- the unexplored continent of Ankon-Konu.">
+<CONSTANT CHOICES135 <LTABLE "Go west" "Go east" "Go north" "Go south (The Lone and Level Sands)">>
 
 <ROOM STORY135
 	(IN ROOMS)
 	(DESC "135")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT135)
+	(CHOICES CHOICES135)
+	(DESTINATIONS <LTABLE STORY079 STORY153 STORY468 STORY-LONE-LEVEL-SANDS>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT136 "The ocean stretches as far as the eye can see. It is tranquil, but there is something ominous about the silence.">
 
 <ROOM STORY136
 	(IN ROOMS)
 	(DESC "136")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT136)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY139 STORY154 STORY292>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 8 12> <LTABLE "A hurricane" "A quiet voyage" "Treachery aboard!">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT137 "You are at sea south of Sokara, at a point roughly on the same longitude as Trefoille. You consider your next course.">
+<CONSTANT CHOICES137 <LTABLE "South" "North" "East" "West">>
 
 <ROOM STORY137
 	(IN ROOMS)
 	(DESC "137")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT137)
+	(CHOICES CHOICES137)
+	(DESTINATIONS <LTABLE STORY004 STORY066 STORY246 STORY081>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT138 "Drifting in light fog, you are startled by the sound of ripping canvas and splintered wood. The ship lurches to a dead halt, then begins to turn about. The cause is almost unbelievable: an anchor, dangling from above the fog bank, has lodged against the forecastle! As you watch, a spindly fellow with violet skin comes scrambling down and tries to work the anchor free.">
+<CONSTANT CHOICES138 <LTABLE "Order the violet man seized" "Let him do his work and depart">>
 
 <ROOM STORY138
 	(IN ROOMS)
 	(DESC "138")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT138)
+	(CHOICES CHOICES138)
+	(DESTINATIONS <LTABLE STORY251 STORY228>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT139 "The sky turns sulphur-grey. Thunderheads pile up on the horizon like vengeful gods. Lightning flickers like burning pitch on the world's rim. \"It's the end!\" shrieks the bosun. \"Say your prayers, lads!\"">
 
 <ROOM STORY139
 	(IN ROOMS)
 	(DESC "139")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT139)
+	(EVENTS STORY139-EVENTS)
+	(CHOICES CHOICES-HURRICANE-STRIKES)
+	(DESTINATIONS <LTABLE <LTABLE STORY157 STORY581 STORY098>>)
+	(REQUIREMENTS STORY-HURRICANE-REQUIREMENTS)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY139-EVENTS ()
+	<STORM-AT-SEA ,STORY139 ,STORY154>>
+
+<CONSTANT TEXT140 "Whether you beg for mercy or vow vengeance, it is all the same to these merciless Reavers. You are thrown into the sea.">
 
 <ROOM STORY140
 	(IN ROOMS)
 	(DESC "140")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT140)
+	(CHOICES CHOICES-SCOUTING)
+	(DESTINATIONS <LTABLE <LTABLE STORY195 STORY085>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-SCOUTING 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY141
