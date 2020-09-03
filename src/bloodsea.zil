@@ -47,7 +47,7 @@
 <CONSTANT R-CODEWORD-ITEM 10> ; "presence of codeword and item"
 <CONSTANT R-DISCHARGE 11> ; "discharge a weapon"
 <CONSTANT R-TITLE 12> ; "check for presence of titles"
-<CONSTANT R-VISITS 13> ; "check if location was visited multiple times"
+<CONSTANT R-VISITS 13> ; "check if location was visited multiple times, requirements format <STORY-NUMBER NUMBER-OF-VISITS NAME-OF-LOCATION>"
 <CONSTANT R-RANK 14> ; "check if location was visited multiple times"
 <CONSTANT R-GAIN-CODEWORD 15> ; "gain codeword (s)"
 <CONSTANT R-PROFESSION 16> ; "check profession"
@@ -55,6 +55,7 @@
 <CONSTANT R-LOCATION 18> ; "test current location"
 <CONSTANT R-LOSE-ITEM 19> ; "lose item"
 <CONSTANT R-WEAPON 20> ; "you have a weapon of a specific combat score"
+<CONSTANT R-DOCKED 21> ; "you have a ship docked here"
 
 ; "No requirements"
 <CONSTANT TWO-CHOICES <LTABLE R-NONE R-NONE>>
@@ -578,6 +579,29 @@
 							<HLIGHT 0>
 							<PRESS-A-KEY>
 						)>
+					)(<AND <EQUAL? .TYPE ,R-DOCKED> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<COND (<CHECK-DOCKED .LIST>
+							<SETG HERE <GET .DESTINATIONS .CHOICE>>
+							<CRLF>
+						)(ELSE
+							<HLIGHT ,H-BOLD>
+							<CRLF>
+							<TELL CR "You do not have a ship docked at ">
+							<TELL " " <GET ,DOCKS .LIST> ,EXCLAMATION-CR>
+							<HLIGHT 0>
+							<PRESS-A-KEY>
+						)>
+					)(<AND <EQUAL? .TYPE ,R-VISITS> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
+						<COND (<CHECK-VISITS-MORE <GET .LIST 1> <GET .LIST 2>>
+							<SETG HERE <GET .DESTINATIONS .CHOICE>>
+							<CRLF>
+						)(ELSE
+							<HLIGHT ,H-BOLD>
+							<CRLF>
+							<TELL CR "You do have not visited " <GET .LIST 3> " enough times" ,EXCLAMATION-CR>
+							<HLIGHT 0>
+							<PRESS-A-KEY>
+						)>
 					)>
 					<RETURN>
 				)(ELSE
@@ -622,10 +646,12 @@
 				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-RANK> .REQUIREMENTS> <COND (<G? .LIST 0> <TELL " (Rank "> <HLIGHT ,H-BOLD> <TELL N .LIST> <HLIGHT 0> <TELL ")">)>)>
 				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-ANY> .REQUIREMENTS> <PRINT-ANY .LIST>)>
 				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-ALL> .REQUIREMENTS> <PRINT-ALL .LIST>)>
-				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-VISITS> .REQUIREMENTS> <COND (<G? .LIST 0> <TELL " (visited > " N .LIST " times)">)>)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-VISITS> .REQUIREMENTS> <COND (<G=? <GET .LIST 0> 3> <TELL " (visited " <GET .LIST 3> " > " N <GET .LIST 2> " times)">)>)>
 				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-PROFESSION> .REQUIREMENTS> <COND (<G? .LIST 0> <TELL " (" D .LIST ")">)>)>
 				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-DOCK> .REQUIREMENTS> <COND (<G? .LIST 0> <TELL " (ship docks at " <GET ,DOCKS .LIST> ")">)>)>
 				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-WEAPON> .REQUIREMENTS> <COND (<G? .LIST 0> <TELL " (COMBAT +" N .LIST ")">)>)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-DOCKED> .REQUIREMENTS> <COND (<G? .LIST 0> <TELL " (ship docked at " <GET ,DOCKS .LIST> ")">)>)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-LOSE-ITEM> .REQUIREMENTS> <TELL " (lose the ">  <PRINT-ITEM .LIST T> <TELL ")">)>
 				<CRLF>
 			>
 			<SET CHOICE <PROCESS-CHOICES .CHOICES>>
@@ -3190,6 +3216,7 @@
 <OBJECT CODEWORD-CERTAIN (DESC "Certain")>
 <OBJECT CODEWORD-CERUMEN (DESC "Cerumen")>
 <OBJECT CODEWORD-CHILL (DESC "Chill")>
+<OBJECT CODEWORD-CITRUS (DESC "Citrus")>
 <OBJECT CODEWORD-CHURCH (DESC "Church")>
 <OBJECT CODEWORD-COSY (DESC "Cosy")>
 <OBJECT CODEWORD-CYNOSURE (DESC "Cynosure")>
@@ -3197,7 +3224,10 @@
 ; "codewords from other books. Included here only for completeness"
 ; ---------------------------------------------------------------------------------------------
 
-; "Shack in Smogmaw"
+<OBJECT CODEWORD-DANGLE (DESC "Dangle")>
+
+; "Shack in Smogmaw (Added by SD Separa)"
+
 <OBJECT CODEWORD-SMOGMAW (DESC "Smogmaw")>
 
 ; "Weapons"
@@ -3668,6 +3698,10 @@
 	(SANCTITY 2)
 	(FLAGS TAKEBIT)>
 
+<OBJECT TREASURE-MAP
+	(DESC "treasure map")
+	(FLAGS TAKEBIT)>
+
 <OBJECT WITCH-HAND
 	(DESC "witch's hand")
 	(FLAGS TAKEBIT)>
@@ -3736,6 +3770,13 @@
 <OBJECT BLESSING-SAFETY-FROM-STORMS (DESC "Safety from Storms")>
 <OBJECT BLESSING-IMMUNITY-POISON-DISEASE (DESC "Immunity to Disease and Poison")>
 
+; Curses
+; ---------------------------------------------------------------------------------------------
+
+<OBJECT CURSE-THREE-FORTUNES
+	(DESC "Three Fortunes (Use one die for ability rolls)")
+	(FLAGS CURSEBIT)>
+
 ; Ships
 ; ---------------------------------------------------------------------------------------------
 
@@ -3746,7 +3787,8 @@
 <CONSTANT CONDITION-EXCELLENT 3>
 
 <CONSTANT DOCK-SMOGMAW 1>
-<CONSTANT DOCKS <LTABLE "Smogmaw">>
+<CONSTANT DOCK-DWEOMER 1>
+<CONSTANT DOCKS <LTABLE "Smogmaw" "Dweomer">>
 
 <OBJECT SHIP-BARQUE
 	(DESC "barque")
@@ -4206,7 +4248,11 @@
 		<SET MODIFIER <+ .MODIFIER <TEST-ABILITY-GOD .ABILITY>>>
 		<SET MODIFIER <+ .MODIFIER <TEST-ABILITY-POTION .ABILITY>>>
 		<COND (<L=? .MODIFIER 0> <PRESS-A-KEY>)>
-		<SET ROLL <ROLL-DICE 2>>
+		<COND (<CHECK-AILMENT ,CURSE-THREE-FORTUNES>
+			<SET ROLL <ROLL-DICE 1>>
+		)(ELSE
+			<SET ROLL <ROLL-DICE 2>>
+		)>
 		<SET TOTAL <+ .SCORE .ROLL .MODIFIER>>
 		<CRLF>
 		<TELL "Rolled (">
@@ -5618,6 +5664,7 @@
 <ROUTINE RESET-STORY ()
 	<SETG LOST-SHARDS 0>
 	<RESET-ODDS 2 0 ,STORY079>
+	<RESET-ODDS 1 0 ,STORY083>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUTP ,STORY006 ,P?DOOM T>
 	<PUTP ,STORY007 ,P?DOOM T>
@@ -7228,224 +7275,141 @@
 	(TYPES SIX-CHOICES)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT091 "The gleam that comes suddenly into her eyes, combined with the sweat glistening on her throat, makes her look feverish and wild. \"The goddesses will ensure your account is settled,\" she says before sinking wearily back on the divan.||You leave the temple under a curse. From now on you can use only one die when making any ability roll. This curse will last until you visit the temple of the Three Fortunes in Metriciens, whereupon it will be lifted.">
+
 <ROOM STORY091
 	(IN ROOMS)
 	(DESC "091")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT091)
+	(EVENTS STORY091-EVENTS)
+	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY091-EVENTS ()
+	<AFFLICTED-WITH ,CURSE-THREE-FORTUNES>>
+
+<CONSTANT TEXT092 "The three mutineers are terrified that you will call your current crewmen to back you up. \"I've got a few barnacles need scraping of my new ship's keel, Mister Burkitt,\" you tell your one-time cabin boy with a crooked smile.||He and his shipmates get up quickly. \"Good to see you're well, skipper. No hard feelings, eh?\" they mutter, pressing a purse with 40 Shards into you hand.||You watch the three men hurry off. You doubt if you'll see them again.">
 
 <ROOM STORY092
 	(IN ROOMS)
 	(DESC "092")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT092)
+	(EVENTS STORY092-EVENTS)
+	(CONTINUE STORY314)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY092-EVENTS ()
+	<GAIN-MONEY 40>
+	<DELETE-CODEWORD ,CODEWORD-CHURCH>>
+
+<CONSTANT TEXT093 "\"Hear that melody, captain?\" asks the mate, his expression a mixture of fear and longing. \"It is the song of the mermaids.\"||It is an unearthly sound, beautiful but somehow terrible. Men must feel this way when, having drawn their last breath, they gaze on the lovely face of a Valkyrie.">
 
 <ROOM STORY093
 	(IN ROOMS)
 	(DESC "093")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT093)
+	(CHOICES CHOICES-CODEWORD)
+	(DESTINATIONS <LTABLE STORY131 STORY149>)
+	(REQUIREMENTS <LTABLE CODEWORD-CYNOSURE NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT094 "The bottle contains a treasure map. \"A bloomin' funny thing to find in a bottle,\" is all the bosun has to say when he sees it.||The helmsman is more helpful. \"See this stretch of coastline? It might indicate the Sea of Hydras.\"||\"No,\" says the first mate with a dour shake of his head. \"It's the straits near Teleos, I'm sure of it.\"">
 
 <ROOM STORY094
 	(IN ROOMS)
 	(DESC "094")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT094)
+	(CONTINUE STORY352)
+	(ITEMS <LTABLE TREASURE-MAP>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT095 "The girl stamps her foot petulantly and disappears in a thick blast of roiling black smoke.">
+<CONSTANT TEXT095-CONTINUED "You open the locket and immediately there is an unearthly howl and something indistinct flies up past you into the sky. A musty scent hangs in the air. Inside the locket is a picture of a bald man with piercing green eyes.">
+<CONSTANT CHOICES095 <LTABLE HAVE-CODEWORD "If not, it is now time to leave the island">>
 
 <ROOM STORY095
 	(IN ROOMS)
 	(DESC "095")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT095)
+	(EVENTS STORY095-EVENTS)
+	(CHOICES CHOICES095)
+	(DESTINATIONS <LTABLE STORY115 STORY171>)
+	(REQUIREMENTS <LTABLE CODEWORD-DANGLE NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY095-EVENTS ()
+	<TAKE-ITEM ,HEART-SHAPED-LOCKET>
+	<GAIN-MONEY 450>
+	<GAIN-CODEWORD ,CODEWORD-CITRUS>
+	<CONTINUE-TEXT ,TEXT095-CONTINUED>>
+
+<CONSTANT TEXT096 "The charts show that you are east of the Innis Shoals, roughly halfway between Uttaku and the great southern continent of Ankon-Konu.">
 
 <ROOM STORY096
 	(IN ROOMS)
 	(DESC "096")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT096)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY033 STORY116 STORY068>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 9 12> <LTABLE "Sickness among the crew" "An uneventful voyage" "A man walking on the water">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT097 "The stowaway is a beautiful girl with blue eyes and long golden hair. She tells you her name is Athanasia and she is the daughter of a prince. \"I ran away to sea rather than be married off to my cousin Zolteg, who in many ways resembles a wart-hog,\" she explains.||In return for letting her join your crew, she teaches you some lovely songs.">
 
 <ROOM STORY097
 	(IN ROOMS)
 	(DESC "097")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT097)
+	(EVENTS STORY097-EVENTS)
+	(CONTINUE STORY078)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY097-EVENTS ("AUX" ROLL)
+	<SET ROLL <RANDOM-EVENT 2 0 T>>
+	<COND (<G? .ROLL <CALCULATE-ABILITY ,CURRENT-CHARACTER ,ABILITY-CHARISMA>>
+		<UPGRADE-ABILITY ,ABILITY-CHARISMA 1>
+	)>>
+
+<CONSTANT TEXT098 "You have reached a torrid clime where the sun beats down mercilessly by day, warping the dry timbers of the ship and turning the ocean into a dark, heaving, fathomless cauldron.">
 
 <ROOM STORY098
 	(IN ROOMS)
 	(DESC "098")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT098)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY183 STORY118 STORY647>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 8 12> <LTABLE "A vessel adrift" "All's quiet" "Monsters of the deep">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT099 "Copper Island is a bleak rocky wilderness. In the lee of the great mountains lies the town of Brazen, a community of dusty slate-roofed houses whose only decoration takes the form of ornamental copper drainpipes.">
+<CONSTANT CHOICES099 <LTABLE "Visit the market" "Go up to the mines" "Find a tavern" "Look for a temple" "Leave town">>
 
 <ROOM STORY099
 	(IN ROOMS)
 	(DESC "099")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-COPPER)
+	(STORY TEXT099)
+	(CHOICES CHOICES099)
+	(DESTINATIONS <LTABLE STORY297 STORY317 STORY334 STORY347 STORY495>)
+	(TYPES FIVE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT100 "You are on a broad platform of polished basalt that extends into the sea. The city of Dweomer lies some way inland, along a paved avenue with stone sentinels on either side.">
+<CONSTANT CHOICES100 <LTABLE "Put to sea" "Acquire a ship" "Arrange passage to the mainland" "Go along the avenue to Dweomer">>
 
 <ROOM STORY100
 	(IN ROOMS)
 	(DESC "100")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-DWEOMER)
+	(STORY TEXT100)
+	(CHOICES CHOICES100)
+	(DESTINATIONS <LTABLE STORY122 STORY406 STORY564 STORY175>)
+	(REQUIREMENTS <LTABLE DOCK-DWEOMER NONE NONE NONE>)
+	(TYPES <LTABLE R-DOCKED R-NONE R-NONE R-NONE>)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY101
