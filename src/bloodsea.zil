@@ -166,7 +166,7 @@
 <GLOBAL STARTING-POINT STORY001>
 <GLOBAL CURRENT-LOCATION LOCATION-OCEAN>
 
-<CONSTANT LOCATIONS <LTABLE "the open ocean" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "the Fortress of The Reaver King" "the Island of Fire" "Vervayens">>
+<CONSTANT LOCATIONS <LTABLE "the open ocean" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "the Fortress of The Reaver King" "the Island of Fire" "Vervayens" "Starspike Island">>
 
 <CONSTANT LOCATION-OCEAN 1>
 <CONSTANT LOCATION-SORCERERS 2>
@@ -178,6 +178,7 @@
 <CONSTANT LOCATION-REAVER 8>
 <CONSTANT LOCATION-FIRE 9>
 <CONSTANT LOCATION-VERVAYENS 10>
+<CONSTANT LOCATION-STARSPIKE 11>
 
 ; "Text constants"
 ; ---------------------------------------------------------------------------------------------
@@ -5719,6 +5720,8 @@
 	<RESET-ODDS 2 0 ,STORY108>
 	<RESET-ODDS 1 0 ,STORY142>
 	<RESET-ODDS 2 0 ,STORY186>
+	<RESET-ODDS 2 0 ,STORY193>
+	<RESET-ODDS 2 0 ,STORY194>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUTP ,STORY006 ,P?DOOM T>
 	<PUTP ,STORY007 ,P?DOOM T>
@@ -5733,7 +5736,8 @@
 	<PUTP ,STORY126 ,P?DOOM T>
 	<PUTP ,STORY147 ,P?DOOM T>
 	<PUTP ,STORY162 ,P?DOOM T>
-	<PUTP ,STORY165 ,P?DOOM T>>
+	<PUTP ,STORY165 ,P?DOOM T>
+	<PUTP ,STORY199 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -8609,11 +8613,21 @@
 	(IN ROOMS)
 	(DESC "178")
 	(STORY TEXT178)
+	(EVENTS STORY178-EVENTS)
 	(CHOICES CHOICES178)
 	(DESTINATIONS <LTABLE STORY216 STORY196>)
 	(REQUIREMENTS <LTABLE SEA-GREEN-LENS NONE>)
 	(TYPES ONE-ITEM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY178-EVENTS ()
+	<COND (,RUN-ONCE
+		<COND (<NOT <CHECK-PROFESSION ,PROFESSION-MAGE>>
+			<COND (<CHECK-ITEM ,CANDLE>
+				<REMOVE-ITEM ,CANDLE ,TEXT-USED F T>
+			)>
+		)>
+	)>>
 
 <CONSTANT TEXT179 "With your own eyes you have seen Fiddler's Green -- a myth spoken of by every seaman.">
 
@@ -8796,224 +8810,149 @@
 	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT191 "Out of a grey dawn, the tall peaks of an island show like a blood-rimmed saw against the sky. It is Dragon Island.">
+<CONSTANT CHOICES191 <LTABLE "Go east to the island (Lords of the Rising Sun)" "Go west" "Go north" "Strike south for open seas">>
+
 <ROOM STORY191
 	(IN ROOMS)
 	(DESC "191")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT191)
+	(CHOICES CHOICES191)
+	(DESTINATIONS <LTABLE STORY-LORDS-RISING-SUN STORY210 STORY055 STORY172>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT192 "Starspike Island is a breath-taking sight: from its centre a slender mountain rises straight up into the sky. Its pinnacle is lost far beyond the clouds. \"It's said to be higher than Sky Mountain in Sokara,\" says one of your crewmen.">
+<CONSTANT CHOICES192 <LTABLE "Put in at the island" "Sail off">>
 
 <ROOM STORY192
 	(IN ROOMS)
 	(DESC "192")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT192)
+	(CHOICES CHOICES192)
+	(DESTINATIONS <LTABLE STORY704 STORY230>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT193 "The daylight is suddenly blotted out by vast clouds that spread like pools of ink across the sky. Lighting forms an incessant web from horizon to horizon, and the thunder is like being inside a great bronze bell. You bellow orders but they are only lost on the wind. The crew stare all around, limp with fear. Only luck can save you now.">
+<CONSTANT CHOICES193 <LTABLE "The storm hits with full force. Rain rattles against the juddering canvas; waves lash the deck.">>
 
 <ROOM STORY193
 	(IN ROOMS)
 	(DESC "193")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT193)
+	(EVENTS STORY193-EVENTS)
+	(CHOICES CHOICES193)
+	(DESTINATIONS <LTABLE <LTABLE STORY249 STORY670 STORY081>>)
+	(REQUIREMENTS STORY-STORM-REQUIREMENTS)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY193-EVENTS ()
+	<STORM-AT-SEA ,STORY193 ,STORY061>>
 
 <ROOM STORY194
 	(IN ROOMS)
 	(DESC "194")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(EVENTS STORY194-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY214 STORY061>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 100> <LTABLE "The pirates overtake you" "You outrun them">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY194-EVENTS ("AUX" (MODIFIER 0) (CONDITION 0))
+	<SET MODIFIER <GET-RANK ,CURRENT-CHARACTER>>
+	<COND (,CURRENT-SHIP
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<COND (<EQUAL? .CONDITION ,CONDITION-AVERAGE>
+			<INC .MODIFIER>
+		)(<EQUAL? .CONDITION ,CONDITION-AVERAGE>
+			<SET MODIFIER <+ .MODIFIER 2>>
+		)(<EQUAL? .CONDITION ,CONDITION-EXCELLENT>
+			<SET MODIFIER <+ .MODIFIER 3>>
+		)>
+	)>
+	<RESET-ODDS 2 .MODIFIER ,STORY194>>
+
+<CONSTANT TEXT195 "The creature throws up its bloodless hands, utters a terrible howl, and vanishes like smoke on the wind. The echoes of its final cry are a long time in dying away.||\"Whew!\" says the bosun in a trembling voice. \"Good job we got it before moonrise, or its strength would've doubled.\"">
+<CONSTANT CHOICES195 <LTABLE "Explore its lair" "Sail away right now">>
 
 <ROOM STORY195
 	(IN ROOMS)
 	(DESC "195")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT195)
+	(CHOICES CHOICES195)
+	(DESTINATIONS <LTABLE STORY215 STORY041>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT196 "You return to the ship and sail away.">
 
 <ROOM STORY196
 	(IN ROOMS)
 	(DESC "196")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT196)
+	(EVENTS STORY196-EVENTS)
+	(CONTINUE STORY048)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY196-EVENTS ()
+	<COND (<CHECK-CODEWORD ,CODEWORD-CALLID>
+		<DELETE-CODEWORD ,CODEWORD-CALLID>
+		<STORY-JUMP ,STORY717>
+	)>>
+
+<CONSTANT TEXT197 "Your master at arms leaps at the stranger, only to end up flat on his back across the deck. The carpenter, a burly tavern brawler, fares no better.||\"Do you send your minions to fight me then?\" roars the stranger. \"I expected better of a ship's captain!\"">
+<CONSTANT CHOICES197 <LTABLE "Fight him yourself" "Tell him to calm down">>
 
 <ROOM STORY197
 	(IN ROOMS)
 	(DESC "197")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT197)
+	(CHOICES CHOICES197)
+	(DESTINATIONS <LTABLE STORY235 STORY217>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT198 "You are picked up by merchants from Yellowport who come ashore to replenish their supplies. They are amazed to find a human being living here.||\"We are bound for Imperial Chambara, then hope to do some trading in the south,\" they say. \"Would you like to be dropped off anywhere, or will you stay aboard till we get home?\"">
+<CONSTANT CHOICES198 <LTABLE "Disembark at Chambara (Lords of the Rising Sun)" "Ask to be dropped off at Smogmaw" "Continue on to Yellowport (The War-Torn Kingdom)">>
 
 <ROOM STORY198
 	(IN ROOMS)
 	(DESC "198")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT198)
+	(CHOICES CHOICES198)
+	(DESTINATIONS <LTABLE STORY-LORDS-RISING-SUN STORY044 STORY-WAR-TORN-KINGDOM>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT199 "You strike the water with enough force to knock the wind out of you.">
+<CONSTANT TEXT199-CONTINUED "The current steadily carries you away from the waterspout atop which your old ship will float forever in the clouds. You drift for hours until picked up by a warship out of Port Kunrir. \"We'll drop you off at the Faceless King's court,\" says the captain. \"Good. I can arrange passage home from there.\"||He laughs. \"I doubt it! Slaves aren't allowed quite that degree of freedom.\"">
 
 <ROOM STORY199
 	(IN ROOMS)
 	(DESC "199")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT199)
+	(EVENTS STORY199-EVENTS)
+	(CONTINUE STORY-COURT-HIDDEN-FACES)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY199-EVENTS ()
+	<LOSE-STAMINA <RANDOM 3> ,DIED-FROM-INJURIES ,STORY199>
+	<CONTINUE-TEXT ,TEXT199-CONTINUED>>
+
+<CONSTANT TEXT200 "\"We're making better headway now,\" announces the mate. \"Let's just hope that we don't run afoul of the weather.\"">
 
 <ROOM STORY200
 	(IN ROOMS)
 	(DESC "200")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT200)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY654 STORY544 STORY311 STORY711>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 3 5 8 12> <LTABLE "Pirates" "Storm" "An uneventful voyage" "Lights under the waves">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY201
