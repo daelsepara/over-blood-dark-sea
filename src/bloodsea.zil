@@ -166,7 +166,7 @@
 <GLOBAL STARTING-POINT STORY001>
 <GLOBAL CURRENT-LOCATION LOCATION-OCEAN>
 
-<CONSTANT LOCATIONS <LTABLE "the open ocean" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "the Fortress of The Reaver King" "the Island of Fire" "Vervayens" "Starspike Island">>
+<CONSTANT LOCATIONS <LTABLE "the open ocean" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "the Fortress of The Reaver King" "the Island of Fire" "Vervayens" "Starspike Island" "the Unmarked Island">>
 
 <CONSTANT LOCATION-OCEAN 1>
 <CONSTANT LOCATION-SORCERERS 2>
@@ -179,6 +179,7 @@
 <CONSTANT LOCATION-FIRE 9>
 <CONSTANT LOCATION-VERVAYENS 10>
 <CONSTANT LOCATION-STARSPIKE 11>
+<CONSTANT LOCATION-UNMARKED 12>
 
 ; "Text constants"
 ; ---------------------------------------------------------------------------------------------
@@ -3228,10 +3229,13 @@
 <OBJECT CODEWORD-CATALYST (DESC "Catalyst")>
 <OBJECT CODEWORD-CERTAIN (DESC "Certain")>
 <OBJECT CODEWORD-CERUMEN (DESC "Cerumen")>
+<OBJECT CODEWORD-CHANCE (DESC "Chance")>
+<OBJECT CODEWORD-CHEOPS (DESC "Cheops")>
 <OBJECT CODEWORD-CHILL (DESC "Chill")>
 <OBJECT CODEWORD-CITRUS (DESC "Citrus")>
 <OBJECT CODEWORD-CHURCH (DESC "Church")>
 <OBJECT CODEWORD-COSY (DESC "Cosy")>
+<OBJECT CODEWORD-CULL (DESC "Cull")>
 <OBJECT CODEWORD-CUTLASS (DESC "Cutlass")>
 <OBJECT CODEWORD-CYNOSURE (DESC "Cynosure")>
 
@@ -5737,7 +5741,9 @@
 	<PUTP ,STORY147 ,P?DOOM T>
 	<PUTP ,STORY162 ,P?DOOM T>
 	<PUTP ,STORY165 ,P?DOOM T>
-	<PUTP ,STORY199 ,P?DOOM T>>
+	<PUTP ,STORY199 ,P?DOOM T>
+	<PUTP ,STORY201 ,P?DOOM T>
+	<PUTP ,STORY206 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -6392,6 +6398,7 @@
 <ROOM STORY030
 	(IN ROOMS)
 	(DESC "030")
+	(LOCATION LOCATION-UNMARKED)
 	(STORY TEXT030)
 	(CHOICES CHOICES030)
 	(DESTINATIONS <LTABLE STORY011 STORY048>)
@@ -6713,6 +6720,7 @@
 <ROOM STORY048
 	(IN ROOMS)
 	(DESC "048")
+	(LOCATION LOCATION-OCEAN)
 	(STORY TEXT048)
 	(EVENTS STORY048-EVENTS)
 	(CHOICES CHOICES048)
@@ -8955,224 +8963,162 @@
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT201 "By dawn you have managed to overhaul two of the pirate ships, but the first presses on relentlessly, steadily gaining on your less manoeuvrable vessel. Pulling alongside, they cast grappling hooks and come swarming aboard.">
+
 <ROOM STORY201
 	(IN ROOMS)
 	(DESC "201")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT201)
+	(EVENTS STORY201-EVENTS)
+	(CONTINUE STORY307)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY201-EVENTS ("AUX" ROLL (DICE 2) (MODIFIER -2) (CONDITION 0))
+	<COND (<CHECK-PROFESSION ,PROFESSION-WARRIOR> <SET DICE 3>)>
+	<COND (,CURRENT-SHIP
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<COND (<EQUAL? .CONDITION ,CONDITION-POOR>
+			<SET MODIFIER -2>
+		)(<EQUAL? .CONDITION ,CONDITION-AVERAGE>
+			<SET MODIFIER 0>
+		)(<EQUAL? .CONDITION ,CONDITION-GOOD>
+			<SET MODIFIER 2>
+		)(ELSE
+			<SET MODIFIER 3>
+		)>
+	)>
+	<PREVENT-DOOM ,STORY201>
+	<SET ROLL <RANDOM-EVENT .DICE .MODIFIER T>>
+	<COND (<L=? .ROLL 3>
+		<EMPHASIZE "Calamity! You are killed!">
+		<STORY-JUMP ,STORY123>
+	)(<L=? .ROLL 8>
+		<EMPHASIZE "Crushing defeat!">
+		<LOSE-STAMINA <ROLL-DICE 2> ,DIED-FROM-INJURIES ,STORY201>
+		<COND (<IS-ALIVE> <STORY-JUMP ,STORY435>)>
+	)(<L=? .ROLL 12>
+		<EMPHASIZE "Forced to give in!">
+		<LOSE-STAMINA <ROLL-DICE 1> ,DIED-FROM-INJURIES ,STORY201>
+		<COND (<IS-ALIVE> <STORY-JUMP ,STORY416>)>
+	)(<L=? .ROLL 16>
+		<EMPHASIZE "The pirates withdraw!">
+		<STORY-JUMP ,STORY101>
+	)(ELSE
+		<EMPHASIZE "Outright victory!">
+	)>>
+
+<CONSTANT TEXT202 "The captain's log contains some interesting accounts of his travels across the Great Steppes. You are particularly interested in a detailed description of a tomb he found. \"It is only possible to gain entrance when the gods are not looking,\" the captain has written in his log. \"We were unable to penetrate to the heart of the tomb, but returned to the ship with much booty from the outer chambers.\"">
 
 <ROOM STORY202
 	(IN ROOMS)
 	(DESC "202")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT202)
+	(CONTINUE STORY221)
+	(CODEWORDS <LTABLE CODEWORD-CHEOPS>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT203 "The three mutineers leave after a while, each clutching a bottle of strong spirit. You follow them through the maze of boardwalks and low-eaved shacks.">
 
 <ROOM STORY203
 	(IN ROOMS)
 	(DESC "203")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT203)
+	(CHOICES CHOICES-SCOUTING)
+	(DESTINATIONS <LTABLE <LTABLE STORY222 STORY044>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-SCOUTING 14>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT204 "By night you dream of a frightful fiend with flesh the colour of cold clay, only to wake with a shiver and find it was no dream. The fiend holds aside the curtain of your bunk in one taloned hand, leaning forward with black mouth agape. You can smell its seaweed breath; its eyes are like dull pearls in the candlelight.">
 
 <ROOM STORY204
 	(IN ROOMS)
 	(DESC "204")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT204)
+	(CHOICES CHOICES-CODEWORD)
+	(DESTINATIONS <LTABLE STORY223 STORY241>)
+	(REQUIREMENTS <LTABLE CODEWORD-CULL NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT205 "You have entered the waters around the Unnumbered Isles. Somewhere in this reef-strewn archipelago is the stronghold of the Reavers. They rule like barbarian lords over the poor crofters of the isles.">
 
 <ROOM STORY205
 	(IN ROOMS)
 	(DESC "205")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT205)
+	(CHOICES CHOICES-CODEWORD)
+	(DESTINATIONS <LTABLE STORY545 STORY563>)
+	(REQUIREMENTS <LTABLE CODEWORD-CHANCE NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT206 "As the raiders leap back to their catamarans and veer away, it is left to you to count the cost of victory.">
 
 <ROOM STORY206
 	(IN ROOMS)
 	(DESC "206")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT206)
+	(EVENTS STORY206-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY352 STORY124 STORY599>>)
+	(REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 2 4 6> <LTABLE "The raiders left empty-handed" "They took all your fresh water" "The crew blames your poor leadership">>>)
+	(TYPES ONE-RANDOM)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY206-EVENTS ()
+	<COND (,RUN-ONCE
+		<LOSE-STAMINA <ROLL-DICE 2> ,DIED-FROM-INJURIES ,STORY206>
+	)>>
+
+<CONSTANT TEXT207 "The Master's lodgings are in a fine, old, stone house at the back of a lawn just inside the college gates. His lugubrious butler Mantel admits you into a study that smells of old books, pipe smoke and armchair leather.||\"Who's this?\" demands the Master, looking up from his chair.||\"One of the students, I'm afraid, sir,\" says Mantel.">
 
 <ROOM STORY207
 	(IN ROOMS)
 	(DESC "207")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT207)
+	(CHOICES CHOICES-CHARISMA)
+	(DESTINATIONS <LTABLE <LTABLE STORY560 STORY578>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-CHARISMA 14>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT208 "\"See that blue glow along the horizon?\" says the navigator. \"It's the witchlight that flickers over Braelak Isle.\"">
 
 <ROOM STORY208
 	(IN ROOMS)
 	(DESC "208")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT208)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY422 STORY226>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 12> <LTABLE "A tempest" "Nothing of note">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT209 "\"Land ahoy!\" shouts the lookout from the crow's nest.||\"That's strange,\" says the navigator, consulting his charts. \"There's no island marked.\"">
+<CONSTANT CHOICES209 <LTABLE "Investigate the island" "Sail on">>
 
 <ROOM STORY209
 	(IN ROOMS)
 	(DESC "209")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT209)
+	(CHOICES CHOICES209)
+	(DESTINATIONS <LTABLE STORY030 STORY048>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT210 "The deep and dark blue ocean rolls on around your bows, churned by a freshening wind.">
 
 <ROOM STORY210
 	(IN ROOMS)
 	(DESC "210")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT210)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY138 STORY228 STORY619>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 8 12> <LTABLE "A flying ship" "Nothing" "An exotic vessel">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY211
