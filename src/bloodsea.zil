@@ -35,27 +35,26 @@
 <CONSTANT TEMP-LIST <LTABLE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE>>
 
 <CONSTANT R-NONE 0> 
-<CONSTANT R-ABILITY 1> ; "tests whether ABILITY exceeds certain score"
-<CONSTANT R-TEST-ABILITY 2> ; "test ABILITY versus difficulty roll"
-<CONSTANT R-RANDOM 3> ; "rolls a number of dice and choose destination based on threshold"
-<CONSTANT R-CODEWORD 4> ; "presence of codeword(s)"
-<CONSTANT R-CODEWORDS 5> ; "presence of codeword(s)"
-<CONSTANT R-ITEM 6> ; "possession of item (s)"
-<CONSTANT R-ALL 7> ; "possession of all these item (s)"
-<CONSTANT R-ANY 8> ; "possession of any of the item (s)"
-<CONSTANT R-MONEY 9> ; "tests ability to pay indicated amount"
-<CONSTANT R-CODEWORD-ITEM 10> ; "presence of codeword and item"
-<CONSTANT R-DISCHARGE 11> ; "discharge a weapon"
-<CONSTANT R-TITLE 12> ; "check for presence of titles"
-<CONSTANT R-VISITS 13> ; "check if location was visited multiple times, requirements format <STORY-NUMBER NUMBER-OF-VISITS NAME-OF-LOCATION>"
-<CONSTANT R-RANK 14> ; "check if location was visited multiple times"
-<CONSTANT R-GAIN-CODEWORD 15> ; "gain codeword (s)"
-<CONSTANT R-PROFESSION 16> ; "check profession"
-<CONSTANT R-DOCK 17> ; "dock at port at this port"
-<CONSTANT R-LOCATION 18> ; "test current location"
-<CONSTANT R-LOSE-ITEM 19> ; "lose item"
-<CONSTANT R-WEAPON 20> ; "you have a weapon of a specific combat score"
-<CONSTANT R-DOCKED 21> ; "you have a ship docked here"
+<CONSTANT R-TEST-ABILITY 1> ; "test ABILITY versus difficulty roll"
+<CONSTANT R-RANDOM 2> ; "rolls a number of dice and choose destination based on threshold"
+<CONSTANT R-CODEWORD 3> ; "presence of codeword(s)"
+<CONSTANT R-CODEWORDS 4> ; "presence of codeword(s)"
+<CONSTANT R-ITEM 5> ; "possession of item (s)"
+<CONSTANT R-ALL 6> ; "possession of all these item (s)"
+<CONSTANT R-ANY 7> ; "possession of any of the item (s)"
+<CONSTANT R-MONEY 8> ; "tests ability to pay indicated amount"
+<CONSTANT R-CODEWORD-ITEM 9> ; "presence of codeword and item"
+<CONSTANT R-DISCHARGE 10> ; "discharge a weapon"
+<CONSTANT R-TITLE 11> ; "check for presence of titles"
+<CONSTANT R-VISITS 12> ; "check if location was visited multiple times, requirements format <STORY-NUMBER NUMBER-OF-VISITS NAME-OF-LOCATION>"
+<CONSTANT R-RANK 13> ; "check if location was visited multiple times"
+<CONSTANT R-GAIN-CODEWORD 14> ; "gain codeword (s)"
+<CONSTANT R-PROFESSION 15> ; "check profession"
+<CONSTANT R-DOCK 16> ; "dock at port at this port"
+<CONSTANT R-LOCATION 17> ; "test current location"
+<CONSTANT R-LOSE-ITEM 18> ; "lose item"
+<CONSTANT R-WEAPON 19> ; "you have a weapon of a specific combat score"
+<CONSTANT R-DOCKED 20> ; "you have a ship docked here"
 
 ; "No requirements"
 <CONSTANT TWO-CHOICES <LTABLE R-NONE R-NONE>>
@@ -3222,6 +3221,7 @@
 ; "Codewords for Over the Blood-Dark Sea"
 ; ---------------------------------------------------------------------------------------------
 
+<OBJECT CODEWORD-CACOGAST (DESC "Cacogast")>
 <OBJECT CODEWORD-CALCIUM (DESC "Calcium")>
 <OBJECT CODEWORD-CALLID (DESC "Callid")>
 <OBJECT CODEWORD-CATALYST (DESC "Catalyst")>
@@ -3718,6 +3718,11 @@
 <OBJECT SILVER-HOLY-SYMBOL
 	(DESC "silver holy symbol")
 	(SANCTITY 2)
+	(FLAGS TAKEBIT)>
+
+<OBJECT SMOULDER-FISH
+	(DESC "smoulder fish")
+	(QUANTITY 1)
 	(FLAGS TAKEBIT)>
 
 <OBJECT TREASURE-MAP
@@ -5703,6 +5708,7 @@
 	<PUTP ,PARROT ,P?QUANTITY 1>
 	<PUTP ,PARROT-FUNGUS ,P?QUANTITY 1>
 	<PUTP ,SELENIUM-ORE ,P?QUANTITY 1>
+	<PUTP ,SMOULDER-FISH ,P?QUANTITY 1>
 	<PUTP ,MONEY-BAG ,P?MONEY 500>
 	<RESET-GEAR>>
 
@@ -5712,6 +5718,7 @@
 	<RESET-ODDS 1 0 ,STORY083>
 	<RESET-ODDS 2 0 ,STORY108>
 	<RESET-ODDS 1 0 ,STORY142>
+	<RESET-ODDS 2 0 ,STORY186>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUTP ,STORY006 ,P?DOOM T>
 	<PUTP ,STORY007 ,P?DOOM T>
@@ -5861,9 +5868,10 @@
 	<SETG MONEY 0>
 	<UPDATE-STATUS-LINE>>
 
-<ROUTINE STORY-RESET-CREW ("OPT" CONDITION)
+<ROUTINE STORY-RESET-CREW ("OPT" CONDITION SHIP)
+	<COND (<NOT .SHIP> <SET SHIP ,CURRENT-SHIP>)>
 	<COND (<NOT .CONDITION> <SET .CONDITION ,CONDITION-GOOD>)>
-	<COND (,CURRENT-SHIP <PUTP ,CURRENT-SHIP ,P?CONDITION .CONDITION>)>>
+	<COND (.SHIP <PUTP .SHIP ,P?CONDITION .CONDITION>)>>
 
 <ROUTINE STORY-ROLL-RANK (STORY "OPT" (MODIFIER 0) "AUX" ROLL (RANK 1))
 	<SET ROLL <RANDOM-EVENT 2 .MODIFIER T>>
@@ -8640,224 +8648,152 @@
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT181 "You waste precious minutes fumbling with a spell that is far beyond your ability. Meanwhile, the crew choke silently to death in the rarefied atmosphere. Realizing there is nothing you can do here, you lower yourself from the side and drop down into the sea.">
+
 <ROOM STORY181
 	(IN ROOMS)
 	(DESC "181")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT181)
+	(CONTINUE STORY199)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT182 "On the south of the island you find a sheltered bay surrounded by high mist-cloaked crags.||\"This would make a good anchorage, skipper,\" says the first mate.">
+<CONSTANT CHOICES182 <LTABLE "Drop anchor here" "Continue around the island to Dweomer" "Sail away from the island">>
 
 <ROOM STORY182
 	(IN ROOMS)
 	(DESC "182")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT182)
+	(CHOICES CHOICES182)
+	(DESTINATIONS <LTABLE STORY220 STORY151 STORY122>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT183 "The vessel is listing badly and not worth salvaging, but you send a party across to see if she has any cargo.">
 
 <ROOM STORY183
 	(IN ROOMS)
 	(DESC "183")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT183)
+	(EVENTS STORY183-EVENTS)
+	(CONTINUE STORY202)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY183-EVENTS ()
+	<COND (<CHECK-VISITS-MORE ,STORY183 1> <STORY-JUMP ,STORY221>)>>
+
+<CONSTANT TEXT184 "They begin to weep bitterly and repent their crime. You are so moved by their renewed pledges of loyalty that you forgive them for stranding you on the island.">
 
 <ROOM STORY184
 	(IN ROOMS)
 	(DESC "184")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT184)
+	(EVENTS STORY184-EVENTS)
+	(CONTINUE STORY314)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY184-EVENTS ("AUX" SHIP CONDITION)
+	<SET SHIP <CHECK-DOCKED ,DOCK-SMOGMAW>>
+	<COND (.SHIP
+		<CONTINUE-TEXT "They are seasoned seamen, so this increases the crew quality.">
+		<SET CONDITION <GETP .SHIP ,P?CONDITION>>
+		<COND (<N=? .CONDITION ,CONDITION-EXCELLENT> <INC .CONDITION>)>
+		<STORY-RESET-CREW .CONDITION .SHIP>
+	)>
+	<DELETE-CODEWORD ,CODEWORD-CHURCH>>
+
+<CONSTANT TEXT185 "Half the inhabitants of Smogmaw are pirates or the friends of pirates. No doubt the trophy you just sold was recognized by someone, because as you are walking past a row of shanties you are struck in the neck by a poisoned dart.">
 
 <ROOM STORY185
 	(IN ROOMS)
 	(DESC "185")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT185)
+	(EVENTS STORY185-EVENTS)
+	(CONTINUE STORY123)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY185-EVENTS ()
+	<COND (<CHECK-BLESSING ,BLESSING-IMMUNITY-POISON-DISEASE>
+		<DELETE-BLESSING ,BLESSING-IMMUNITY-POISON-DISEASE>
+		<STORY-JUMP ,STORY044>
+	)(ELSE
+		<EMPHASIZE "You can do nothing to save yourself.">
+	)>>
+
+<CONSTANT TEXT186 "The catamarans are packed with raiders from the coast of Ankon-Konu. They cannot hope to take your ship, but they will try to leap aboard and carry off a few prisoners.">
 
 <ROOM STORY186
 	(IN ROOMS)
 	(DESC "186")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT186)
+	(EVENTS STORY186-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY123 STORY206 STORY352>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 3 12 100> <LTABLE "An arrow impales your eye" "The raiders retreat at last" "You drive them off with ease">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY186-EVENTS ()
+	<COND (<CHECK-PROFESSION ,PROFESSION-WARRIOR>
+		<RESET-ODDS 3 0 ,STORY186>
+	)(ELSE
+		<RESET-ODDS 2 0 ,STORY186>
+	)>>
+
+<CONSTANT TEXT187 "The irascible college cook bars your way. \"I don't want any scholars in my kitchen!\" he thunders.||To pacify him you could offer a smoulder fish (if you have one) or else rely on your natural charm.">
+<CONSTANT CHOICES187 <LTABLE "Offer a smoulder fish" TEXT-ROLL-CHARISMA>>
 
 <ROOM STORY187
 	(IN ROOMS)
 	(DESC "187")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY187-BACKGROUND)
+	(STORY TEXT187)
+	(CHOICES CHOICES187)
+	(DESTINATIONS <LTABLE STORY243 <LTABLE STORY261 STORY279>>)
+	(REQUIREMENTS <LTABLE SMOULDER-FISH <LTABLE ABILITY-CHARISMA 12>>)
+	(TYPES <LTABLE R-ITEM R-TEST-ABILITY>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY187-BACKGROUND ()
+	<COND (<CHECK-CODEWORD ,CODEWORD-CACOGAST> <RETURN ,STORY225>)>
+	<RETURN ,STORY187>>
+
+<CONSTANT TEXT188 "You study your charts, reckoning your position to lie due south of the estuary of the Ruby River. Far to the east on this latitude lies the Island of Fire.">
+<CONSTANT CHOICES188 <LTABLE "Steer south" "Go west" "Head north" "Travel east">>
 
 <ROOM STORY188
 	(IN ROOMS)
 	(DESC "188")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT188)
+	(CHOICES CHOICES188)
+	(DESTINATIONS <LTABLE STORY370 STORY096 STORY021 STORY208>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT189 "A strong tropical wind strains the sails. \"Best we strike the top-sail,\" says the mate. \"If a storm hits we're in danger of capsizing.\"">
 
 <ROOM STORY189
 	(IN ROOMS)
 	(DESC "189")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT189)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY174 STORY209 STORY106>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 8 12> <LTABLE "Storm" "Nothing of note" "Madness">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT190 "Ringed about with desolate shores, the sea keeps up its eternal whisperings. It puts the mate, who is normally an irascible red-faced drunkard, in wistful mood. \"Often when at home,\" he says, \"tiring of laughter and song, I take myself to a deserted bay and listen for the sea-nymphs' flutes that herald the tide.\"||\"You're a poet!\" says the navigator admiringly.||The mate glares at him, jerked back to his usual foul mood. \"There's no call for insults, mister! Look alive -- we need a new course, you swab.\"">
+<CONSTANT CHOICES190 <LTABLE "Go east (Lords of the Rising Son)" "Go west" "Go north" "Go south">>
 
 <ROOM STORY190
 	(IN ROOMS)
 	(DESC "190")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT190)
+	(CHOICES CHOICES190)
+	(DESTINATIONS <LTABLE STORY-LORDS-RISING-SUN STORY156 STORY173 STORY337>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY191
