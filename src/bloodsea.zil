@@ -164,11 +164,11 @@
 <GLOBAL CONTINUE-TO-CHOICES T>
 <GLOBAL RUN-ONCE F>
 <GLOBAL STARTING-POINT STORY001>
-<GLOBAL CURRENT-LOCATION LOCATION-UNKNOWN>
+<GLOBAL CURRENT-LOCATION LOCATION-OCEAN>
 
-<CONSTANT LOCATIONS <LTABLE "The Unknown" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "The Fortress of The Reaver King">>
+<CONSTANT LOCATIONS <LTABLE "the open ocean" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "the Fortress of The Reaver King" "the Island of Fire">>
 
-<CONSTANT LOCATION-UNKNOWN 1>
+<CONSTANT LOCATION-OCEAN 1>
 <CONSTANT LOCATION-SORCERERS 2>
 <CONSTANT LOCATION-SMOGMAW 3>
 <CONSTANT LOCATION-COPPER 4>
@@ -176,6 +176,7 @@
 <CONSTANT LOCATION-FIDDLER 6>
 <CONSTANT LOCATION-METRICIENS 7>
 <CONSTANT LOCATION-REAVER 8>
+<CONSTANT LOCATION-FIRE 9>
 
 ; "Text constants"
 ; ---------------------------------------------------------------------------------------------
@@ -5925,7 +5926,7 @@
 <ROOM STORY001
 	(IN ROOMS)
 	(DESC "001")
-	(LOCATION LOCATION-UNKNOWN)
+	(LOCATION LOCATION-OCEAN)
 	(STORY TEXT001)
 	(EVENTS STORY001-EVENTS)
 	(FLAGS LIGHTBIT)>
@@ -8149,199 +8150,147 @@
 <ROOM STORY152
 	(IN ROOMS)
 	(DESC "152")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY152-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY152-BACKGROUND ()
+	<COND (,CURRENT-SHIP <PUTP ,CURRENT-SHIP ,P?DOCKED ,DOCK-DWEOMER>)>
+	<RETURN ,STORY100>>
+
+<CONSTANT TEXT153 "By day you sail on lavender waves under a vault of azure and gold. By night the sails gleam dazzlingly white in the rays of the moon, and each star finds its twin in the dark ocean depths.">
 
 <ROOM STORY153
 	(IN ROOMS)
 	(DESC "153")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT153)
+	(EVENTS STORY153-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY239 STORY171 STORY057>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 6 12> <LTABLE "A flock of birds" "An uneventful journey" "Landfall">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY153-EVENTS ()
+	<COND (<AND ,RUN-ONCE <L? ,STAMINA ,MAX-STAMINA>> <GAIN-STAMINA 1>)>>
+
+<CONSTANT TEXT154 "You are crossing the Sea of Hydras, a stretch of water with a baleful reputation. The crewmen go about their tasks in uneasy silence, hardly daring to draw breath lest they attract calamitous misfortune.">
+<CONSTANT CHOICES154 <LTABLE "Go south" "Go north-east (Lords of the Rising Sun)" "Go north (Lords of the Rising Sun)" "Go south-east" "Go west">>
 
 <ROOM STORY154
 	(IN ROOMS)
 	(DESC "154")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT154)
+	(CHOICES CHOICES154)
+	(DESTINATIONS <LTABLE STORY023 STORY-LORDS-RISING-SUN STORY-LORDS-RISING-SUN STORY098 STORY337>)
+	(TYPES FIVE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT155 "Despite the overcast sky, you think you have a good estimate of your position.||\"We are due south of Yellowport,\" you tell the navigator, who looks back at you dubiously. \"Set your bearing accordingly.\"">
+<CONSTANT CHOICES155 <LTABLE "Go north (The War-Torn Kingdom)" "Go south" "Go east" "Go west">>
 
 <ROOM STORY155
 	(IN ROOMS)
 	(DESC "155")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT155)
+	(CHOICES CHOICES155)
+	(DESTINATIONS <LTABLE STORY-WAR-TORN-KINGDOM STORY246 STORY055 STORY077>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT156 "You approach the Island of Fire. It comprises a broad mountain of volcanic origin rimmed by fertile plains. Islanders wave to you from the water's edge.">
+<CONSTANT CHOICES156 <LTABLE "Put in at the island" "Continue on to open ocean">>
 
 <ROOM STORY156
 	(IN ROOMS)
 	(DESC "156")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT156)
+	(CHOICES CHOICES156)
+	(DESTINATIONS <LTABLE STORY461 STORY479>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT157 "Helpless in the hurricane's grip, your vessel is torn apart. Water rushes into the broken shell of the hull, dragging you down. The screams of your crewmen are lost in the roar of the storm. Your ship and crew are lost. So are your money and possessions. You can think of nothing now but saving yourself.">
+<CONSTANT TEXT157-CONTINUED "You manage to stay alive by clinging to a broken spar. On the point of death, with your vision blurring, you see a ship. Seawater fills your mouth as you try to cry out; all you manage is a feeble groan. The ship seems to jump closer in rapid flickering movements as you drift in and out of consciousness. At last you feel yourself being hauled aboard.||You wake on a pallet below deck. You start to sit up, but you are still too weak after your ordeal.||\"Save your strength,\" says a voice out of the gloom. \"You'll need it. The life of a slave is harsh indeed.\"||You discover that you have been picked up by an Uttakin slave ship. The slavers will only agree to release you if you can pay a ransom of 300 Shards.">
+<CONSTANT CHOICES157 <LTABLE "Pay the ransom (Cities of Gold and Glory)" "Can't or won't pay (The Court of Hidden Faces)">>
 
 <ROOM STORY157
 	(IN ROOMS)
 	(DESC "157")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT157)
+	(EVENTS STORY157-EVENTS)
+	(CHOICES CHOICES157)
+	(DESTINATIONS <LTABLE STORY-CITIES-GOLD-GLORY STORY-COURT-HIDDEN-FACES>)
+	(REQUIREMENTS <LTABLE 300 NONE>)
+	(TYPES <LTABLE R-MONEY R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY157-EVENTS ()
+	<COND (,RUN-ONCE
+		<RESET-CONTAINER ,CARGO>
+		<REMOVE ,CURRENT-SHIP>
+		<SETG CURRENT-SHIP NONE>
+		<STORY-LOSE-EVERYTHING F>
+		<UPDATE-STATUS-LINE>
+		<COND (<G? <RANDOM-EVENT 2 0 T> <GET-RANK ,CURRENT-CHARACTER>>
+			<EMPHASIZE "You drowned.">
+			<STORY-JUMP ,STORY123>
+		)>
+	)>>
+
+<CONSTANT TEXT158 "Somehow you manage to keep your head above water. You swim until your limbs feel as though they are caught in a net. You struggle on, mortally weak but determined not to give up.||A ship heaves into view. You raise your arm and give a feeble cry. By some miracle you are spotted, and the ship steers towards you. You are hauled aboard, wrapped in blankets, and given a bowl of hot soup.||To your immense relief, you have been rescued by merchants from Metriciens.||\"We are bound for Dweomer and then home,\" they say. \"We'll drop you off wherever you like.\"">
+<CONSTANT CHOICES158 <LTABLE "Get off at Dweomer" "Continue on to Metriciens (Cities of Gold and Glory)">>
 
 <ROOM STORY158
 	(IN ROOMS)
 	(DESC "158")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT158)
+	(CHOICES CHOICES158)
+	(DESTINATIONS <LTABLE STORY100 STORY-CITIES-GOLD-GLORY>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT159 "The island is a tropical paradise. You decide to treat your crew to a week of rest and relaxation.">
 
 <ROOM STORY159
 	(IN ROOMS)
 	(DESC "159")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT159)
+	(EVENTS STORY159-EVENTS)
+	(CONTINUE STORY041)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY159-EVENTS ("AUX" ROLL (CONDITION 0))
+	<COND (,CURRENT-SHIP <SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>)>
+	<SET ROLL <RANDOM-EVENT 2 <GET-RANK ,CURRENT-CHARACTER> T>>
+	<COND (<L=? .ROLL 6>
+		<EMPHASIZE "The crew maroons you!">
+		<STORY-JUMP ,STORY177>
+		<RETURN>
+	)(<L=? .ROLL 9>
+		<EMPHASIZE "Indiscipline!">
+		<DEC .CONDITION>
+	)(<L=? .ROLL 11>
+		<EMPHASIZE "Invigoration!">
+		<INC .CONDITION>
+	)(ELSE
+		<EMPHASIZE "Inspiration!">
+		<SET .CONDITION <+ .CONDITION 2>>
+	)>
+	<COND (<L? .CONDITION ,CONDITION-POOR> <SET CONDITION ,CONDITION-POOR>)>
+	<COND (<G? .CONDITION ,CONDITION-EXCELLENT> <SET CONDITION ,CONDITION-EXCELLENT>)>
+	<COND (,CURRENT-SHIP <PUTP ,CURRENT-SHIP ,P?CONDITION .CONDITION>)>>
+
+<CONSTANT TEXT160 "All you can do is trust to luck.">
 
 <ROOM STORY160
 	(IN ROOMS)
 	(DESC "160")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT160)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY123 STORY030>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 6 12> <LTABLE "Overcome by thirst" "An island lies ahead">>>)
+	(TYPES ONE-RANDOM)
+	(CODEWORDS CODEWORD-CALLID)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY161
