@@ -2424,6 +2424,7 @@
 ; ---------------------------------------------------------------------------------------------
 
 <CONSTANT CHOICES-STORM-FURY <LTABLE "The storm hits with full fury. Great grey waves break across the deck.">>
+<CONSTANT CHOICES-TITANIC-FURY <LTABLE "The storm hits with titanic fury, ripping huge waves out of the sea and flinging them across the deck.">>
 <CONSTANT CHOICES-HURRICANE-STRIKES <LTABLE "The hurricane strikes.">>
 <CONSTANT STORM-OUTCOMES <LTABLE "The ship sinks!" "The mast splits!" "You weather the storm!">>
 <CONSTANT STORY-STORM-REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 4 6 19> STORM-OUTCOMES>>>
@@ -3694,6 +3695,10 @@
 
 <OBJECT ROYAL-RING
 	(DESC "royal ring")
+	(FLAGS TAKEBIT)>
+
+<OBJECT SEA-GREEN-LENS
+	(DESC "sea green lens")
 	(FLAGS TAKEBIT)>
 
 <OBJECT SELENIUM-ORE
@@ -8495,136 +8500,86 @@
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT171 "You estimate your position to be a little way north of the estuary of the Great River that cleaves across Ankon-Konu, separating the western desert and mountains from the thick foetid jungles of the east.||\"What course, captain?\" asks the mate.">
+<CONSTANT CHOICES171 <LTABLE "North" "South (The Lone and Level Sands)" "East" "West">>
+
 <ROOM STORY171
 	(IN ROOMS)
 	(DESC "171")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT171)
+	(CHOICES CHOICES171)
+	(DESTINATIONS <LTABLE STORY244 STORY-LONE-LEVEL-SANDS STORY189 STORY468>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT172 "Three things take no notice of men's lives: Fate, the weather and the tides. Against Fate and storms, man may contend; but the sea's ferocity only Heaven can forfend.">
 
 <ROOM STORY172
 	(IN ROOMS)
 	(DESC "172")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT172)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY629 STORY190 STORY611>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 6 9 12> <LTABLE "Lost cargo" "An uneventful passage" "Yellow plague">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT173 "A windy day with white clouds flying, flung spray and blown spume and the seagulls wheeling overhead -- what more could a ship's captain ask for?">
 
 <ROOM STORY173
 	(IN ROOMS)
 	(DESC "173")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT173)
+	(EVENTS STORY173-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY191 STORY325>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 8 12> <LTABLE "A quiet voyage" "Trouble aboard">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY173-EVENTS ()
+	<COND (<AND ,RUN-ONCE <L? ,STAMINA ,MAX-STAMINA>> <GAIN-STAMINA 1>)>>
+
+<CONSTANT TEXT174 "Huge guns boom in the black battlefield that the sky has become. The sailors go white with fear. \"It's no mere storm,\" screeches the bosun. \"It's the final battle of the gods! It's Armageddon!\"">
 
 <ROOM STORY174
 	(IN ROOMS)
 	(DESC "174")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT174)
+	(EVENTS STORY174-EVENTS)
+	(CHOICES CHOICES-TITANIC-FURY)
+	(DESTINATIONS <LTABLE <LTABLE STORY212 STORY670 STORY227>>)
+	(REQUIREMENTS STORY-STORM-REQUIREMENTS)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY174-EVENTS ()
+	<STORM-AT-SEA ,STORY174 ,STORY209>>
+
+<CONSTANT TEXT175 "The avenue between Dweomer and the harbour is a metalled road lined with fanciful statues. Looking inland, you can see the gleam of blue light emanating from a dense wood.">
+<CONSTANT CHOICES175 <LTABLE "Head towards the wood" "Go into the city" "Go to the harbour">>
 
 <ROOM STORY175
 	(IN ROOMS)
 	(DESC "175")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-DWEOMER)
+	(STORY TEXT175)
+	(CHOICES CHOICES175)
+	(DESTINATIONS <LTABLE STORY697 STORY571 STORY100>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT176 "You emerge from your cabin to find all hands on deck and the ship speeding ahead under a full press of sail. It is with some astonishment that you see another vessel far astern.||\"They're pirates, skipper,\" says the mate. \"Been on our tail since the end of the last watch, but I think we can outrun them.\"||\"I should have been woken up at once!\" you tell him severely.">
+<CONSTANT CHOICES176 <LTABLE "Continue to run from the pirates" "Drop sail and turn to face them">>
 
 <ROOM STORY176
 	(IN ROOMS)
 	(DESC "176")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT176)
+	(CHOICES CHOICES176)
+	(DESTINATIONS <LTABLE STORY194 STORY214>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
 
 <CONSTANT TEXT177 "The island appears to have sufficient food and fresh water to sustain you, but it will not be like living in the lap of luxury.">
@@ -8639,70 +8594,50 @@
 	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT178 "The tunnel winds in a spiral towards the centre of the black island.||\"It must be a fort,\" says one of your crewmen.||\"Not built by human hand,\" says another, pointing to strange lines etched into the walls. They seem to show squat crab-men with many stalk-like eyes striding belligerently across the decks of ships, but it is hard to be sure in the dim light.||A black stone door with an opal panel in the middle blocks the way ahead. To open it you will need a sea-green lens.">
+<CONSTANT CHOICES178 <LTABLE "Open the door" "Return the way you came">>
+
 <ROOM STORY178
 	(IN ROOMS)
 	(DESC "178")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT178)
+	(CHOICES CHOICES178)
+	(DESTINATIONS <LTABLE STORY216 STORY196>)
+	(REQUIREMENTS <LTABLE SEA-GREEN-LENS NONE>)
+	(TYPES ONE-ITEM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT179 "With your own eyes you have seen Fiddler's Green -- a myth spoken of by every seaman.">
 
 <ROOM STORY179
 	(IN ROOMS)
 	(DESC "179")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-FIDDLER)
+	(STORY TEXT179)
+	(EVENTS STORY179-EVENTS)
+	(CONTINUE STORY161)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY179-EVENTS ()
+	<COND (<OR <CHECK-PROFESSION ,PROFESSION-MAGE> <CHECK-PROFESSION ,PROFESSION-TROUBADOUR> <CHECK-PROFESSION ,PROFESSION-WAYFARER>>
+		<COND (<G? <RANDOM-EVENT 2 0 T> <GET-RANK ,CURRENT-CHARACTER>>
+			<GAIN-RANK 1>
+			<UPGRADE-STAMINA <ROLL-DICE 1>>
+		)>
+	)(ELSE
+		<EMPHASIZE "The beauty of Fiddler's Green leaves you unmoved.">
+	)>>
+
+<CONSTANT TEXT180 "The raft finally breaks apart, but not before it has carried you to a stretch of shoreline. You have no idea where you might be, but at least you have reached the mainland. Or have you?">
 
 <ROOM STORY180
 	(IN ROOMS)
 	(DESC "180")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT180)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY026 STORY505 STORY238 STORY313>>)
+	(REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 2 3 5 6> <LTABLE "Unknown" "Unknown" "Unknown" "Unknown">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY181
