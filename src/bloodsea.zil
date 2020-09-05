@@ -260,10 +260,7 @@
 		<COND (,RESURRECTION-ARRANGEMENTS
 			<SET HAS-ROYAL-RING <CHECK-ITEM ,ROYAL-RING>>
 			<STORY-LOSE-EVERYTHING F>
-			<COND (,CURRENT-SHIP
-				<REMOVE ,CURRENT-SHIP>
-				<SETG CURRENT-SHIP NONE>
-			)>
+			<STORY-LOSE-SHIP>
 			<COND (.HAS-ROYAL-RING
 				<EMPHASIZE "Through a quirk of magical fate, somehow the royal ring has travelled with you through the lands of the dead.">
 				<MOVE ,ROYAL-RING ,PLAYER>
@@ -509,10 +506,9 @@
 						<COND (,CURRENT-SHIP
 							<CRLF>
 							<TELL "Your " D ,CURRENT-SHIP " docks at " <GET ,DOCKS .LIST> ,PERIOD-CR>
-							<PUTP ,CURRENT-SHIP ,P?DOCKED .LIST>
+							<STORY-SET-DOCK .LIST ,CURRENT-SHIP>
 							<PRESS-A-KEY>
 							<SETG HERE <GET .DESTINATIONS .CHOICE>>
-							<SETG CURRENT-SHIP NONE>
 						)(ELSE
 							<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
 								<EMPHASIZE "Your ships are docked elsewhere!">
@@ -1961,14 +1957,6 @@
 <ROUTINE LOSE-MONEY (COST)
 	<COST-MONEY .COST "lose">>
 
-<ROUTINE LOSE-SHIP ()
-	<COND (,CURRENT-SHIP
-		<COND (<CHECK-SHIP ,CURRENT-SHIP>
-			<REMOVE ,CURRENT-SHIP>
-			<SETG CURRENT-SHIP NONE>
-		)>	
-	)>>
-
 <ROUTINE LOSE-STAMINA (DAMAGE MESSAGE STORY)
 	<SETG STAMINA <- ,STAMINA .DAMAGE>>
 	<COND (<L? ,STAMINA 0> <SETG STAMINA 0>)>
@@ -2409,13 +2397,14 @@
 ; "Story - Storm routines"
 ; ---------------------------------------------------------------------------------------------
 
+<CONSTANT CHOICES-HURRICANE-STRIKES <LTABLE "The hurricane strikes.">>
 <CONSTANT CHOICES-STORM-FURY <LTABLE "The storm hits with full fury. Great grey waves break across the deck.">>
 <CONSTANT CHOICES-TITANIC-FURY <LTABLE "The storm hits with titanic fury, ripping huge waves out of the sea and flinging them across the deck.">>
-<CONSTANT CHOICES-HURRICANE-STRIKES <LTABLE "The hurricane strikes.">>
 <CONSTANT STORM-OUTCOMES <LTABLE "The ship sinks!" "The mast splits!" "You weather the storm!">>
+<CONSTANT HURRICANE-ODDS <LTABLE 5 7 19>>
 <CONSTANT STORM-ODDS <LTABLE 4 6 19>>
 <CONSTANT STORY-STORM-REQUIREMENTS <LTABLE <LTABLE 1 0 STORM-ODDS STORM-OUTCOMES>>>
-<CONSTANT STORY-HURRICANE-REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 5 7 19> STORM-OUTCOMES>>>
+<CONSTANT STORY-HURRICANE-REQUIREMENTS <LTABLE <LTABLE 1 0 HURRICANE-ODDS STORM-OUTCOMES>>>
 <CONSTANT TEXT-BLESSING-STORM-SAFETY "Your Safety from Storms blessing protected you">
 <CONSTANT TEXT-STORM-SEA "Heavy black clouds race towards you across the sky, whipping the waves into a frenzy. The crew mutter among themselves fearfully.">
 <CONSTANT TEXT-STORM-SUBSIDES "Your ship is thrown about like flotsam and jetsam. When the storm subsides, you take stock. Much has been swept overboard.||Also, the ship has been swept way off course and the mate has no idea where you are. \"We're lost at sea, Cap'n,\" he moans.">
@@ -4831,7 +4820,7 @@
 				<COND (<YES?>
 					<COST-MONEY <GET .BUY-PRICES .ITEM> ,TEXT-PAID>
 					<MOVE <GET ,SHIPS-LIST .ITEM> ,SHIPS>
-					<PUTP <GET ,SHIPS-LIST .ITEM> ,P?DOCKED .DOCK>
+					<STORY-SET-DOCK .DOCK <GET ,SHIPS-LIST .ITEM> F>
 					<COND (<NOT ,CURRENT-SHIP> <SETG CURRENT-SHIP <GET ,SHIPS-LIST .ITEM>>)>
 					<CRLF>
 					<TELL "You bought a ">
@@ -5761,7 +5750,8 @@
 	<PUTP ,STORY211 ,P?DOOM T>
 	<PUTP ,STORY212 ,P?DOOM T>
 	<PUTP ,STORY214 ,P?DOOM T>
-	<PUTP ,STORY225 ,P?DOOM T>>
+	<PUTP ,STORY225 ,P?DOOM T>
+	<PUTP ,STORY249 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -5893,6 +5883,20 @@
 <CONSTANT TEXT-SWEPT-MIRACULOUSLY "You are swept miraculously to the shore">
 <CONSTANT TEXT-SHIPWRECK "Helpless in the grip of the storm, the vessel cracks apart. The seawater rushes into the broken shell of the hull, dragging you down. The screams of your crewmen are drowned out by the howl of the storm.||They are lost forever. You can think of nothing not but saving yourself.">
 
+<ROUTINE STORY-SET-DOCK (DOCK "OPT" SHIP (CHECK T))
+	<COND (<NOT .SHIP> <SET SHIP ,CURRENT-SHIP>)>
+	<COND (.SHIP
+		<COND (.CHECK
+			<COND (<NOT <GETP .SHIP ,P?DOCKED>> <PUTP .SHIP ,P?DOCKED .DOCK>)>
+		)(ELSE
+			<PUTP .SHIP ,P?DOCKED .DOCK>
+		)>
+	)>>
+
+<ROUTINE STORY-SET-SAIL ("OPT" SHIP)
+	<COND (<NOT .SHIP> <SET SHIP ,CURRENT-SHIP>)>
+	<COND (.SHIP <PUTP .SHIP ,P?DOCKED NONE>)>>
+
 <ROUTINE STORY-SHIPWRECK (STORY "OPT" JUMP-DROWNED JUMP-SURVIVE TEXT-SURVIVE "AUX" (RANK 1) ROLL LOSS)
 	<PUTP .STORY ,P?DOOM T>
 	<SET RANK <GET-RANK ,CURRENT-CHARACTER>>
@@ -5923,8 +5927,8 @@
 	<UPDATE-STATUS-LINE>>
 
 <ROUTINE STORY-LOSE-SHIP ()
-	<RESET-CARGO>
 	<COND (,CURRENT-SHIP
+		<RESET-CARGO>
 		<REMOVE ,CURRENT-SHIP>
 		<SETG CURRENT-SHIP NONE>
 	)>
@@ -6277,7 +6281,7 @@
 
 <ROUTINE STORY017-EVENTS ()
 	<GAIN-MONEY 150>
-	<COND (,CURRENT-SHIP <PUTP ,CURRENT-SHIP ,P?DOCKED NONE>)>>
+	<STORY-SET-SAIL ,CURRENT-SHIP>>
 
 <CONSTANT TEXT018 "The temple of Badogor is just a hut set in a clearing some distance from town. You enter to be instantly assailed by a horde of cultists whose teeth are as sharp as knife-points.">
 <CONSTANT CHOICES018 <LTABLE "Fight your way to safety">>
@@ -6990,7 +6994,7 @@
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY064-EVENTS ()
-	<LOSE-SHIP>>
+	<STORY-LOSE-SHIP>>
 
 <CONSTANT TEXT065 "The vampire furrows its bald white brow, perplexed to hear you speaking in verse. It looks like a cat that has caught sight of itself in a mirror. Each time it speaks, you reply with a line that rhymes -- and all the time you are slowly retreating down the beach to the rowboat.">
 
@@ -7823,6 +7827,7 @@
 <ROOM STORY122
 	(IN ROOMS)
 	(DESC "122")
+	(LOCATION LOCATION-OCEAN)
 	(STORY TEXT122)
 	(CHOICES CHOICES122)
 	(DESTINATIONS <LTABLE STORY200 STORY244 STORY504 STORY129>)
@@ -8264,7 +8269,7 @@
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY152-BACKGROUND ()
-	<COND (,CURRENT-SHIP <PUTP ,CURRENT-SHIP ,P?DOCKED ,DOCK-DWEOMER>)>
+	<STORY-SET-DOCK ,DOCK-DWEOMER ,CURRENT-SHIP>
 	<RETURN ,STORY100>>
 
 <CONSTANT TEXT153 "By day you sail on lavender waves under a vault of azure and gold. By night the sails gleam dazzlingly white in the rays of the moon, and each star finds its twin in the dark ocean depths.">
@@ -8558,7 +8563,7 @@
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY169-EVENTS ()
-	<COND (,CURRENT-SHIP <PUTP ,CURRENT-SHIP ,P?DOCKED ,DOCK-VERVAYENS>)>>
+	<STORY-SET-DOCK  ,DOCK-VERVAYENS ,CURRENT-SHIP>>
 
 <CONSTANT TEXT170 "\"Ah, this is the life!\" you hear the cabin boy telling himself. \"One day I'll be as rich as the captain, and then I'll buy my own ship.\"||You put a hand on his shoulder, startling him out of his reverie. \"In the meantime, lad, you'd better see to your chores,\" you growl at him. \"Else we'll hear the ship's cat purring before the day is done.\"">
 
@@ -8579,6 +8584,7 @@
 	(IN ROOMS)
 	(DESC "171")
 	(STORY TEXT171)
+	(EVENTS STORY-SET-SAIL)
 	(CHOICES CHOICES171)
 	(DESTINATIONS <LTABLE STORY244 STORY-LONE-LEVEL-SANDS STORY189 STORY468>)
 	(TYPES FOUR-CHOICES)
@@ -9346,7 +9352,7 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY220-BACKGROUND ()
-	<COND (,CURRENT-SHIP <PUTP ,CURRENT-SHIP ,P?DOCKED ,DOCK-SORCERERS>)>
+	<STORY-SET-DOCK ,DOCK-SORCERERS ,CURRENT-SHIP>
 	<RETURN ,STORY407>>
 
 <CONSTANT TEXT221 "The first mate reports finding no sign of life aboard the ship. \"Looks like she was abandoned all of a sudden, captain,\" he says. \"We found a couple of things you might want.\"">
@@ -9618,225 +9624,137 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 <ROUTINE STORY240-EVENTS ()
 	<DELETE-CODEWORD ,CODEWORD-CHURCH>>
 
+<CONSTANT TEXT241 "\"Pay heed to what I say,\" whispers the fiend in gravid tones. \"Go north to a certain fane that is upon the steppes, and there tell the four winds that Tayang Khan was foully slain at sea.\"||You try twice to find your voice, finally managing to gasp out: \"What if they already know that?\"||But the fiend seems not to understand. It speaks like a sleepwalker, repeating its words until they fade into incoherence. You watch it go as the candle burns down, and your rigid terror gradually gives way to fatigue. In the morning you are hardly sure it happened at all.">
+
 <ROOM STORY241
 	(IN ROOMS)
 	(DESC "241")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT241)
+	(CONTINUE STORY022)
+	(CODEWORDS <LTABLE CODEWORD-CULL>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT242 "\"Will we have any trouble reaching Dweomer?\" you ask the skipper of the Taradiddle.||\"Not in this beauty,\" he says proudly. \"Her mast's of prime bluewood, and she always finds her way home.\"||He is right; the voyage is blissfully uneventful.">
 
 <ROOM STORY242
 	(IN ROOMS)
 	(DESC "242")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT242)
+	(CONTINUE STORY100)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT243 "The cook is delighted. The fish is rated a great delicacy by the dons of Dweomer. You are rewarded with 200 Shards.">
 
 <ROOM STORY243
 	(IN ROOMS)
 	(DESC "243")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT243)
+	(EVENTS STORY243-EVENTS)
+	(CONTINUE STORY607)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY243-EVENTS ()
+	<GAIN-MONEY 200>
+	<GIVE-ITEM ,SMOULDER-FISH T>>
+
+<CONSTANT TEXT244 "\"Can you taste it on the breeze, shipmates?\" you ask the crew.||\"Taste what, captain? The scent of brine?\" asks the mate.||\"No, not brine; it's the smell of sorcery. Braelak is just over the horizon.\"">
 
 <ROOM STORY244
 	(IN ROOMS)
 	(DESC "244")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT244)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY460 STORY262 STORY441>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 7 12> <LTABLE "A shooting star" "A quiet day's sailing" "Attacked by night">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT245 "With the navigator's spyglass you survey the tree-fringed cliffs and blazing coral beaches of Ankon-Konu. To the north across leagues of open ocean is Old Sokar, now renamed Marlock City since a coup in Sokara brought General Grieve Marlock to power.">
+<CONSTANT CHOICES245 <LTABLE "Go north" "Go south (The Serpent King's Domain)" "Go east" "Go west">>
 
 <ROOM STORY245
 	(IN ROOMS)
 	(DESC "245")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT245)
+	(CHOICES CHOICES245)
+	(DESTINATIONS <LTABLE STORY042 STORY-SERPENT-KINGS-DOMAIN STORY263 STORY189>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT246 "The days are fair and sunny, the nights star-brimmed. Your ship skips like a cloud across waves the colour of ink.">
 
 <ROOM STORY246
 	(IN ROOMS)
 	(DESC "246")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT246)
+	(EVENTS STORY246-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY665 STORY264 STORY569>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 8 12> <LTABLE "A vision in moonlight" "A quiet day's sailing" "Traders from Mithdrak">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY246-EVENTS ()
+	<COND (<AND ,RUN-ONCE <L? ,STAMINA ,MAX-STAMINA>> <GAIN-STAMINA 1>)>>
+
+<CONSTANT TEXT247 "You find a book that contains so many terrifying stories that you doubt if you'll ever sleep soundly again. It leaves you so scared that you have to wait for the librarian to come looking for you.||\"Great tomes of fear!\" he declares. \"Your hair has turned white.\"">
 
 <ROOM STORY247
 	(IN ROOMS)
 	(DESC "247")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT247)
+	(EVENTS STORY247-EVENTS)
+	(CONTINUE STORY368)
+	(CODEWORDS <LTABLE CODEWORD-CHILL>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY247-EVENTS ()
+	<LOSE-ABILITY ,ABILITY-CHARISMA 1>>
+
+<CONSTANT TEXT248 "The sky turns black and spits lightning. Your crewmen grow fearful.||\"Lay her a-hold!\" cries the bosun in panic. \"Bestir yourselves, lads, or we're done for!\"">
+<CONSTANT CHOICES248 <LTABLE "The storm hits with titanic fury, throwing vast fists of water up from the sea to batter your ship's frail timbers.">>
 
 <ROOM STORY248
 	(IN ROOMS)
 	(DESC "248")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT248)
+	(EVENTS STORY248-EVENTS)
+	(CHOICES CHOICES248)
+	(DESTINATIONS <LTABLE <LTABLE STORY212 STORY670 STORY263>>)
+	(REQUIREMENTS STORY-STORM-REQUIREMENTS)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY248-EVENTS ()
+	<STORM-AT-SEA ,STORY248 ,STORY245>>
+
+<CONSTANT TEXT249 "The hull breaks into splinters and seawater gushes into the hold. Shuddering like a wounded beast, the ship begins to sink. The terrified cries of your crewmen are lost in the crash of the waves closing over your head. Your ship and crew are lost. You can think of nothing now but saving yourself.">
+<CONSTANT TEXT249-GRIM "You are swept miraculously towards a grim surf-lashed shore ringed with jagged reefs.">
 
 <ROOM STORY249
 	(IN ROOMS)
 	(DESC "249")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT249)
+	(EVENTS STORY249-EVENTS)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY249-EVENTS ()
+	<STORY-SHIPWRECK ,STORY249 ,STORY123 ,STORY313 ,TEXT249-GRIM>>
+
+<CONSTANT TEXT250 "The pirates take your cargo, all your possessions and your cash. They also seize your ship for themselves.||At least they decide to spare your life -- probably in the hope that you'll earn enough to buy another ship so they can rob you again.||You are put off in Smogmaw.">
 
 <ROOM STORY250
 	(IN ROOMS)
 	(DESC "250")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT250)
+	(EVENTS STORY250-EVENTS)
+	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY250-EVENTS ()
+	<STORY-LOSE-EVERYTHING F>
+	<STORY-LOSE-SHIP>>
 
 <ROOM STORY251
 	(IN ROOMS)
