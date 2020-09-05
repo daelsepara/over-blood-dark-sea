@@ -181,21 +181,6 @@
 <CONSTANT LOCATION-STARSPIKE 11>
 <CONSTANT LOCATION-UNMARKED 12>
 
-; "Text constants"
-; ---------------------------------------------------------------------------------------------
-
-<CONSTANT TEXT-AFFLICTED "afflicted">
-<CONSTANT TEXT-BACK "Back">
-<CONSTANT TEXT-BYE "Bye">
-<CONSTANT TEXT-EXCELLENT "Excellent!">
-<CONSTANT TEXT-GO-BACK "Go back">
-<CONSTANT TEXT-GOODBYE "Goodbye!">
-<CONSTANT TEXT-INFECTED "infected">
-<CONSTANT TEXT-NEXT-TIME "See you next time!">
-<CONSTANT TEXT-POISONED "poisoned">
-<CONSTANT TEXT-RANDOM-EVENT "Random Event">
-<CONSTANT TEXT-SURE "Are you sure?">
-
 ; "Gamebook loop"
 ; ---------------------------------------------------------------------------------------------
 
@@ -1421,9 +1406,9 @@
 			<COND (<G? .NUMBER 0>
 				<COND (<G=? ,MONEY <* .PRICE .NUMBER>>
 					<CRLF>
-					<TELL "Are you sure?">
+					<TELL ,TEXT-SURE>
 					<COND (<YES?>
-						<COST-MONEY <* .PRICE .NUMBER> "paid">
+						<COST-MONEY <* .PRICE .NUMBER> ,TEXT-PAID>
 						<DO (I 1 .NUMBER)
 							<TAKE-ITEM .ITEM T>
 						>
@@ -2668,11 +2653,11 @@
 		<HLIGHT ,H-BOLD>
 		<TELL "You are not ">
 		<COND (<FSET? .DISEASE ,POISONBIT>
-			<TELL "poisoned">
+			<TELL ,TEXT-POISONED>
 		)(<FSET? .DISEASE ,CURSEBIT>
-			<TELL "cursed">
+			<TELL ,TEXT-CURSED>
 		)(ELSE
-			<TELL "afflicted">
+			<TELL ,TEXT-AFFLICTED>
 		)>
 		<TELL " with the " D .DISEASE>
 		<TELL ,EXCLAMATION-CR>
@@ -3243,6 +3228,7 @@
 ; "codewords from other books. Included here only for completeness"
 ; ---------------------------------------------------------------------------------------------
 
+<OBJECT CODEWORD-AID (DESC "Aid")>
 <OBJECT CODEWORD-DANGLE (DESC "Dangle")>
 
 ; "Shack in Smogmaw (Added by SD Separa)"
@@ -4655,36 +4641,43 @@
 <OBJECT CARGO-FURS
 	(DESC "Furs")
 	(TYPE 1)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT)>
 
 <OBJECT CARGO-GRAINS
 	(DESC "Grains")
 	(TYPE 2)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT)>
 
 <OBJECT CARGO-METALS
 	(DESC "Metals")
 	(TYPE 3)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT)>
 
 <OBJECT CARGO-MINERALS
 	(DESC "Minerals")
 	(TYPE 4)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT)>
 
 <OBJECT CARGO-SPICES
 	(DESC "Spices")
 	(TYPE 5)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT)>
 
 <OBJECT CARGO-TEXTILES
 	(DESC "Textiles")
 	(TYPE 6)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT)>
 
 <OBJECT CARGO-TIMBER
 	(DESC "Timber")
 	(TYPE 7)
+	(QUANTITY 1)
 	(FLAGS TAKEBIT)>
 
 <CONSTANT CARGO-LIST <LTABLE CARGO-FURS CARGO-GRAINS CARGO-METALS CARGO-MINERALS CARGO-SPICES CARGO-TEXTILES CARGO-TIMBER>>
@@ -4853,7 +4846,7 @@
 		)>
 	>>
 
-<ROUTINE SELL-ALL-CARGO (CARGO-PRICES "OPT" CONTAINER "AUX" ITEM TYPE PROFIT)
+<ROUTINE SELL-ALL-CARGO (CARGO-PRICES "OPT" CONTAINER "AUX" ITEM TYPE PROFIT QUANTITY)
 	<COND (<NOT .CONTAINER> <SET .CONTAINER ,CARGO>)>
 	<COND (<G? <COUNT-CONTAINER .CONTAINER> 0>
 		<SET PROFIT 0>
@@ -4862,7 +4855,8 @@
 			<COND (<NOT .ITEM> <RETURN>)>
 			<SET TYPE <GETP .ITEM ,P?TYPE>>
 			<COND (<G? .TYPE 0>
-				<SET PROFIT <+ .PROFIT <GET .CARGO-PRICES .TYPE>>>
+				<SET QUANTITY <GETP .ITEM ,P?QUANTITY>>
+				<SET PROFIT <+ .PROFIT <* .QUANTITY <GET .CARGO-PRICES .TYPE>>>>
 			)>
 			<SET ITEM <NEXT? .ITEM>>
 		>
@@ -5092,7 +5086,7 @@
 		<TELL D .SHACK>
 		<HLIGHT 0>
 		<CRLF>
-		<PRINT-MENU ,SHACK-MENU-MONEY F F !\0 "Back">
+		<PRINT-MENU ,SHACK-MENU-MONEY F F !\0 ,TEXT-BACK>
 		<SET .MONEY <GETP .SHACK ,P?MONEY>>
 		<COND (<G? .MONEY 0>
 			<TELL "There are ">
@@ -5147,7 +5141,7 @@
 		<TELL D .SHACK>
 		<HLIGHT 0>
 		<CRLF>
-		<PRINT-MENU ,SHACK-MENU-POSSESSIONS F F !\0 "Back">
+		<PRINT-MENU ,SHACK-MENU-POSSESSIONS F F !\0 ,TEXT-BACK>
 		<DESCRIBE-INVENTORY-MAIN>
 		<TELL "What will you do next?">
 		<REPEAT ()
@@ -5537,8 +5531,8 @@
 ; "Smogmaw Market"
 ; ---------------------------------------------------------------------------------------------
 
-<CONSTANT CHOICES-SMOGMAW-BUY <LTABLE "Buy armours/weapons (without COMBAT bonus)" "Buy weapons (with COMBAT bonus)" "Buy other items" "Back">>
-<CONSTANT CHOICES-SMOGMAW-SELL <LTABLE "Sell armours/weapons (without COMBAT bonus)" "Sell weapons (+1 COMBAT)" "Sell weapons (+2 COMBAT)" "Sell weapons (+3 COMBAT)" "Sell other items"  "Back">>
+<CONSTANT CHOICES-SMOGMAW-BUY <LTABLE "Buy armours/weapons (without COMBAT bonus)" "Buy weapons (with COMBAT bonus)" "Buy other items" TEXT-BACK>>
+<CONSTANT CHOICES-SMOGMAW-SELL <LTABLE "Sell armours/weapons (without COMBAT bonus)" "Sell weapons (+1 COMBAT)" "Sell weapons (+2 COMBAT)" "Sell weapons (+3 COMBAT)" "Sell other items"  TEXT-BACK>>
 
 <ROOM SMOGMAW-MARKET-BUY
 	(DESC "086 Smogmaw Market")
@@ -5670,7 +5664,17 @@
 
 ; "reset routines"
 
+<ROUTINE RESET-CARGO-GOODS ()
+	<PUTP ,CARGO-FURS ,P?QUANTITY 1>
+	<PUTP ,CARGO-GRAINS ,P?QUANTITY 1>
+	<PUTP ,CARGO-METALS ,P?QUANTITY 1>
+	<PUTP ,CARGO-MINERALS ,P?QUANTITY 1>
+	<PUTP ,CARGO-SPICES ,P?QUANTITY 1>
+	<PUTP ,CARGO-TEXTILES ,P?QUANTITY 1>
+	<PUTP ,CARGO-TIMBER ,P?QUANTITY 1>>
+
 <ROUTINE RESET-GEAR ()
+	<FSET ,CHAIN-MAIL ,WORNBIT>
 	<PUTP ,AXE ,P?QUANTITY 1>
 	<PUTP ,AXE1 ,P?QUANTITY 1>
 	<PUTP ,AXE2 ,P?QUANTITY 1>
@@ -5706,15 +5710,7 @@
 	<PUTP ,SPLINT-ARMOUR ,P?QUANTITY 1>>
 
 <ROUTINE RESET-OBJECTS ()
-	<FSET ,CHAIN-MAIL ,WORNBIT>
-	<PUTP ,POTION-OF-COMELINESS ,P?QUANTITY 1>
-	<PUTP ,POTION-OF-GODLINESS ,P?QUANTITY 1>
-	<PUTP ,POTION-OF-INTELLECT ,P?QUANTITY 1>
-	<PUTP ,POTION-OF-NATURE ,P?QUANTITY 1>
-	<PUTP ,POTION-OF-STEALTH ,P?QUANTITY 1>
-	<PUTP ,POTION-OF-STRENGTH ,P?QUANTITY 1>
-	<PUTP ,POTION-OF-HEALING ,P?QUANTITY 1>
-	<PUTP ,POTION-OF-RESTORATION ,P?QUANTITY 1>
+	<PUTP ,MONEY-BAG ,P?MONEY 500>
 	<PUTP ,CANDLE ,P?QUANTITY 1>
 	<PUTP ,INK-SAC ,P?QUANTITY 1>
 	<PUTP ,LANTERN ,P?QUANTITY 1>
@@ -5722,10 +5718,22 @@
 	<PUTP ,PARROT-FUNGUS ,P?QUANTITY 1>
 	<PUTP ,SELENIUM-ORE ,P?QUANTITY 1>
 	<PUTP ,SMOULDER-FISH ,P?QUANTITY 1>
-	<PUTP ,MONEY-BAG ,P?MONEY 500>
-	<RESET-GEAR>>
+	<RESET-CARGO-GOODS>
+	<RESET-GEAR>
+	<RESET-POTIONS>>
+
+<ROUTINE RESET-POTIONS ()
+	<PUTP ,POTION-OF-COMELINESS ,P?QUANTITY 1>
+	<PUTP ,POTION-OF-GODLINESS ,P?QUANTITY 1>
+	<PUTP ,POTION-OF-INTELLECT ,P?QUANTITY 1>
+	<PUTP ,POTION-OF-NATURE ,P?QUANTITY 1>
+	<PUTP ,POTION-OF-STEALTH ,P?QUANTITY 1>
+	<PUTP ,POTION-OF-STRENGTH ,P?QUANTITY 1>
+	<PUTP ,POTION-OF-HEALING ,P?QUANTITY 1>
+	<PUTP ,POTION-OF-RESTORATION ,P?QUANTITY 1>>
 
 <ROUTINE RESET-STORY ()
+	<SETG SOLD-PIRATES-HEAD F>
 	<SETG LOST-SHARDS 0>
 	<RESET-ODDS 2 0 ,STORY079>
 	<RESET-ODDS 2 0 ,STORY108>
@@ -5752,7 +5760,8 @@
 	<PUTP ,STORY206 ,P?DOOM T>
 	<PUTP ,STORY211 ,P?DOOM T>
 	<PUTP ,STORY212 ,P?DOOM T>
-	<PUTP ,STORY214 ,P?DOOM T>>
+	<PUTP ,STORY214 ,P?DOOM T>
+	<PUTP ,STORY225 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -5769,15 +5778,15 @@
 <CONSTANT ENDING-WAR-TORN-KINGDOM "Further adventures await at Fabled Lands 1: The War-Torn Kingdom.|">
 <CONSTANT ENDING-SERPENT-KINGS-DOMAIN "Further adventures await at Fabled Lands 7: The Serpent King's Domain.|">
 
+; "Text constants"
+; ---------------------------------------------------------------------------------------------
+
 <CONSTANT DIED-IN-COMBAT "You died in combat">
 <CONSTANT DIED-OF-HUNGER "You starved to death">
 <CONSTANT DIED-GREW-WEAKER "You grew weaker and eventually died">
 <CONSTANT DIED-FROM-INJURIES "You died from your injuries">
 <CONSTANT DIED-FROM-COLD "You eventually freeze to death">
 <CONSTANT NOTHING-HAPPENS "Nothing happens.">
-
-<CONSTANT TEXT-YOU-CAN-GO "You can go:">
-<CONSTANT TEXT-YOU-CAN "You can:">
 
 <CONSTANT HAVE-A "You have a">
 <CONSTANT HAVE-AN "You have an">
@@ -5789,6 +5798,27 @@
 <CONSTANT OTHERWISE "Otherwise">
 <CONSTANT YOU-ARE-A "You are a">
 
+<CONSTANT TEXT-AFFLICTED "afflicted">
+<CONSTANT TEXT-BACK "Back">
+<CONSTANT TEXT-BYE "Bye">
+<CONSTANT TEXT-CURSED "cursed">
+<CONSTANT TEXT-EXCELLENT "Excellent!">
+<CONSTANT TEXT-GO-BACK "Go back">
+<CONSTANT TEXT-GOODBYE "Goodbye!">
+<CONSTANT TEXT-INFECTED "infected">
+<CONSTANT TEXT-NEXT-TIME "See you next time!">
+<CONSTANT TEXT-PAID "paid">
+<CONSTANT TEXT-POISONED "poisoned">
+<CONSTANT TEXT-RANDOM-EVENT "Random Event">
+<CONSTANT TEXT-STORM "Storm">
+<CONSTANT TEXT-SURE "Are you sure?">
+<CONSTANT TEXT-USED "used">
+<CONSTANT TEXT-UNEVENTFUL "An uneventful voyage">
+<CONSTANT TEXT-UNKNOWN "Unknown">
+<CONSTANT TEXT-YOU-CAN "You can:">
+<CONSTANT TEXT-YOU-CAN-GO "You can go:">
+
+; "ABILITY roll text constants"
 <CONSTANT TEXT-ROLL-COMBAT "Make a COMBAT roll">
 <CONSTANT TEXT-ROLL-CHARISMA "Make a CHARISMA roll">
 <CONSTANT TEXT-ROLL-MAGIC "Make a MAGIC roll">
@@ -5796,12 +5826,7 @@
 <CONSTANT TEXT-ROLL-SCOUTING "Make a SCOUTING roll">
 <CONSTANT TEXT-ROLL-THIEVERY "Make a THIEVERY roll">
 
-<CONSTANT TEXT-PAID "paid">
-<CONSTANT TEXT-USED "used">
-
-<CONSTANT TEXT-STORM "Storm">
-<CONSTANT TEXT-UNEVENTFUL "An uneventful voyage">
-
+; "Temple text constants"
 <CONSTANT TEXT-BECOME-INITIATE "Become an Initiate">
 <CONSTANT TEXT-LEAVE-TEMPLE "Leave the temple">
 <CONSTANT TEXT-RENOUNCE-WORSHIP "Renounce worship">
@@ -5831,14 +5856,18 @@
 <CONSTANT ONE-RANDOM <LTABLE R-RANDOM>>
 <CONSTANT TWO-ABILITY <LTABLE R-TEST-ABILITY R-TEST-ABILITY>>
 
-<ROUTINE STORY-GAIN-CARGO (CARGO "OPT" CAPACITY COUNT)
+<ROUTINE STORY-GAIN-CARGO (CARGO "OPT" (UNITS 1) "AUX" CAPACITY COUNT)
 	<COND (,CURRENT-SHIP
-		<MOVE .CARGO ,CURRENT-SHIP>
+		<COND (<IN? .CARGO ,CARGO>
+			<PUTP .CARGO ,P?QUANTITY <+ <GETP .CARGO ,P?QUANTITY> .UNITS>>
+		)(ELSE
+			<PUTP .CARGO ,P?QUANTITY .UNITS>
+			<MOVE .CARGO ,CARGO>
+		)>
 		<SET CAPACITY <GETP ,CURRENT-SHIP ,P?CAPACITY>>
 		<SET COUNT <COUNT-CONTAINER ,CARGO>>
 		<COND (<G? .COUNT .CAPACITY>
-			<DEC .COUNT>
-			<STORY-LOSE-CARGO .COUNT>
+			<STORY-LOSE-CARGO .CAPACITY>
 		)>
 	)>>
 
@@ -5872,9 +5901,7 @@
 		<EMPHASIZE ,TEXT-DROWNED>
 		<COND (.JUMP-DROWNED <STORY-JUMP .JUMP-DROWNED>)>
 	)(ELSE
-		<RESET-CONTAINER ,CARGO>
-		<REMOVE ,CURRENT-SHIP>
-		<SETG CURRENT-SHIP NONE>
+		<STORY-LOSE-SHIP>
 		<CRLF>
 		<COND (.TEXT-SURVIVE
 			<TELL .TEXT-SURVIVE>
@@ -5893,6 +5920,14 @@
 	)>
 	<RESET-POSSESSIONS>
 	<SETG MONEY 0>
+	<UPDATE-STATUS-LINE>>
+
+<ROUTINE STORY-LOSE-SHIP ()
+	<RESET-CARGO>
+	<COND (,CURRENT-SHIP
+		<REMOVE ,CURRENT-SHIP>
+		<SETG CURRENT-SHIP NONE>
+	)>
 	<UPDATE-STATUS-LINE>>
 
 <ROUTINE STORY-RESET-CREW ("OPT" CONDITION SHIP)
@@ -6044,7 +6079,7 @@
 	(STORY TEXT004)
 	(CHOICES CHOICES004)
 	(DESTINATIONS <LTABLE <LTABLE STORY491 STORY024>>)
-	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 6 12> <LTABLE "Storm" "A safe voyage">>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 6 12> <LTABLE TEXT-STORM "A safe voyage">>>)
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
@@ -6315,7 +6350,7 @@
 	(STORY TEXT023)
 	(CHOICES CHOICES-RANDOM)
 	(DESTINATIONS <LTABLE <LTABLE STORY083 STORY041 STORY574 STORY105>>)
-	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 7 10 12> <LTABLE "Storm" "Brooding quiet" "Haunted" "A mysterious island">>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 7 10 12> <LTABLE TEXT-STORM "Brooding quiet" "Haunted" "A mysterious island">>>)
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
@@ -7444,7 +7479,7 @@
 	(STORY TEXT096)
 	(CHOICES CHOICES-RANDOM)
 	(DESTINATIONS <LTABLE <LTABLE STORY033 STORY116 STORY068>>)
-	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 9 12> <LTABLE "Sickness among the crew" "An uneventful voyage" "A man walking on the water">>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 9 12> <LTABLE "Sickness among the crew" TEXT-UNEVENTFUL "A man walking on the water">>>)
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
@@ -7731,7 +7766,7 @@
 	(STORY TEXT117)
 	(CHOICES CHOICES-RANDOM)
 	(DESTINATIONS <LTABLE <LTABLE STORY496 STORY135 STORY465>>)
-	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 9 12> <LTABLE "A flying horseman" "An uneventful voyage" "The Kraken wakes">>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 9 12> <LTABLE "A flying horseman" TEXT-UNEVENTFUL "The Kraken wakes">>>)
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
@@ -8301,9 +8336,7 @@
 
 <ROUTINE STORY157-EVENTS ()
 	<COND (,RUN-ONCE
-		<RESET-CONTAINER ,CARGO>
-		<REMOVE ,CURRENT-SHIP>
-		<SETG CURRENT-SHIP NONE>
+		<STORY-LOSE-SHIP>
 		<STORY-LOSE-EVERYTHING F>
 		<UPDATE-STATUS-LINE>
 		<COND (<G? <RANDOM-EVENT 2 0 T> <GET-RANK ,CURRENT-CHARACTER>>
@@ -8685,7 +8718,7 @@
 	(STORY TEXT180)
 	(CHOICES CHOICES-RANDOM)
 	(DESTINATIONS <LTABLE <LTABLE STORY026 STORY505 STORY238 STORY313>>)
-	(REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 2 3 5 6> <LTABLE "Unknown" "Unknown" "Unknown" "Unknown">>>)
+	(REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 2 3 5 6> <LTABLE TEXT-UNKNOWN TEXT-UNKNOWN TEXT-UNKNOWN TEXT-UNKNOWN>>>)
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
@@ -8820,7 +8853,7 @@
 	(STORY TEXT189)
 	(CHOICES CHOICES-RANDOM)
 	(DESTINATIONS <LTABLE <LTABLE STORY174 STORY209 STORY106>>)
-	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 8 12> <LTABLE "Storm" "Nothing of note" "Madness">>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 8 12> <LTABLE TEXT-STORM "Nothing of note" "Madness">>>)
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
@@ -8978,7 +9011,7 @@
 	(STORY TEXT200)
 	(CHOICES CHOICES-RANDOM)
 	(DESTINATIONS <LTABLE <LTABLE STORY654 STORY544 STORY311 STORY711>>)
-	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 3 5 8 12> <LTABLE "Pirates" "Storm" "An uneventful voyage" "Lights under the waves">>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 3 5 8 12> <LTABLE "Pirates" TEXT-STORM TEXT-UNEVENTFUL "Lights under the waves">>>)
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
@@ -9316,445 +9349,274 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	<COND (,CURRENT-SHIP <PUTP ,CURRENT-SHIP ,P?DOCKED ,DOCK-SORCERERS>)>
 	<RETURN ,STORY407>>
 
+<CONSTANT TEXT221 "The first mate reports finding no sign of life aboard the ship. \"Looks like she was abandoned all of a sudden, captain,\" he says. \"We found a couple of things you might want.\"">
+
 <ROOM STORY221
 	(IN ROOMS)
 	(DESC "221")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT221)
+	(EVENTS STORY221-EVENTS)
+	(CONTINUE STORY118)
+	(ITEMS <LTABLE MARINERS-RUTTIER SMOULDER-FISH>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY221-EVENTS ()
+	<STORY-GAIN-CARGO ,CARGO-SPICES>>
+
+<CONSTANT TEXT222 "The three of them live in a house that stands on short wooden posts above a tract of mud on the southern fringe of town. You watch them slump in the doorway, where the jutting porch of interleaved pandanus shields them from the sun. The air is filled with gnats and the stench of rotting river weeds.||You can round up some friends to help you exact your revenge. Otherwise you must deal with the mutineers yourself.">
+<CONSTANT CHOICES222 <LTABLE HAVE-CODEWORD "Muster some friends" "Attack the three on your own" "Wait till they're asleep" "Forget about them">>
 
 <ROOM STORY222
 	(IN ROOMS)
 	(DESC "222")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT222)
+	(CHOICES CHOICES222)
+	(DESTINATIONS <LTABLE STORY240 STORY240 STORY073 STORY148 STORY044>)
+	(REQUIREMENTS <LTABLE CODEWORD-AID DOCK-SMOGMAW NONE NONE NONE>)
+	(TYPES <LTABLE R-CODEWORD R-DOCKED R-NONE R-NONE R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT223 "\"You have not done as I asked,\" whispers the fiend in a voice of dreadful intimacy.||You try to cry out, to call the men on watch to your aid. But the fiend touches your lips with an icy finger. \"Hush,\" it says. \"No need to bother them with our business.\" With the other hand it reaches out and extinguishes the nightlight.">
 
 <ROOM STORY223
 	(IN ROOMS)
 	(DESC "223")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT223)
+	(CONTINUE STORY123)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT224 "The ship is the Ichabod, a barque with fading paintwork and weathered timbers. Three days out from Smogmaw she runs into heavy weather.">
 
 <ROOM STORY224
 	(IN ROOMS)
 	(DESC "224")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT224)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY-WAR-TORN-KINGDOM STORY099>>)
+	(REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 4 6> <LTABLE "Arrive at Yellowport as planned" "The Ichabod is forced to lay up at Copper Island for repairs">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT225 "Woe betide any scholar to whom the cook has taken a dislike. You are fed a bowl of hot stew which you consume with gusto, but later that evening you suffer stomach pains and are up until dawn retching into a bucket.">
 
 <ROOM STORY225
 	(IN ROOMS)
 	(DESC "225")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT225)
+	(EVENTS STORY225-EVENTS)
+	(CONTINUE STORY607)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY225-EVENTS ()
+	<LOSE-STAMINA <ROLL-DICE 1> ,DIED-GREW-WEAKER ,STORY225>>
+
+<CONSTANT TEXT226 "You are roughly twenty leagues due north of the Sleeping Isle. The helmsman awaits your orders.">
+<CONSTANT CHOICES226 <LTABLE "Go east" "Go west" "Go north" "Go south">>
 
 <ROOM STORY226
 	(IN ROOMS)
 	(DESC "226")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT226)
+	(CHOICES CHOICES226)
+	(DESTINATIONS <LTABLE STORY009 STORY170 STORY129 STORY281>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT227 "Closing your eyes, you lean back against the mask and enjoy the rise and plunge of the ship as she steers on through warm tropical seas.">
 
 <ROOM STORY227
 	(IN ROOMS)
 	(DESC "227")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT227)
+	(EVENTS STORY227-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY248 STORY245 STORY515 STORY176>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 7 9 12> <LTABLE TEXT-STORM "Nothing of note" "A castaway" "Pirates">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY227-EVENTS ()
+	<COND (<AND ,RUN-ONCE <L? ,STAMINA ,MAX-STAMINA>> <GAIN-STAMINA 1>)>>
+
+<CONSTANT TEXT228 "You are roughly midway between the Isle of Fire and Dragon Island. What course will you tell your men to steer?">
+<CONSTANT CHOICES228 <LTABLE "North" "South" "East" "West">>
 
 <ROOM STORY228
 	(IN ROOMS)
 	(DESC "228")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT228)
+	(CHOICES CHOICES228)
+	(DESTINATIONS <LTABLE STORY055 STORY172 STORY173 STORY246>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT229 "You give a faltering tongue-tied apology that softens the men's wrath but leaves them openly contemptuous. The first mate, Fryer, takes command and you are set ashore on a deserted island to fend for yourself.||Your ship and cargo are lost forever. Your main problem now is just staying alive.">
 
 <ROOM STORY229
 	(IN ROOMS)
 	(DESC "229")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT229)
+	(EVENTS STORY229-EVENTS)
+	(CONTINUE STORY177)
+	(CODEWORDS <LTABLE CODEWORD-CHURCH>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY229-EVENTS ()
+	<STORY-LOSE-SHIP>>
+
+<CONSTANT TEXT230 "You set a new course, and eventually even the lofty pinnacle of Starspike Island drops below the horizon.">
+<CONSTANT CHOICES230 <LTABLE "Go north" "Go south" "Go east" "Go west">>
 
 <ROOM STORY230
 	(IN ROOMS)
 	(DESC "230")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-OCEAN)
+	(STORY TEXT230)
+	(CHOICES CHOICES230)
+	(DESTINATIONS <LTABLE STORY156 STORY337 STORY172 STORY302>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT231 "The ship is swept far out to sea. Men and goods are washed overboard by huge waves that snap your hawsers like twine.||At last the storm blows itself out. You are left drifting in unknown waters.">
 
 <ROOM STORY231
 	(IN ROOMS)
 	(DESC "231")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT231)
+	(EVENTS STORY231-EVENTS)
+	(CONTINUE STORY321)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY231-EVENTS ("AUX" CONDITION)
+	<COND (,CURRENT-SHIP
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<COND (<G? .CONDITION ,CONDITION-POOR> <DEC .CONDITION>)>
+		<PUTP ,CURRENT-SHIP ,P?CONDITION .CONDITION>
+	)>
+	<STORY-LOSE-CARGO 1>>
+
+<CONSTANT TEXT232 "You help yourself to the pirates' treasure, which amounts to 250 Shards.||Their ship's hold contains 2 Cargo Units of spices, which you can add to your own cargo if your ship has enough room for them.">
 
 <ROOM STORY232
 	(IN ROOMS)
 	(DESC "232")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT232)
+	(EVENTS STORY232-EVENTS)
+	(CONTINUE STORY245)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY232-EVENTS ("AUX" CAPACITY COUNT NUMBER)
+	<GAIN-MONEY 250>
+	<COND (,CURRENT-SHIP
+		<SET COUNT <COUNT-CONTAINER ,CARGO>>
+		<SET CAPACITY <GETP ,CURRENT-SHIP ,P?CAPACITY>>
+		<COND (<G? .NUMBER 0>
+			<COND (<G? .NUMBER 2> <SET NUMBER 2>)>
+			<CRLF>
+			<TELL "Take " N .NUMBER " cargo units of spices?">
+			<COND (<YES?>
+				<STORY-GAIN-CARGO ,CARGO-SPICES .NUMBER>
+			)>
+		)>
+	)>>
+
+<CONSTANT TEXT233 "You are face to face with Amcha One-Eye, the bane of honest merchants throughout the northern lands. If you imagined that he would wear an eye-patch you were mistaken. His sightless eye is kept openly displayed, an unblinking white orb that strikes terror into the hearts of all who must confront him.">
 
 <ROOM STORY233
 	(IN ROOMS)
 	(DESC "233")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT233)
+	(CHOICES CHOICES-HAVE-NOT)
+	(DESTINATIONS <LTABLE STORY493 STORY400>)
+	(REQUIREMENTS <LTABLE PIRATE-CAPTAINS-HEAD NONE>)
+	(TYPES ONE-ITEM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT234 "A figure composed of glittering green light appears in the air in front of you. Your crewmen fall on their faces in abject fear. You are not so easily cowed, but none the less you make a respectful bow.||\"I recognize you as a worshipper of the Lord and Lady of the Sea,\" says the spectral figure. \"One boon shall I grant you. Choose whether it is life, strength or ease that is your heart's desire.\"">
+<CONSTANT CHOICES234 <LTABLE "Choose life" "Choose strength" "Choose ease">>
 
 <ROOM STORY234
 	(IN ROOMS)
 	(DESC "234")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT234)
+	(CHOICES CHOICES234)
+	(DESTINATIONS <LTABLE STORY289 STORY309 STORY327>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT235 "\"Good!\" he bellows. \"Good! Yes, by the two gods who rule below -- I'll grapple with you.\"||He stamps the deck with such exuberant ferocity that even the bravest of your men go scurrying for cover.">
 
 <ROOM STORY235
 	(IN ROOMS)
 	(DESC "235")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT235)
+	(CHOICES CHOICES-COMBAT)
+	(DESTINATIONS <LTABLE <LTABLE STORY271 STORY253>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-COMBAT 13>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT236 "Witches come bouncing out across the waves, demonstrating their contempt of nature's laws by riding in worm-eaten coracles that are as leaky as sieves.||\"Blow winds and crack your cheeks!\" they cry, adding an obscene laugh that causes disgust and horror in equal doses.||\"They'll curse us to the ocean deeps,\" moans the bosun in abject fear. \"Do something, captain!\"">
 
 <ROOM STORY236
 	(IN ROOMS)
 	(DESC "236")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT236)
+	(CHOICES CHOICES-MAGIC)
+	(DESTINATIONS <LTABLE <LTABLE STORY254 STORY272>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-MAGIC 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT237 "A wind of frightening intensity blows up out of nowhere. \"This weather cannot be natural!\" says the bosun with a shiver.||You round on him. \"You always say that, mister. Where's your evidence?\"||He points all around. \"The sheets of green lightning beyond the clouds. The thick sulphurous dust in the air. The presence of frogs and other unexplained debris in the water all around us.\"||You give a snort. \"Fair enough.\"">
 
 <ROOM STORY237
 	(IN ROOMS)
 	(DESC "237")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT237)
+	(CHOICES CHOICES-MAGIC)
+	(DESTINATIONS <LTABLE <LTABLE STORY188 STORY255>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-MAGIC 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT238 "You are washed up on a narrow beach at the back of a bay surrounded by high mist-shrouded peaks. After resting to recover your strength, you pick your way up a series of steep paths until you can get a clear view of the island. To the north lies an expanse of glittering blue forest, so there can be no question where you are -- Braelak, the Sorcerer's Isle. Nearer at hand is a tower built of obsidian blocks.">
+<CONSTANT CHOICES238 <LTABLE "Enter the forest" "Go to the tower">>
 
 <ROOM STORY238
 	(IN ROOMS)
 	(DESC "238")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT238)
+	(CHOICES CHOICES238)
+	(DESTINATIONS <LTABLE STORY697 STORY426>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT239 "A flock of migrating birds alights to cover every inch of deck, masts and spars. Their plumage is a striking mixture of ebony, scarlet, and metallic green.||\"Queer sort of birds,\" remarks the mate. \"Got almost a wise look to them, wouldn't you say?\"">
 
 <ROOM STORY239
 	(IN ROOMS)
 	(DESC "239")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT239)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <TABLE STORY257 STORY275>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 2 12> <LTABLE TEXT-UNKNOWN TEXT-UNKNOWN>>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT240 "With the help of a few strong men you have no trouble settling your score with the three mutineers. It is up to your own conscience what you do with them, but you can rest assured that you will never see them again.">
 
 <ROOM STORY240
 	(IN ROOMS)
 	(DESC "240")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT240)
+	(EVENTS STORY240-EVENTS)
+	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY240-EVENTS ()
+	<DELETE-CODEWORD ,CODEWORD-CHURCH>>
 
 <ROOM STORY241
 	(IN ROOMS)
