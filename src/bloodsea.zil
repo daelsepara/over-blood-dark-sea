@@ -166,7 +166,7 @@
 <GLOBAL STARTING-POINT STORY001>
 <GLOBAL CURRENT-LOCATION LOCATION-OCEAN>
 
-<CONSTANT LOCATIONS <LTABLE "the open ocean" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "the Fortress of The Reaver King" "the Island of Fire" "Vervayens" "Starspike Island" "the Unmarked Island">>
+<CONSTANT LOCATIONS <LTABLE "the open ocean" "Braelak, the Sorcerer's Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "the Fortress of The Reaver King" "the Island of Fire" "Vervayens" "Starspike Island" "the Unmarked Island">>
 
 <CONSTANT LOCATION-OCEAN 1>
 <CONSTANT LOCATION-SORCERERS 2>
@@ -2428,7 +2428,8 @@
 <CONSTANT CHOICES-TITANIC-FURY <LTABLE "The storm hits with titanic fury, ripping huge waves out of the sea and flinging them across the deck.">>
 <CONSTANT CHOICES-HURRICANE-STRIKES <LTABLE "The hurricane strikes.">>
 <CONSTANT STORM-OUTCOMES <LTABLE "The ship sinks!" "The mast splits!" "You weather the storm!">>
-<CONSTANT STORY-STORM-REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 4 6 19> STORM-OUTCOMES>>>
+<CONSTANT STORM-ODDS <LTABLE 4 6 19>>
+<CONSTANT STORY-STORM-REQUIREMENTS <LTABLE <LTABLE 1 0 STORM-ODDS STORM-OUTCOMES>>>
 <CONSTANT STORY-HURRICANE-REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 5 7 19> STORM-OUTCOMES>>>
 <CONSTANT TEXT-BLESSING-STORM-SAFETY "Your Safety from Storms blessing protected you">
 <CONSTANT TEXT-STORM-SEA "Heavy black clouds race towards you across the sky, whipping the waves into a frenzy. The crew mutter among themselves fearfully.">
@@ -3826,11 +3827,12 @@
 <CONSTANT CONDITION-GOOD 2>
 <CONSTANT CONDITION-EXCELLENT 3>
 
-<CONSTANT DOCKS <LTABLE "Smogmaw" "Dweomer" "Vervayens">>
+<CONSTANT DOCKS <LTABLE "Smogmaw" "Dweomer" "Vervayens" "Sorcerer's Isle">>
 
 <CONSTANT DOCK-SMOGMAW 1>
 <CONSTANT DOCK-DWEOMER 2>
 <CONSTANT DOCK-VERVAYENS 3>
+<CONSTANT DOCK-SORCERERS 4>
 
 <OBJECT SHIP-BARQUE
 	(DESC "barque")
@@ -3867,6 +3869,12 @@
 	(COMBAT 6)
 	(DEFENSE 9)
 	(STAMINA 9)>
+
+<OBJECT MONSTER-SERPENT
+	(DESC "Serpent")
+	(COMBAT 7)
+	(DEFENSE 8)
+	(STAMINA 10)>
 
 <OBJECT MONSTER-VAMPIRE
 	(DESC "Vampire")
@@ -5720,11 +5728,9 @@
 <ROUTINE RESET-STORY ()
 	<SETG LOST-SHARDS 0>
 	<RESET-ODDS 2 0 ,STORY079>
-	<RESET-ODDS 1 0 ,STORY083>
 	<RESET-ODDS 2 0 ,STORY108>
 	<RESET-ODDS 1 0 ,STORY142>
 	<RESET-ODDS 2 0 ,STORY186>
-	<RESET-ODDS 2 0 ,STORY193>
 	<RESET-ODDS 2 0 ,STORY194>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUTP ,STORY006 ,P?DOOM T>
@@ -5743,7 +5749,10 @@
 	<PUTP ,STORY165 ,P?DOOM T>
 	<PUTP ,STORY199 ,P?DOOM T>
 	<PUTP ,STORY201 ,P?DOOM T>
-	<PUTP ,STORY206 ,P?DOOM T>>
+	<PUTP ,STORY206 ,P?DOOM T>
+	<PUTP ,STORY211 ,P?DOOM T>
+	<PUTP ,STORY212 ,P?DOOM T>
+	<PUTP ,STORY214 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -5798,25 +5807,29 @@
 <CONSTANT TEXT-RENOUNCE-WORSHIP "Renounce worship">
 <CONSTANT TEXT-RESURRECTION-ARRANGEMENTS "Make Resurrection Arrangements">
 <CONSTANT TEXT-SEEK-BLESSING "Seek a blessing">
-<CONSTANT CHOICES-STANDARD-TEMPLE <LTABLE TEXT-BECOME-INITIATE TEXT-RENOUNCE-WORSHIP TEXT-SEEK-BLESSING TEXT-LEAVE-TEMPLE>>
 
+; "frequent choices lists"
 <CONSTANT CHOICES-COMBAT <LTABLE TEXT-ROLL-COMBAT>>
 <CONSTANT CHOICES-CHARISMA <LTABLE TEXT-ROLL-CHARISMA>>
 <CONSTANT CHOICES-MAGIC <LTABLE TEXT-ROLL-MAGIC>>
 <CONSTANT CHOICES-SANCTITY <LTABLE TEXT-ROLL-SANCTITY>>
 <CONSTANT CHOICES-SCOUTING <LTABLE TEXT-ROLL-SCOUTING>>
 <CONSTANT CHOICES-THIEVERY <LTABLE TEXT-ROLL-THIEVERY>>
-<CONSTANT CHOICES-RANDOM <LTABLE TEXT-RANDOM-EVENT>>
-
-<CONSTANT ONE-ABILITY <LTABLE R-TEST-ABILITY>>
-<CONSTANT ONE-RANDOM <LTABLE R-RANDOM>>
-<CONSTANT TWO-ABILITY <LTABLE R-TEST-ABILITY R-TEST-ABILITY>>
 
 <CONSTANT CHOICES-CODEWORD <LTABLE HAVE-CODEWORD IF-NOT>>
-<CONSTANT ONE-CODEWORD <LTABLE R-CODEWORD R-NONE>>
-<CONSTANT ONE-ITEM <LTABLE R-ITEM R-NONE>>
+<CONSTANT CHOICES-HAVE-NOT <LTABLE HAVE-A IF-NOT>>
+<CONSTANT CHOICES-PROFESSION <LTABLE YOU-ARE-A OTHERWISE>>
+<CONSTANT CHOICES-RANDOM <LTABLE TEXT-RANDOM-EVENT>>
 
-<CONSTANT TEXT-TAKE-MISSION "Take up the mission">
+; "frequent choice types"
+<CONSTANT ONE-ABILITY <LTABLE R-TEST-ABILITY>>
+<CONSTANT ONE-CODEWORD <LTABLE R-CODEWORD R-NONE>>
+<CONSTANT ONE-GAIN <LTABLE R-GAIN-CODEWORD R-NONE>>
+<CONSTANT ONE-ITEM <LTABLE R-ITEM R-NONE>>
+<CONSTANT ONE-MONEY <LTABLE R-MONEY R-NONE>>
+<CONSTANT ONE-PROFESSION <LTABLE R-PROFESSION R-NONE>>
+<CONSTANT ONE-RANDOM <LTABLE R-RANDOM>>
+<CONSTANT TWO-ABILITY <LTABLE R-TEST-ABILITY R-TEST-ABILITY>>
 
 <ROUTINE STORY-GAIN-CARGO (CARGO "OPT" CAPACITY COUNT)
 	<COND (,CURRENT-SHIP
@@ -5851,7 +5864,7 @@
 <CONSTANT TEXT-SWEPT-MIRACULOUSLY "You are swept miraculously to the shore">
 <CONSTANT TEXT-SHIPWRECK "Helpless in the grip of the storm, the vessel cracks apart. The seawater rushes into the broken shell of the hull, dragging you down. The screams of your crewmen are drowned out by the howl of the storm.||They are lost forever. You can think of nothing not but saving yourself.">
 
-<ROUTINE STORY-SHIPWRECK (STORY "OPT" JUMP-DROWNED JUMP-SURVIVE "AUX" (RANK 1) ROLL LOSS)
+<ROUTINE STORY-SHIPWRECK (STORY "OPT" JUMP-DROWNED JUMP-SURVIVE TEXT-SURVIVE "AUX" (RANK 1) ROLL LOSS)
 	<PUTP .STORY ,P?DOOM T>
 	<SET RANK <GET-RANK ,CURRENT-CHARACTER>>
 	<SET ROLL <RANDOM-EVENT 2>>
@@ -5863,7 +5876,11 @@
 		<REMOVE ,CURRENT-SHIP>
 		<SETG CURRENT-SHIP NONE>
 		<CRLF>
-		<TELL ,TEXT-SWEPT-MIRACULOUSLY>
+		<COND (.TEXT-SURVIVE
+			<TELL .TEXT-SURVIVE>
+		)(ELSE
+			<TELL ,TEXT-SWEPT-MIRACULOUSLY>
+		)>
 		<TELL ,PERIOD-CR>
 		<SET LOSS <RANDOM-EVENT 2 0 T>>
 		<LOSE-STAMINA .LOSS ,DIED-GREW-WEAKER .STORY>
@@ -6056,7 +6073,7 @@
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY006-EVENTS ()
-	<STORY-SHIPWRECK ,STORY006 ,STORY123 ,STORY006>>
+	<STORY-SHIPWRECK ,STORY006 ,STORY123 ,STORY026>>
 
 <CONSTANT TEXT007 "The stowaway is an assassin who bursts from hiding and runs at you brandishing a long curved knife. \"Nivram the Wizard sends his regards, scum!\" he rants.">
 
@@ -6087,7 +6104,7 @@
 	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
-<CONSTANT TEXT009 "You sail into the coastal waters of Sorcerers' Isle. Here the sea foam takes on an odd pearly glow by moonlight, and strange songs can be heard across the darkling waters.">
+<CONSTANT TEXT009 "You sail into the coastal waters of Sorcerer's Isle. Here the sea foam takes on an odd pearly glow by moonlight, and strange songs can be heard across the darkling waters.">
 <CONSTANT CHOICES009 <LTABLE "Put into Dweomer harbour" "Sail around the island" "Steer out on to the open sea">>
 
 <ROOM STORY009
@@ -6420,7 +6437,7 @@
 	<EMPHASIZE "Upon death, you will now be resurrected on the Island of Rebirth.">>
 
 <CONSTANT TEXT032 "You pore over the charts, reckoning your position to lie dead south of Knucklebones Point.">
-<CONSTANT CHOICES032 <LTABLE "Head for Sorcerers' Isle" "Steer a course for the Unnumbered Isles" "Head north to the mainland (Cities of Gold and Glory)" "Go eastwards">>
+<CONSTANT CHOICES032 <LTABLE "Head for Sorcerer's Isle" "Steer a course for the Unnumbered Isles" "Head north to the mainland (Cities of Gold and Glory)" "Go eastwards">>
 
 <ROOM STORY032
 	(IN ROOMS)
@@ -6542,7 +6559,7 @@
 	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
 
-<CONSTANT TEXT039 "You are halfway between the Innis Shoals and Braelak, the Sorcerers' Isle.">
+<CONSTANT TEXT039 "You are halfway between the Innis Shoals and Braelak, the Sorcerer's Isle.">
 <CONSTANT CHOICES039 <LTABLE "Go west" "Head for the mainland (The Court of Hidden Faces)" "Go east" "Steer south for open ocean">>
 
 <ROOM STORY039
@@ -7511,6 +7528,8 @@
 	(TYPES <LTABLE R-CODEWORD R-TEST-ABILITY>)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT103-ROCKY "You are swept miraculously towards a rocky shore.">
+
 <ROOM STORY103
 	(IN ROOMS)
 	(DESC "103")
@@ -7520,7 +7539,7 @@
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY103-EVENTS ()
-	<STORY-SHIPWRECK ,STORY103 ,STORY123 ,STORY-SERPENT-KINGS-DOMAIN>>
+	<STORY-SHIPWRECK ,STORY103 ,STORY123 ,STORY-SERPENT-KINGS-DOMAIN ,TEXT103-ROCKY>>
 
 <CONSTANT TEXT104 "The combined strength of all your men is just enough to push the iron doors open. Within lies a hidden valley entirely surrounded by high cliffs -- a paradise of bubbling brooks, emerald lawns, fruit trees and scented flowers. Strewn all around are gold, silver and gems as plentiful as pebbles in a merchant's garden. With wild cries of delight, your men stuff their pockets with all they can carry.||You yourself pick up jewels worth 5000 Shards. The air here is so clean and fresh.||A cold breeze shakes the boughs of the trees. Leaves fall, curling on the grass.||\"We've let Time into Paradise,\" reckons the mate. \"Let's not linger here.\"">
 
@@ -7763,7 +7782,7 @@
 	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
-<CONSTANT TEXT122 "You are sailing away from Braelak, the Sorcerers' Isle">
+<CONSTANT TEXT122 "You are sailing away from Braelak, the Sorcerer's Isle">
 <CONSTANT CHOICES122 <LTABLE "Go north" "Go south" "Go east" "Go west">>
 
 <ROOM STORY122
@@ -9121,225 +9140,181 @@
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT211 "The serpent raises its heavy head and gives vent to a sibilant
+snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has left it quite torpid, so you could easily run off rather than fight it.">
+
 <ROOM STORY211
 	(IN ROOMS)
 	(DESC "211")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT211)
+	(EVENTS STORY211-EVENTS)
+	(CONTINUE STORY012)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY211-EVENTS ()
+	<CRLF>
+	<TELL "Fight the Serpent (COMBAT: 7, DEFENSE: 8, STAMINA: 10)?">
+	<COND (<YES?>
+		<COMBAT-MONSTER ,MONSTER-SERPENT 7 8 10>
+		<CHECK-COMBAT ,MONSTER-SERPENT ,STORY211>
+	)(ELSE
+		<EMPHASIZE "You run back to the ship.">
+		<PREVENT-DOOM ,STORY211>
+		<STORY-JUMP ,STORY125>
+	)>>
+
+<CONSTANT TEXT212 "The ship cracks open and seawater rushes into the broken shell of the hull. The screams of your crewmen are drowned out by the surge of the waves.">
+<CONSTANT TEXT212-WHITE "You are swept mysteriously to a beach of white sand fringed with feathery palms.">
 
 <ROOM STORY212
 	(IN ROOMS)
 	(DESC "212")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT212)
+	(EVENTS STORY212-EVENTS)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY212-EVENTS ()
+	<STORY-SHIPWRECK ,STORY212 ,STORY123 ,STORY-SERPENT-KINGS-DOMAIN ,TEXT212-WHITE>>
+
+<CONSTANT TEXT213 "The sky turns black and spits lightning. Your crew grow fearful. \"Lay her a-hold!\" cries the bosun in panic. \"Bestir yourselves, lads, or we're done for!\"">
+<CONSTANT CHOICES213 <LTABLE "Storm hits with titanic fury, throwing vast fists of water up from the sea to batter your ship's frail timbers.">>
 
 <ROOM STORY213
 	(IN ROOMS)
 	(DESC "213")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT213)
+	(EVENTS STORY213-EVENTS)
+	(CHOICES CHOICES213)
+	(DESTINATIONS <LTABLE <LTABLE STORY249 STORY231 STORY246>>)
+	(REQUIREMENTS STORY-STORM-REQUIREMENTS)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY213-EVENTS ()
+	<STORM-AT-SEA ,STORY213 ,STORY155>>
+
+<CONSTANT TEXT214 "You close with the pirate vessel. At close quarters you see the attackers waiting with drawn swords at the rail. They are an odd mix of tall Uttakin, velvet-coated Golnirans, Sokarans with broad pale faces and savage natives of the Feathered Lands. All are alike in one respect, however: the naked hate that shines from their eyes. As the ships come together, they leap aboard with a wild battle-cry.">
 
 <ROOM STORY214
 	(IN ROOMS)
 	(DESC "214")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT214)
+	(EVENTS STORY214-EVENTS)
+	(CONTINUE STORY232)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY214-EVENTS ("AUX" ROLL (DICE 2) (MODIFIER -2) (CONDITION 0))
+	<COND (<CHECK-PROFESSION ,PROFESSION-WARRIOR> <SET DICE 3>)>
+	<COND (,CURRENT-SHIP
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<COND (<EQUAL? .CONDITION ,CONDITION-POOR>
+			<SET MODIFIER -2>
+		)(<EQUAL? .CONDITION ,CONDITION-AVERAGE>
+			<SET MODIFIER 0>
+		)(<EQUAL? .CONDITION ,CONDITION-GOOD>
+			<SET MODIFIER 2>
+		)(ELSE
+			<SET MODIFIER 3>
+		)>
+	)>
+	<PREVENT-DOOM ,STORY214>
+	<SET ROLL <RANDOM-EVENT .DICE .MODIFIER T>>
+	<COND (<L=? .ROLL 3>
+		<EMPHASIZE "Calamity! You are killed!">
+		<STORY-JUMP ,STORY123>
+	)(<L=? .ROLL 8>
+		<EMPHASIZE "Crushing defeat!">
+		<LOSE-STAMINA <ROLL-DICE 2> ,DIED-FROM-INJURIES ,STORY214>
+		<COND (<IS-ALIVE> <STORY-JUMP ,STORY140>)>
+	)(<L=? .ROLL 12>
+		<EMPHASIZE "Forced to give in!">
+		<LOSE-STAMINA <ROLL-DICE 1> ,DIED-FROM-INJURIES ,STORY214>
+		<COND (<IS-ALIVE> <STORY-JUMP ,STORY250>)>
+	)(<L=? .ROLL 16>
+		<EMPHASIZE "The pirates withdraw!">
+		<STORY-JUMP ,STORY245>
+	)(ELSE
+		<EMPHASIZE "Outright victory!">
+	)>>
+
+<CONSTANT TEXT215 "Inside the cave is a stone sarcophagus that smells of brimstone and ammonia. Strewn around it, spotted with bat droppings and gobbets of rancid gristle, are piles of gold plate, coin and jewellery. Rubies sparkle like drops of black blood in the rays of the rising moon. Emeralds gleam like myriad cats' eyes. Sapphires are strewn about like crystalline petals.||The total value of the haul is 6000 Shards.">
 
 <ROOM STORY215
 	(IN ROOMS)
 	(DESC "215")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT215)
+	(EVENTS STORY215-EVENTS)
+	(CONTINUE STORY041)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY215-EVENTS ()
+	<GAIN-MONEY 6000>>
+
+<CONSTANT TEXT216 "You present the sea-green lens to the door panel and it slides up. Beyond is a circular courtyard open to the sky with a marble fountain in the middle.||\"Blow me if we aren't smack in the bloomin' middle of the place!\" says the master at arms.">
 
 <ROOM STORY216
 	(IN ROOMS)
 	(DESC "216")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT216)
+	(EVENTS STORY216-EVENTS)
+	(CONTINUE STORY270)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY216-EVENTS ()
+	<COND (<CHECK-VISITS-MORE ,STORY216 1> <STORY-JUMP ,STORY252>)>>
+
+<CONSTANT TEXT217 "\"Your talk of peace insults me!\" rages the bare-chested stranger. His fist lashes out, giving you such a strong buffet in the face that your knees buckle and blackness drops over you like a great wave. By the time your crew can bring you round, the stranger has sailed off in his boat.">
 
 <ROOM STORY217
 	(IN ROOMS)
 	(DESC "217")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT217)
+	(EVENTS STORY217-EVENTS)
+	(CONTINUE STORY125)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY217-EVENTS ()
+	<DEC ,MAX-STAMINA>
+	<COND (<G? ,STAMINA ,MAX-STAMINA> <SETG STAMINA ,MAX-STAMINA>)>
+	<UPDATE-STATUS-LINE>>
+
+<CONSTANT TEXT218 "Pirates find you when they come ashore to bury some treasure. Their captain fondles your hair and smirks.||\"Young and healthy enough,\" he says. \"You're bound for the slave pens, my friend, unless you can muster a ransom of 150 Shards.\"">
+<CONSTANT CHOICES218 <LTABLE "Agree to the ransom (Cities of Gold and Glory)" "Can't or won't pay">>
 
 <ROOM STORY218
 	(IN ROOMS)
 	(DESC "218")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT218)
+	(CHOICES CHOICES218)
+	(DESTINATIONS <LTABLE STORY-CITIES-GOLD-GLORY STORY472>)
+	(REQUIREMENTS <LTABLE 150 NONE>)
+	(TYPES ONE-MONEY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT219 "Dangling on a long rope usually used for keelhauling, you manage to get down to the top of the waterspout. From there you swim down to the sea bed, where you discover a rusty wheel beside a wide vent. Could this be the source of the waterspout?||With the last breath in your lungs, you turn the wheel until the vent closes and the torrent of water is cut off. Then you bob back to the surface to find your ship drifting safely on the waves once more. Your crew gratefully hauls you aboard with loud cheers.||\"A strange experience,\" you say to the first mate.||He waves his hand to make light of the matter. \"Oh, a seafarer sees many strange things. Let me tell you about the time...\"||And so you sail on.">
 
 <ROOM STORY219
 	(IN ROOMS)
 	(DESC "219")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-OCEAN)
+	(STORY TEXT219)
+	(CONTINUE STORY039)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY220
 	(IN ROOMS)
 	(DESC "220")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY220-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY220-BACKGROUND ()
+	<COND (,CURRENT-SHIP <PUTP ,CURRENT-SHIP ,P?DOCKED ,DOCK-SORCERERS>)>
+	<RETURN ,STORY407>>
 
 <ROOM STORY221
 	(IN ROOMS)
@@ -20138,7 +20113,7 @@
 	(VICTORY F)
 	(FLAGS LIGHTBIT)>
 
-<CONSTANT TEXT714 "You are washed up on a narrow stretch of beach at the back of a bay surrounded by high mist-shrouded peaks.||A bottle has been swept up on to the shingle beside you. Though your fingers are trembling with cold, you manage to unscrew it. Inside you find a ship's deeds, which you can add to your list of possessions.||After resting to recover your strength, you pick your way up a series of steep paths until you can get a clear view of the island. To the north lies an expanse of glittering blue forest, so there can be no question where you are -- Braelak, the Sorcerers' Isle. Nearer at hand is a tower built of obsidian blocks.">
+<CONSTANT TEXT714 "You are washed up on a narrow stretch of beach at the back of a bay surrounded by high mist-shrouded peaks.||A bottle has been swept up on to the shingle beside you. Though your fingers are trembling with cold, you manage to unscrew it. Inside you find a ship's deeds, which you can add to your list of possessions.||After resting to recover your strength, you pick your way up a series of steep paths until you can get a clear view of the island. To the north lies an expanse of glittering blue forest, so there can be no question where you are -- Braelak, the Sorcerer's Isle. Nearer at hand is a tower built of obsidian blocks.">
 <CONSTANT CHOICES714 <LTABLE "Enter the forest" "Go to the tower">>
 
 <ROOM STORY714
