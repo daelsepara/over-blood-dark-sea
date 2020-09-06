@@ -3212,7 +3212,10 @@
 <OBJECT CODEWORD-CITRUS (DESC "Citrus")>
 <OBJECT CODEWORD-CHURCH (DESC "Church")>
 <OBJECT CODEWORD-CLUTCH (DESC "Clutch")>
+<OBJECT CODEWORD-CORADE (DESC "Corade")>
 <OBJECT CODEWORD-COSY (DESC "Cosy")>
+<OBJECT CODEWORD-COVET (DESC "Covet")>
+<OBJECT CODEWORD-CROCUS (DESC "Crocus")>
 <OBJECT CODEWORD-CULL (DESC "Cull")>
 <OBJECT CODEWORD-CUSHAT (DESC "Cushat")>
 <OBJECT CODEWORD-CUTLASS (DESC "Cutlass")>
@@ -5766,7 +5769,10 @@
 	<PUTP ,STORY225 ,P?DOOM T>
 	<PUTP ,STORY249 ,P?DOOM T>
 	<PUTP ,STORY253 ,P?DOOM T>
-	<PUTP ,STORY269 ,P?DOOM T>>
+	<PUTP ,STORY269 ,P?DOOM T>
+	<PUTP ,STORY284 ,P?DOOM T>
+	<PUTP ,STORY286 ,P?DOOM T>
+	<PUTP ,STORY288 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -10205,224 +10211,197 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 <ROUTINE STORY280-EVENTS ()
 	<KEEP-ITEM ,SPECTRAL-VEIL>>
 
+<CONSTANT TEXT281 "The first mate breaks open a keg of beer and has all the crew raise their cups to the north. He excuses this by saying: \"We're toasting the High King. It's a time-honoured ritual, Cap'n\"||You smile indulgently. It has been three centuries since the Uttakin swept away the once-glorious realm of the High King, but old traditions die hard.">
+
 <ROOM STORY281
 	(IN ROOMS)
 	(DESC "281")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT281)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY093 STORY300 STORY450>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 8 12> <LTABLE "Songs across the waves" "Nothing untoward" "Uttakin slavers">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT282 "You are sailing in warm tropical waters the colour of ink.">
+<CONSTANT CHOICES282 <LTABLE HAVE-CODEWORD HAVE-CODEWORD HAVE-CODEWORD "If you have none of those">>
 
 <ROOM STORY282
 	(IN ROOMS)
 	(DESC "282")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT282)
+	(CHOICES CHOICES282)
+	(DESTINATIONS <LTABLE STORY341 STORY087 STORY107 STORY125>)
+	(REQUIREMENTS <LTABLE CODEWORD-CORADE CODEWORD-CERTAIN CODEWORD-COVET NONE>)
+	(TYPES <LTABLE R-CODEWORD R-CODEWORD R-CODEWORD R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT283 "You are sailing off the south-eastern promontory of Sokara, known for obscure reasons as Scorpion Bight. To the north lies the Druids' Isle.">
+<CONSTANT CHOICES283 <LTABLE "Steer north (The War-Torn Kingdom)" "Steer south" "Steer east (Lords of the Rising Sun)" "Steer west">>
 
 <ROOM STORY283
 	(IN ROOMS)
 	(DESC "283")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT283)
+	(CHOICES CHOICES283)
+	(DESTINATIONS <LTABLE STORY-WAR-TORN-KINGDOM STORY173 STORY-LORDS-RISING-SUN STORY066>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT284 "While some of your crew see to repairs aboard ship, you lead a shore party in gathering food and fresh water.">
+<CONSTANT TEXT284-FALL "You fall from a coconut palm!">
+<CONSTANT TEXT284-STUNG "Stung by a scorpion!">
+<CONSTANT TEXT284-REST "You get a good rest.">
 
 <ROOM STORY284
 	(IN ROOMS)
 	(DESC "284")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT284)
+	(EVENTS STORY284-EVENTS)
+	(CONTINUE STORY304)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY284-EVENTS ("AUX" ROLL)
+	<SET ROLL <RANDOM-EVENT 1 0 T>>
+	<COND (<L=? .ROLL 2>
+		<EMPHASIZE ,TEXT284-FALL>
+		<LOSE-STAMINA <ROLL-DICE 1> ,DIED-FROM-INJURIES ,STORY284>
+	)(<EQUAL? .ROLL 3>
+		<EMPHASIZE ,TEXT284-STUNG>
+		<COND (<CHECK-BLESSING ,BLESSING-IMMUNITY-POISON-DISEASE>
+			<PREVENT-DOOM ,STORY284>
+		)(ELSE
+			<LOSE-STAMINA <ROLL-DICE 2> ,DIED-GREW-WEAKER ,STORY284>
+		)>
+	)(ELSE
+		<EMPHASIZE ,TEXT284-REST>
+		<COND (<L? ,STAMINA ,MAX-STAMINA> <GAIN-STAMINA 1>)>
+		<PREVENT-DOOM ,STORY284>
+	)>>
+
+<CONSTANT TEXT285 "A sharp tang is on the air. The sky, thick with iron-coloured clouds, begins to spin slowly like a great inexorable wheel. The heavens are shot though with brimstone flares. The crew stands slack-faced with dismay.||\"It is the fist of Elnir...\" whimpers the bosun. \"He means to punish us for our sins.\"">
+<CONSTANT CHOICES285 <LTABLE "The hurricane sweeps down with merciless force.">>
 
 <ROOM STORY285
 	(IN ROOMS)
 	(DESC "285")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT285)
+	(EVENTS STORY285-EVENTS)
+	(CHOICES CHOICES285)
+	(DESTINATIONS <LTABLE <LTABLE STORY006 STORY231 STORY337>>)
+	(REQUIREMENTS STORY-STORM-REQUIREMENTS)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY285-EVENTS ()
+	<STORM-AT-SEA ,STORY285 ,STORY320>>
+
+<CONSTANT TEXT286 "The prow of the oncoming ship looms close. Your men stand ready, braced for impact. It comes, the ship lurches, there is an instant's hesitation as though the Fates held their breath -- then the pirates are aboard. Battle is joined.">
 
 <ROOM STORY286
 	(IN ROOMS)
 	(DESC "286")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT286)
+	(EVENTS STORY286-EVENTS)
+	(CONTINUE STORY267)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY286-EVENTS ("AUX" ROLL (DICE 2) (MODIFIER -2) (CONDITION 0))
+	<COND (<CHECK-PROFESSION ,PROFESSION-WARRIOR> <SET DICE 3>)>
+	<COND (,CURRENT-SHIP
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<COND (<EQUAL? .CONDITION ,CONDITION-POOR>
+			<SET MODIFIER -2>
+		)(<EQUAL? .CONDITION ,CONDITION-AVERAGE>
+			<SET MODIFIER 0>
+		)(<EQUAL? .CONDITION ,CONDITION-GOOD>
+			<SET MODIFIER 2>
+		)(ELSE
+			<SET MODIFIER 3>
+		)>
+	)>
+	<PREVENT-DOOM ,STORY201>
+	<SET ROLL <RANDOM-EVENT .DICE .MODIFIER T>>
+	<COND (<L=? .ROLL 4>
+		<EMPHASIZE "Calamity! You are killed!">
+		<STORY-JUMP ,STORY123>
+	)(<L=? .ROLL 9>
+		<EMPHASIZE "Crushing defeat!">
+		<LOSE-STAMINA <ROLL-DICE 2> ,DIED-FROM-INJURIES ,STORY201>
+		<COND (<IS-ALIVE> <STORY-JUMP ,STORY435>)>
+	)(<L=? .ROLL 13>
+		<EMPHASIZE "Forced to give in!">
+		<LOSE-STAMINA <ROLL-DICE 1> ,DIED-FROM-INJURIES ,STORY201>
+		<COND (<IS-ALIVE> <STORY-JUMP ,STORY416>)>
+	)(<L=? .ROLL 17>
+		<EMPHASIZE "The pirates withdraw!">
+		<STORY-JUMP ,STORY101>
+	)(ELSE
+		<EMPHASIZE "Outright victory!">
+	)>>
+
+<CONSTANT TEXT287 "Hardly able to contain your mirth at the thought of the great Reavers being robbed themselves, you help yourself to a few fistfuls of treasure (worth 500 Shards in all) before sneaking back out of their stronghold.">
 
 <ROOM STORY287
 	(IN ROOMS)
 	(DESC "287")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT287)
+	(EVENTS STORY287-EVENTS)
+	(CHOICES CHOICES-CODEWORD)
+	(DESTINATIONS <LTABLE STORY549 STORY436>)
+	(REQUIREMENTS <LTABLE CODEWORD-CROCUS NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY287-EVENTS ()
+	<COND (,RUN-ONCE <GAIN-MONEY 500>)>>
+
+<CONSTANT TEXT288 "You descend a narrow gangway to a passage with a door to either side. You suspect that the two Golnir men with you are beginning to understand the difference between courage and recklessness.">
+<CONSTANT CHOICES288 <LTABLE "Try the left-hand door" "Try the right-hand door" "Advance down the passage" "Return to your ship">>
 
 <ROOM STORY288
 	(IN ROOMS)
 	(DESC "288")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(EVENTS STORY288-EVENTS)
+	(CHOICES CHOICES288)
+	(DESTINATIONS <LTABLE STORY326 STORY010 STORY029 STORY308>)
+	(TYPES FOUR-CHOICES)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY288-EVENTS ()
+	<COND (,RUN-ONCE
+		<COND (<CHECK-CODEWORD ,CODEWORD-CALCIUM>
+			<PREVENT-DOOM ,STORY288>
+		)(ELSE
+			<EMPHASIZE "You lose more stamina in the rarefied air.">
+			<LOSE-STAMINA 2 ,DIED-GREW-WEAKER ,STORY288>
+		)>
+	)>
+	<CONTINUE-TEXT ,TEXT288>>
+
+<CONSTANT TEXT289 "\"Journey towards the rising sun,\" says the herald of the twin gods. \"Before you reach the stars, you will come upon a bay that is guarded by a great serpent. Fight it alone - no man may help you. At the highest point of the island you'll get your boon.\"||The figure dissolves into a cascade of fading green sparks.">
 
 <ROOM STORY289
 	(IN ROOMS)
 	(DESC "289")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT289)
+	(CONTINUE STORY252)
+	(CODEWORDS <LTABLE CODEWORD-CORADE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT290 "Again you batter the strange fighter down. Now there is a thin smear of blood at the corner of his mouth and he sounds slightly out of breath as he throws open his arms and says: \"Come, my dear foe, let's embrace. I'll crush your bones to powder!\"">
 
 <ROOM STORY290
 	(IN ROOMS)
 	(DESC "290")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT290)
+	(CHOICES CHOICES-COMBAT)
+	(DESTINATIONS <LTABLE <LTABLE STORY310 STORY253>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-COMBAT 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY291
