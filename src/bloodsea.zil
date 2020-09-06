@@ -5732,6 +5732,7 @@
 	<RESET-ODDS 1 0 ,STORY142>
 	<RESET-ODDS 2 0 ,STORY186>
 	<RESET-ODDS 2 0 ,STORY194>
+	<RESET-ODDS 2 0 ,STORY268>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUTP ,STORY006 ,P?DOOM T>
 	<PUTP ,STORY007 ,P?DOOM T>
@@ -5755,7 +5756,8 @@
 	<PUTP ,STORY214 ,P?DOOM T>
 	<PUTP ,STORY225 ,P?DOOM T>
 	<PUTP ,STORY249 ,P?DOOM T>
-	<PUTP ,STORY253 ,P?DOOM T>>
+	<PUTP ,STORY253 ,P?DOOM T>
+	<PUTP ,STORY269 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -9351,7 +9353,7 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY221-EVENTS ()
-	<STORY-GAIN-CARGO ,CARGO-SPICES>>
+	<STORY-GAIN-CARGO ,CARGO-SPICES 1>>
 
 <CONSTANT TEXT222 "The three of them live in a house that stands on short wooden posts above a tract of mud on the southern fringe of town. You watch them slump in the doorway, where the jutting porch of interleaved pandanus shields them from the sun. The air is filled with gnats and the stench of rotting river weeds.||You can round up some friends to help you exact your revenge. Otherwise you must deal with the mutineers yourself.">
 <CONSTANT CHOICES222 <LTABLE HAVE-CODEWORD "Muster some friends" "Attack the three on your own" "Wait till they're asleep" "Forget about them">>
@@ -9874,225 +9876,171 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 		<EMPHASIZE ,TEXT260-METRICIENS>
 	)>>
 
+<CONSTANT TEXT261 "The cook relents and lets you sit in a corner of the kitchen. The other scholars are impressed that you managed to charm even the bad-tempered cook, and your reputation soars.">
+
 <ROOM STORY261
 	(IN ROOMS)
 	(DESC "261")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT261)
+	(EVENTS STORY261-EVENTS)
+	(CONTINUE STORY607)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY261-EVENTS ()
+	<COND (<G? <RANDOM-EVENT 1 0 T> <GET-ABILITY-SCORE ,CURRENT-CHARACTER ,ABILITY-CHARISMA>>
+		<UPGRADE-ABILITY ,ABILITY-CHARISMA 1>
+	)>>
+
+<CONSTANT TEXT262 "To the north lies Braelak, island of sorcerers. Far to the south are the marsh-enclosed ruins of old Tarshesh. Westwards there are the priests of Innis; pirates lurk in the east. Where now?">
+<CONSTANT CHOICES262 <LTABLE "Head north" "Head south" "Head east" "Head west">>
 
 <ROOM STORY262
 	(IN ROOMS)
 	(DESC "262")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT262)
+	(CHOICES CHOICES262)
+	(DESTINATIONS <LTABLE STORY009 STORY153 STORY630 STORY281>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT263 "An offshore wind brings the scent of strange blossoms, dead vegetation and the stink of malarial swamps.||\"The Weeping Jungle,\" declares the mate gloomily. \"My brother lost his life in that pest-infested wilderness.\"||The quartermaster expresses a sceptical view: \"I heard your brother died in a tavern brawl in Ringhorn.\"||\"Bah!\" The mate stamps off to his cabin. You begin to worry about the crew's morale.">
 
 <ROOM STORY263
 	(IN ROOMS)
 	(DESC "263")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT263)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY612 STORY282 STORY176 STORY483>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 8 10 12> <LTABLE "Mutiny!" "A quiet voyage" "Pirates" "Divine intervention?">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT264 "Daybreak casts a net of mist across the water, blurring the horizon. It seems as though you are suspended in an infinite white void.">
+<CONSTANT CHOICES264 <LTABLE "Steer north" "Go south" "Travel east" "Head west">>
 
 <ROOM STORY264
 	(IN ROOMS)
 	(DESC "264")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT264)
+	(CHOICES CHOICES264)
+	(DESTINATIONS <LTABLE STORY066 STORY156 STORY210 STORY119>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT265 "You can take the crewmen exploring with you or leave them here to gather supplies.">
+<CONSTANT TEXT265-CONTINUED "You stroll through light woodland and emerge on a level plain. The grass is as neatly mowned as a lawn. Bees hum drowsily between the flowers. A paved avenue, lined on either side by stone slabs, stretches off across the plain towards grey cliffs in the distance.">
+<CONSTANT CHOICES265 <LTABLE "Go on" "Turn back">>
 
 <ROOM STORY265
 	(IN ROOMS)
 	(DESC "265")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT265)
+	(EVENTS STORY265-EVENTS)
+	(CHOICES CHOICES265)
+	(DESTINATIONS <LTABLE STORY043 STORY005>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY265-EVENTS ()
+	<COND (,RUN-ONCE
+		<CRLF>
+		<TELL "Take the crewmen with you as you explore?">
+		<COND (<YES?> <GAIN-CODEWORD ,CODEWORD-COSY>)>
+	)>>
 
 <ROOM STORY266
 	(IN ROOMS)
 	(DESC "266")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY266-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY266-BACKGROUND ()
+	<STORY-SET-DOCK ,DOCK-SMOGMAW ,CURRENT-SHIP>>
+
+<CONSTANT TEXT267 "You help yourself to the pirates' treasure, which amounts to 400 Shards. Their ship's hold contains 1 Cargo Unit of spices, which you can add to your own cargo if your ship has room for it.||Your mate is for taking the pirate captain's head as a gory trophy of your victory.">
+<CONSTANT TEXT267-LEADERSHIP "You've gained a rank after your stirring leadership in battle.">
 
 <ROOM STORY267
 	(IN ROOMS)
 	(DESC "267")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT267)
+	(EVENTS STORY267-EVENTS)
+	(CONTINUE STORY101)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY267-EVENTS ()
+	<GAIN-MONEY 400>
+	<STORY-GAIN-CARGO ,CARGO-SPICES 1>
+	<KEEP-ITEM ,PIRATE-CAPTAINS-HEAD>
+	<COND (<G? <RANDOM-EVENT 2 0 T> <GETP ,CURRENT-CHARACTER ,P?RANK>>
+		<CONTINUE-TEXT ,TEXT267-LEADERSHIP>
+		<GAIN-RANK 1>
+		<UPGRADE-STAMINA <ROLL-DICE 1>>
+	)>>
+
+<CONSTANT TEXT268 "The first mate comes running to your cabin in the small hours of the morning. \"Pirates, cap'n!\" he gasps. \"Three ships coming in windward of us.\"||You cannot battle three ships at once. You give the orders to put out full sail. You must hope to outrun them.">
 
 <ROOM STORY268
 	(IN ROOMS)
 	(DESC "268")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT268)
+	(EVENTS STORY268-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY201 STORY322>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 6 100> <LTABLE "The pirates overtake you" "You shake them off">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY268-EVENTS ("AUX" MODIFIER CONDITION)
+	<SET MODIFIER <GETP ,CURRENT-CHARACTER ,P?RANK>>
+	<COND (,CURRENT-SHIP
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<COND (<EQUAL? .CONDITION ,CONDITION-AVERAGE>
+			<INC .MODIFIER>
+		)(<EQUAL? .CONDITION ,CONDITION-GOOD>
+			<SET MODIFIER <+ .MODIFIER 2>>
+		)(<EQUAL? .CONDITION ,CONDITION-EXCELLENT>
+			<SET MODIFIER <+ .MODIFIER 3>>
+		)>
+		<COND (<G? <COUNT-CONTAINER ,CARGO> 0> <DEC .MODIFIER>)>
+	)>
+	<RESET-ODDS 2 .MODIFIER ,STORY268>>
+
+<CONSTANT TEXT269 "Most are reluctant to go, but you find a pair of doughty fellows from Haggart's Corner who are too simple to understand fear. They follow you up into the rigging, from where you climb up the flying ship's anchor chain.||The deck is empty except for swirls of pearly mist. Glancing down, you can just make out the shadow of you own vessel under the blanket of fog. One of the seamen with you coughs and says, \"The air's perilous thin, skipper. Best shake a leg.\"">
+<CONSTANT CHOICES269 <LTABLE "Go back down and be on your way" "Explore below decks">>
 
 <ROOM STORY269
 	(IN ROOMS)
 	(DESC "269")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT269)
+	(EVENTS STORY269-EVENTS)
+	(CHOICES CHOICES269)
+	(DESTINATIONS <LTABLE STORY228 STORY288>)
+	(TYPES TWO-CHOICES)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY269-EVENTS ()
+	<COND (,RUN-ONCE
+		<COND (<CHECK-CODEWORD ,CODEWORD-CALCIUM>
+			<PREVENT-DOOM ,STORY269>
+		)(ELSE
+			<LOSE-STAMINA 1 ,DIED-GREW-WEAKER ,STORY269>
+		)>
+	)>>
+
+<CONSTANT TEXT270 "A sacred aura hangs about this place. If you are an initiate of the twin gods of the sea, Alvir and Valmir, then you will be particularly attuned to it.">
 
 <ROOM STORY270
 	(IN ROOMS)
 	(DESC "270")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT270)
+	(EVENTS STORY270-EVENTS)
+	(CONTINUE STORY252)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY270-EVENTS ()
+	<COND (<CHECK-GOD ,GOD-ALVIR-VALMIR> <STORY-JUMP ,STORY234>)>>
 
 <ROOM STORY271
 	(IN ROOMS)
