@@ -3211,6 +3211,7 @@
 <OBJECT CODEWORD-CHILL (DESC "Chill")>
 <OBJECT CODEWORD-CITRUS (DESC "Citrus")>
 <OBJECT CODEWORD-CHURCH (DESC "Church")>
+<OBJECT CODEWORD-CLUTCH (DESC "Clutch")>
 <OBJECT CODEWORD-COSY (DESC "Cosy")>
 <OBJECT CODEWORD-CULL (DESC "Cull")>
 <OBJECT CODEWORD-CUSHAT (DESC "Cushat")>
@@ -3473,6 +3474,10 @@
 	(DESC "climbing gear")
 	(FLAGS TAKEBIT)>
 
+<OBJECT CLOAK-OF-FEATHERS
+	(DESC "cloak of feathers")
+	(FLAGS TAKEBIT)>
+
 <OBJECT COMPASS
 	(DESC "compass")
 	(SCOUTING 1)
@@ -3707,6 +3712,10 @@
 <OBJECT SMOULDER-FISH
 	(DESC "smoulder fish")
 	(QUANTITY 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT SPECTRAL-VEIL
+	(DESC "spectral veil")
 	(FLAGS TAKEBIT)>
 
 <OBJECT TREASURE-MAP
@@ -7245,7 +7254,7 @@
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY080-EVENTS ()
-	<STORY-RESET-CREW ,CONDITION-POOR>>
+	<STORY-RESET-CREW ,CONDITION-POOR ,CURRENT-SHIP>>
 
 <CONSTANT TEXT081 "A strong breeze flutters the sails. The crewmen go about their chores merrily, scrambling through the rigging like carefree monkeys.||\"Five bells,\" intones the mate.">
 
@@ -8377,7 +8386,7 @@
 	)>
 	<COND (<L? .CONDITION ,CONDITION-POOR> <SET CONDITION ,CONDITION-POOR>)>
 	<COND (<G? .CONDITION ,CONDITION-EXCELLENT> <SET CONDITION ,CONDITION-EXCELLENT>)>
-	<STORY-RESET-CREW .CONDITION>>
+	<STORY-RESET-CREW .CONDITION ,CURRENT-SHIP>>
 
 <CONSTANT TEXT160 "All you can do is trust to luck.">
 
@@ -8526,7 +8535,7 @@
 			<EMPHASIZE "The mainmast topples!">
 			<STORY-JUMP ,STORY212>
 		)(<L=? .ROLL 10>
-			<STORY-RESET-CREW ,CONDITION-POOR>
+			<STORY-RESET-CREW ,CONDITION-POOR ,CURRENT-SHIP>
 			<EMPHASIZE "Several sailors lost!">
 			<STORY-JUMP ,STORY135>
 		)(ELSE
@@ -10042,225 +10051,159 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 <ROUTINE STORY270-EVENTS ()
 	<COND (<CHECK-GOD ,GOD-ALVIR-VALMIR> <STORY-JUMP ,STORY234>)>>
 
+<CONSTANT TEXT271 "You send him slamming to the deck, but he bounces up again none the worse for wear. Immediately he clasps his hands behind your neck and you are wrestling again.">
+
 <ROOM STORY271
 	(IN ROOMS)
 	(DESC "271")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT271)
+	(CHOICES CHOICES-COMBAT)
+	(DESTINATIONS <LTABLE <LTABLE STORY290 STORY253>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-COMBAT 14>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT272 "The witches curse your crew with a dreary malaise that renders them useless for all but the simplest chores.||Tittering evilly, the witches skim off across the choppy sea.">
 
 <ROOM STORY272
 	(IN ROOMS)
 	(DESC "272")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT272)
+	(EVENTS STORY272-EVENTS)
+	(CONTINUE STORY039)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY272-EVENTS ()
+	<STORY-RESET-CREW ,CONDITION-POOR ,CURRENT-SHIP>>
+
+<CONSTANT TEXT273 "You wake up. Something is amiss, It takes you a while to realize that you are no longer at sea. In fact, you are not even aboard a ship. Instead you are lying in a bed in one of the rooms at Chard's Inn.||How did you get here? It is a complete mystery. When you ask someone the date, you discover that six months are missing out of your life! Your ship and crew are lost. Some of your possessions and your money is gone too.">
 
 <ROOM STORY273
 	(IN ROOMS)
 	(DESC "273")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT273)
+	(EVENTS STORY273-EVENTS)
+	(CONTINUE STORY-CITIES-GOLD-GLORY)
+	(CODEWORDS <LTABLE CODEWORD-CLUTCH>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY273-EVENTS ("AUX" ITEM)
+	<STORY-LOSE-SHIP>
+	<DO (I 1 6)
+		<SET ITEM <GET-ITEM .I ,PLAYER>>
+		<COND (.ITEM <REMOVE-ITEM .ITEM "lost" T T>)>
+	>
+	<SETG MONEY 0>
+	<UPGRADE-ABILITY ,ABILITY-SCOUTING 1>
+	<COND (<L? ,STAMINA ,MAX-STAMINA>
+		<EMPHASIZE "You have fully recovered from your injuries.">
+		<SETG STAMINA ,MAX-STAMINA>
+		<UPDATE-STATUS-LINE>
+	)>>
+
+<CONSTANT TEXT274 "The priestess holds up her hand before you can speak. \"Peace! Whatever your business, all must her adapt to a slower pace of life. Ah, this accursed heat.\" She indicates her brow, and a slave boy runs forward to lick away the film of sweat.||You are faintly repelled by such decadence, but you try to hide it. \"I have come...\" you begin.||The priestess frowns. \"Have I not said that things are done differently here in Smogmaw? Approach, sit; tell me your business over a game of cards.\"">
+<CONSTANT CHOICES274 <LTABLE "Agree to play with her" "Leave the temple">>
 
 <ROOM STORY274
 	(IN ROOMS)
 	(DESC "274")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT274)
+	(CHOICES CHOICES274)
+	(DESTINATIONS <LTABLE STORY343 STORY044>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT275 "Mysteriously, when the flock has departed you discover a stowaway sitting on the bowsprit. He peers at everyone suspiciously and utters cawing noises when approached, but after a few days he has recovered his wits enough to speak. \"I dreamt I was flying,\" he says. \"Nor can I tell how I got here.\"||He has some money saved up at home, and rewards you with 50 Shards for dropping him off at your next port of call.">
 
 <ROOM STORY275
 	(IN ROOMS)
 	(DESC "275")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT275)
+	(EVENTS STORY275-EVENTS)
+	(CONTINUE STORY171)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY275-EVENTS ()
+	<GAIN-MONEY 50>>
+
+<CONSTANT TEXT276 "The merchant known as Moon of Evening will never forget how you saved her life. She takes you into her household and embellishes you with body paint and a cloak of feathers. You can also stay here with her family as long as you like.||\"Are you staying in Smogmaw?\" asks Moon of Evening's brother, a handsome fellow known as Dances with Boas. \"I know a merchant who'll take you upriver if you like.\"">
+<CONSTANT CHOICES276 <LTABLE "Go with the merchant" "Stay in town for now">>
 
 <ROOM STORY276
 	(IN ROOMS)
 	(DESC "276")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT276)
+	(EVENTS STORY276-EVENTS)
+	(CHOICES CHOICES276)
+	(DESTINATIONS <LTABLE STORY-SERPENT-KINGS-DOMAIN STORY295>)
+	(TYPES TWO-CHOICES)
+	(ITEMS <LTABLE CLOAK-OF-FEATHERS>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY276-EVENTS ()
+	<COND (<L? ,STAMINA ,MAX-STAMINA>
+		<SETG STAMINA ,MAX-STAMINA>
+		<EMPHASIZE "You have fully recovered from your injuries.">
+		<UPDATE-STATUS-LINE>
+	)>>
+
+<CONSTANT TEXT277 "\"You have performed a great service for Glimbinki,\" avers the priest. \"In return I will bestow the two blessings that are within my power.\"||These blessings entitle you to reroll a failed attempt at using the ability in question. Each blessing can be used only once. Thanking the priest, you return to town.">
 
 <ROOM STORY277
 	(IN ROOMS)
 	(DESC "277")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT277)
+	(EVENTS STORY277-EVENTS)
+	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY277-EVENTS ()
+	<GAIN-BLESSING ,BLESSING-SCOUTING>
+	<GAIN-BLESSING ,BLESSING-MAGIC>>
+
+<CONSTANT TEXT278 "The island is soon left far astern.">
+<CONSTANT CHOICES278 <LTABLE "Go north (Lords of the Rising Sun)" "Go south" "Go east (Lords of the Rising Sun)" "Go west">>
 
 <ROOM STORY278
 	(IN ROOMS)
 	(DESC "278")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-OCEAN)
+	(STORY TEXT278)
+	(EVENTS STORY278-EVENTS)
+	(CHOICES CHOICES278)
+	(DESTINATIONS <LTABLE STORY-LORDS-RISING-SUN STORY060 STORY-LORDS-RISING-SUN STORY136>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY278-EVENTS ()
+	<STORY-SET-SAIL ,CURRENT-SHIP>>
+
+<CONSTANT TEXT279 "The cook issues a stream of insults that threatens to turn the air blue. You retreat cowed and shaken.">
 
 <ROOM STORY279
 	(IN ROOMS)
 	(DESC "279")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT279)
+	(EVENTS STORY279-EVENTS)
+	(CONTINUE STORY607)
+	(CODEWORDS <LTABLE CODEWORD-CACOGAST>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY279-EVENTS ()
+	<LOSE-ABILITY ,ABILITY-CHARISMA 1>>
+
+<CONSTANT TEXT280 "The ghost disappears with a doleful sigh. A wisp of fabric drifts down to the deck. It is a spectral veil.">
 
 <ROOM STORY280
 	(IN ROOMS)
 	(DESC "280")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT280)
+	(EVENTS STORY280-EVENTS)
+	(CONTINUE STORY078)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY280-EVENTS ()
+	<KEEP-ITEM ,SPECTRAL-VEIL>>
 
 <ROOM STORY281
 	(IN ROOMS)
