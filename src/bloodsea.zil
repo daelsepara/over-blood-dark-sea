@@ -994,7 +994,9 @@
 			<DO (I 1 .EVENTS)
 				<COND (<L=? .RESULT <GET .ODDS .I>>
 					<SET DESTINATION <GET .DESTINATIONS .I>>
-					<EMPHASIZE <GET .OUTCOMES .I> "Outcome">
+					<COND (.OUTCOMES
+						<EMPHASIZE <GET .OUTCOMES .I> "Outcome">
+					)>
 					<PRESS-A-KEY>
 					<COND (<NOT <PROCESS-RANDOM-BLESSING>>
 						<SET HAS-DESTINATION T>
@@ -3211,6 +3213,7 @@
 <OBJECT CODEWORD-CHURCH (DESC "Church")>
 <OBJECT CODEWORD-COSY (DESC "Cosy")>
 <OBJECT CODEWORD-CULL (DESC "Cull")>
+<OBJECT CODEWORD-CUSHAT (DESC "Cushat")>
 <OBJECT CODEWORD-CUTLASS (DESC "Cutlass")>
 <OBJECT CODEWORD-CYNOSURE (DESC "Cynosure")>
 
@@ -5751,7 +5754,8 @@
 	<PUTP ,STORY212 ,P?DOOM T>
 	<PUTP ,STORY214 ,P?DOOM T>
 	<PUTP ,STORY225 ,P?DOOM T>
-	<PUTP ,STORY249 ,P?DOOM T>>
+	<PUTP ,STORY249 ,P?DOOM T>
+	<PUTP ,STORY253 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -5804,7 +5808,6 @@
 <CONSTANT TEXT-SURE "Are you sure?">
 <CONSTANT TEXT-USED "used">
 <CONSTANT TEXT-UNEVENTFUL "An uneventful voyage">
-<CONSTANT TEXT-UNKNOWN "Unknown">
 <CONSTANT TEXT-YOU-CAN "You can:">
 <CONSTANT TEXT-YOU-CAN-GO "You can go:">
 
@@ -6036,22 +6039,11 @@
 	(DESC "001")
 	(LOCATION LOCATION-OCEAN)
 	(STORY TEXT001)
-	(EVENTS STORY001-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY709 STORY505 STORY714 STORY313 STORY151>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 6 7 9 12> NONE>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
-
-<ROUTINE STORY001-EVENTS ("AUX" ROLL)
-	<SET ROLL <RANDOM-EVENT 2 0 T>>
-	<COND (<L=? .ROLL 4>
-		<STORY-JUMP ,STORY709>
-	)(<L=? .ROLL 6>
-		<STORY-JUMP ,STORY505>
-	)(<L=? .ROLL 7>
-		<STORY-JUMP ,STORY714>
-	)(<L=? .ROLL 9>
-		<STORY-JUMP ,STORY313>
-	)(ELSE
-		<STORY-JUMP ,STORY151>
-	)>>
 
 <CONSTANT TEXT002 "You find two important references to the Innis Shoals. The first, in a book on navigation, reads: \"These islands form an effective barrier to the western sea, being ringed with treacherous reefs and racked by constant storms. Only a skilled pilot can bring a ship safely through.\"||The other book deals with matters of religion: \"A numinous essence is thought to pervade the air of this region. For this reason, the archipelago has long been accounted as a holy place and many a hermit has made his home here.\"||All in all, the Innis Shoals hardly sound the place for a holiday. Unless you're a religious maniac, that is.">
 
@@ -6495,26 +6487,18 @@
 	(DESC "033")
 	(STORY TEXT033)
 	(EVENTS STORY033-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY058 STORY170 STORY-ISLE-THOUSAND-SPIRES STORY370 STORY040>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 6 7 9 12> NONE>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
-<ROUTINE STORY033-EVENTS ("AUX" ROLL)
+<ROUTINE STORY033-EVENTS ()
 	<COND (<CHECK-BLESSING ,BLESSING-IMMUNITY-POISON-DISEASE>
 		<DELETE-BLESSING ,BLESSING-IMMUNITY-POISON-DISEASE>
 		<STORY-JUMP ,STORY116>
 	)(ELSE
 		<CONTINUE-TEXT ,TEXT033-CONTINUED>
-		<SET ROLL <RANDOM-EVENT 2 0 T>>
-		<COND (<L=? .ROLL 4>
-			<STORY-JUMP ,STORY058>
-		)(<L=? .ROLL 6>
-			<STORY-JUMP ,STORY170>
-		)(<EQUAL? .ROLL 7>
-			<STORY-JUMP ,STORY-ISLE-THOUSAND-SPIRES>
-		)(<L=? .ROLL 9>
-			<STORY-JUMP ,STORY370>	
-		)(ELSE
-			<STORY-JUMP ,STORY040>
-		)>
 	)>>
 
 <CONSTANT TEXT034 "\"What shall we play?\" wonders the priestess, pressing the pack of cards against her lower lip. \"Ah, yes, how about a sedate game of Paying the Devil?\"">
@@ -8724,7 +8708,7 @@
 	(STORY TEXT180)
 	(CHOICES CHOICES-RANDOM)
 	(DESTINATIONS <LTABLE <LTABLE STORY026 STORY505 STORY238 STORY313>>)
-	(REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 2 3 5 6> <LTABLE TEXT-UNKNOWN TEXT-UNKNOWN TEXT-UNKNOWN TEXT-UNKNOWN>>>)
+	(REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 2 3 5 6> NONE>>)
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
@@ -9607,7 +9591,7 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(STORY TEXT239)
 	(CHOICES CHOICES-RANDOM)
 	(DESTINATIONS <LTABLE <TABLE STORY257 STORY275>>)
-	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 2 12> <LTABLE TEXT-UNKNOWN TEXT-UNKNOWN>>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 2 12> NONE>>)
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
@@ -9756,225 +9740,139 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	<STORY-LOSE-EVERYTHING F>
 	<STORY-LOSE-SHIP>>
 
+<CONSTANT TEXT251 "Several sailors grab the stranger and bring him over to you. You ply him with questions, but he has gone limp and begun to gasp for breath. He dies as quickly as a man might drown at six fathoms.||\"What now, skipper?\" says the first mate in an awestruck voice. \"Shall we cut the cable and let their ship go drifting off?\"">
+<CONSTANT CHOICES251 <LTABLE "Cut the flying ship's cable" "Take a party of seamen aloft">>
+
 <ROOM STORY251
 	(IN ROOMS)
 	(DESC "251")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT251)
+	(CHOICES CHOICES251)
+	(DESTINATIONS <LTABLE STORY228 STORY269>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT252 "Your crewmen take the opportunity to collect some barrels of fresh water from the fountain.||There is nothing else of interest here, so you return to the ship.">
 
 <ROOM STORY252
 	(IN ROOMS)
 	(DESC "252")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT252)
+	(EVENTS STORY252-EVENTS)
+	(CONTINUE STORY196)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY252-EVENTS ()
+	<DELETE-CODEWORD ,CODEWORD-CALLID>>
+
+<CONSTANT TEXT253 "The stranger grabs hold of you, hefts you into the air, and flings you down. You hit the deck with such force that it makes your teeth rattle.">
+<CONSTANT CHOICES253 <LTABLE "Grapple your foe" "Tell him there's no need to fight">>
 
 <ROOM STORY253
 	(IN ROOMS)
 	(DESC "253")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT253)
+	(EVENTS STORY253-EVENTS)
+	(CHOICES CHOICES253)
+	(DESTINATIONS <LTABLE STORY235 STORY217>)
+	(TYPES TWO-CHOICES)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY253-EVENTS ()
+	<COND (,RUN-ONCE <LOSE-STAMINA <ROLL-DICE 6> ,DIED-IN-COMBAT ,STORY253>)>>
+
+<CONSTANT TEXT254 "You confound the witches by cancelling the spell that keeps their coracles afloat. Your crewmen laugh in relief as they watch the flotilla of vile women sink below the surging grey swell.||The leader of the coven manages to hold her head above water long enough to plead for you to haul her out.">
+<CONSTANT CHOICES254 <LTABLE "Drop her a line" "Let her drown">>
 
 <ROOM STORY254
 	(IN ROOMS)
 	(DESC "254")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT254)
+	(CHOICES CHOICES254)
+	(DESTINATIONS <LTABLE STORY291 STORY039>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT255 "The wind does not abate for several hours. Somehow you have the uneasy feeling that it has blow you a quite unconscionable distance in that time.||After consulting the stars and his charts, the navigator makes a guess at your current position.">
 
 <ROOM STORY255
 	(IN ROOMS)
 	(DESC "255")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT255)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY228 STORY320 STORY118 STORY648 STORY322 STORY283 STORY352>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 3 4 6 7 9 10 12> NONE>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT256 "The priestess gets to her feet. \"The goddesses have looked on you with favour,\" she says. \"Their breath has filled your sails, their hands sheltered your back, guiding you safely here.\"">
+<CONSTANT CHOICES256 <LTABLE "Seek a blessing from the goddesses" "Renounce their worship" "Leave the temple">>
 
 <ROOM STORY256
 	(IN ROOMS)
 	(DESC "256")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT256)
+	(CHOICES CHOICES256)
+	(DESTINATIONS <LTABLE STORY293 STORY330 STORY044>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT257 "There are so many birds that, when they rise again into the air, their wings all but blot out the sun. At the same time you feel a strange enchantment creeping over you. But is it harmful, or beneficial?">
+<CONSTANT CHOICES257 <LTABLE "Resist the enchantment" "Don't try">>
 
 <ROOM STORY257
 	(IN ROOMS)
 	(DESC "257")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT257)
+	(CHOICES CHOICES257)
+	(DESTINATIONS <LTABLE <LTABLE STORY171 STORY294> STORY294>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-MAGIC 15> NONE>)
+	(TYPES <LTABLE R-TEST-ABILITY R-NONE>)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY258
 	(IN ROOMS)
 	(DESC "258")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY258-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY258-BACKGROUND ()
+	<COND (<CHECK-CODEWORD ,CODEWORD-AID> <RETURN ,STORY276>)>
+	<RETURN ,STORY295>>
+
+<CONSTANT TEXT259 "It is easy to pick out Glimbinki's shrine, a tall teepee of interlaced feathers supported by a central totem of hard red wood surmounted by a giant carved beak.">
 
 <ROOM STORY259
 	(IN ROOMS)
 	(DESC "259")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT259)
+	(CHOICES CHOICES-CODEWORD)
+	(DESTINATIONS <LTABLE STORY277 STORY296>)
+	(REQUIREMENTS <LTABLE CODEWORD-CUSHAT NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT260-VILLAIN "The captain is a villain. He takes all your money and maroons you!">
+<CONSTANT TEXT260-METRICIENS "You reach Metriciens without incident.">
 
 <ROOM STORY260
 	(IN ROOMS)
 	(DESC "260")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(EVENTS STORY260-EVENTS)
+	(CONTINUE STORY-CITIES-GOLD-GLORY)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY260-EVENTS ("AUX" ROLL)
+	<SET ROLL <RANDOM-EVENT 1 0 T>>
+	<COND (<L=? .ROLL 2>
+		<SETG MONEY 0>
+		<EMPHASIZE ,TEXT260-VILLAIN>
+		<STORY-JUMP ,STORY177>
+		<UPDATE-STATUS-LINE>
+	)(ELSE
+		<EMPHASIZE ,TEXT260-METRICIENS>
+	)>>
 
 <ROOM STORY261
 	(IN ROOMS)
