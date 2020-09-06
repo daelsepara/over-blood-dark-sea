@@ -19676,7 +19676,7 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY714-EVENTS ()
-	<KEEP-ITEM ,SHIPS-DEEDS>>
+	<COND (,RUN-ONCE <KEEP-ITEM ,SHIPS-DEEDS>)>>
 
 <ROOM STORY715
 	(IN ROOMS)
