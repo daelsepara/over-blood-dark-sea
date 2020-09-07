@@ -166,7 +166,7 @@
 <GLOBAL STARTING-POINT STORY001>
 <GLOBAL CURRENT-LOCATION LOCATION-OCEAN>
 
-<CONSTANT LOCATIONS <LTABLE "the open ocean" "Braelak, the Sorcerer's Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "the Fortress of The Reaver King" "the Island of Fire" "Vervayens" "Starspike Island" "the Unmarked Island">>
+<CONSTANT LOCATIONS <LTABLE "the open ocean" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "the Fortress of The Reaver King" "the Island of Fire" "Vervayens" "Starspike Island" "the Unmarked Island">>
 
 <CONSTANT LOCATION-OCEAN 1>
 <CONSTANT LOCATION-SORCERERS 2>
@@ -2534,16 +2534,22 @@
 					<HLIGHT 0>
 					<PRESS-A-KEY>
 					<AGAIN .MAIN>
-				)(<L=? <GET .PRICELIST .ITEM> 0>
+				)(<EQUAL? <GET .PRICELIST .ITEM> 0>
 					<HLIGHT ,H-BOLD>
 					<TELL <GET .WARES .ITEM> " not available here" ,PERIOD-CR>
 					<HLIGHT 0>
 					<PRESS-A-KEY>
 					<AGAIN .MAIN>
 				)>
-				<TELL "Purchase ">
-				<PRINT-ITEM <GET .WARES .ITEM> T>
-				<TELL " (" N <GET .PRICELIST .ITEM> " " D ,CURRENCY ")?">
+				<COND (<G? <GET .PRICELIST .ITEM> 0>
+					<TELL "Purchase ">
+					<PRINT-ITEM <GET .WARES .ITEM> T>
+					<TELL " (" N <GET .PRICELIST .ITEM> " " D ,CURRENCY ")?">
+				)(<L? <GET .PRICELIST .ITEM> 0>
+					<TELL "Get ">
+					<PRINT-ITEM <GET .WARES .ITEM> T>
+					<TELL " for free?">
+				)>
 			)(ELSE
 				<TELL "Sell ">
 				<PRINT-ITEM <GET .WARES .ITEM> T>
@@ -2567,12 +2573,17 @@
 									<TELL ,EXCLAMATION-CR>
 									<PRESS-A-KEY>
 								)(ELSE
-									<SETG MONEY <- ,MONEY <GET .PRICELIST .ITEM>>>
+									<COND (<G? <GET .PRICELIST .ITEM> 0> <SETG MONEY <- ,MONEY <GET .PRICELIST .ITEM>>>)>
 									<ADD-QUANTITY <GET .WARES .ITEM> 1 .CONTAINER T>
 								)>
 							)(ELSE
-								<SETG MONEY <- ,MONEY <GET .PRICELIST .ITEM>>>
-								<TELL "You bought ">
+								<COND (<G? <GET .PRICELIST .ITEM> 0>
+									<SETG MONEY <- ,MONEY <GET .PRICELIST .ITEM>>>
+									<TELL "You bought ">
+								)(ELSE
+									<TELL "You got ">
+									<GOTTEN-FREE <GET .WARES .ITEM>>
+								)>
 								<COND (<FSET? <GET .WARES .ITEM> ,NARTICLEBIT>
 									<TELL "the">
 								)(ELSE
@@ -2596,6 +2607,7 @@
 					)>
 				)(ELSE
 					<COND (<OR <AND <EQUAL? .CONTAINER ,PLAYER> <CHECK-ITEM <GET .WARES .ITEM>>> <IN? <GET .WARES .ITEM> .CONTAINER>>
+						<CHECK-SOLD-FREE <GET .WARES .ITEM>>
 						<REMOVE-ITEM <GET .WARES .ITEM> "sold" F T>
 						<SETG MONEY <+ ,MONEY <GET .PRICELIST .ITEM>>>
 					)(ELSE
@@ -3491,6 +3503,10 @@
 	(QUANTITY 1)
 	(FLAGS TAKEBIT)>
 
+<OBJECT COURTIERS-MASK
+	(DESC "courtier's mask")
+	(FLAGS TAKEBIT)>
+
 <OBJECT CROSS-STAFF
 	(DESC "cross-staff")
 	(SCOUTING 2)
@@ -3821,7 +3837,7 @@
 <CONSTANT CONDITION-GOOD 2>
 <CONSTANT CONDITION-EXCELLENT 3>
 
-<CONSTANT DOCKS <LTABLE "Smogmaw" "Dweomer" "Vervayens" "Sorcerer's Isle">>
+<CONSTANT DOCKS <LTABLE "Smogmaw" "Dweomer" "Vervayens" "Sorcerers' Isle">>
 
 <CONSTANT DOCK-SMOGMAW 1>
 <CONSTANT DOCK-DWEOMER 2>
@@ -5343,22 +5359,50 @@
 ; "Tavern"
 ; ---------------------------------------------------------------------------------------------
 
-<ROUTINE VISIT-TAVERN ("OPT" (STORY NONE) (FEE 1) (GAIN 1) "AUX" (DAYS 0) (DIFFERENCE 0) (VISITS))
+<ROUTINE VISIT-TAVERN ("OPT" (STORY NONE) (FEE 1) "AUX" (DAYS 0) (VISITS) (ROLL))
 	<COND (<NOT .STORY> <SET STORY ,HERE>)>
 	<COND (<L? ,STAMINA ,MAX-STAMINA>
-		<SET DIFFERENCE <- ,MAX-STAMINA ,STAMINA>>
 		<COND (<G=? ,MONEY .FEE>
 			<REPEAT ()
 				<CRLF>
-				<TELL "It costs " N .FEE " per day to regain " N .GAIN " stamina" ,PERIOD-CR>
-				<SET DAYS <GET-NUMBER "How many days will you spend here" 0 .DIFFERENCE>>
+				<TELL "It costs " N .FEE " per day to get a bed here" ,PERIOD-CR>
+				<SET DAYS <GET-NUMBER "How many days will you spend here" 0 100>>
 				<COND (<G? .DAYS 0>
 					<COND (<G=? ,MONEY <* .DAYS .FEE>>
-						<GAIN-STAMINA <* .DAYS .GAIN>>
-						<COST-MONEY <* .DAYS .FEE> ,TEXT-PAID>
-						<SET VISITS <GETP .STORY ,P?VISITS>>
-						<SET VISITS <+ .VISITS .DAYS>>
-						<PUTP .STORY ,P?VISITS .VISITS>
+						<DO (I 1 .DAYS)
+							<SET VISITS <GETP .STORY ,P?VISITS>>
+							<INC .VISITS>
+							<PUTP .STORY ,P?VISITS .VISITS>
+							<COST-MONEY .FEE ,TEXT-PAID>
+							<CRLF>
+							<TELL "Day " N .I "...">
+							<SET ROLL <ROLL-DICE 1>>
+							<HLIGHT ,H-BOLD>
+							<COND (<L=? .ROLL 1>
+								<TELL "Dysentery" ,EXCLAMATION-CR>
+								<HLIGHT 0>
+								<LOSE-STAMINA 1 ,DIED-GREW-WEAKER .STORY>
+							)(<L=? .ROLL 2>
+								<PREVENT-DOOM .STORY>
+								<TELL "No gain or loss of Stamina" ,PERIOD-CR>
+								<HLIGHT 0>
+							)(ELSE
+								<PREVENT-DOOM .STORY>
+								<TELL "A good rest" ,EXCLAMATION-CR>
+								<COND (<L? ,STAMINA ,MAX-STAMINA> <GAIN-STAMINA 1>)>
+							)>
+							<COND (<IS-ALIVE>
+								<COND (<G=? ,STAMINA ,MAX-STAMINA>
+									<RETURN>
+								)(ELSE
+									<CRLF>
+									<TELL "Do you wish to continue your stay at the tavern?">
+									<COND (<NOT <YES?>> <RETURN>)>
+								)>
+							)(ELSE
+								<RETURN>
+							)>
+						>
 						<RETURN>
 					)(ELSE
 						<EMPHASIZE "You can't afford that!">
@@ -5721,6 +5765,140 @@
 
 <ROUTINE COPPER-SELLING-OTHERS ()
 	<MERCHANT <LTABLE COMPASS CROSS-STAFF SEXTANT LANTERN SELENIUM-ORE> <LTABLE 400 700 1100 40 700> ,PLAYER T>>
+
+; "Vervayens Market"
+; ---------------------------------------------------------------------------------------------
+
+<CONSTANT FREE-ITEMS <LTABLE AXE BATTLE-AXE MACE SPEAR STAFF SWORD LEATHER-ARMOUR CANDLE ROPE>>
+<CONSTANT GOT-FREE <LTABLE F F F F F F F F F>>
+<GLOBAL SOLD-FREE F>
+
+; "Checks if an item was received for free"
+<ROUTINE GOTTEN-FREE (ITEM "AUX" COUNT)
+	<COND (.ITEM
+		<SET COUNT <GET ,FREE-ITEMS 0>>
+		<DO (I 1 .COUNT)
+			<COND (<EQUAL? .ITEM <GET ,FREE-ITEMS .I>>
+				<PUT ,GOT-FREE .I T>
+			)>
+		>
+	)>>
+
+; "resets list"
+<ROUTINE RESET-GOT-FREE ("AUX" COUNT)
+	<SET COUNT <GET ,FREE-ITEMS 0>>
+	<DO (I 1 .COUNT) <PUT ,GOT-FREE .I F>>
+	<SETG SOLD-FREE F>>
+
+; "Checks if an item gotten for free was sold"
+<ROUTINE CHECK-SOLD-FREE (ITEM "AUX" COUNT)
+	<COND (.ITEM
+		<SET COUNT <GET ,FREE-ITEMS 0>>
+		<DO (I 1 .COUNT)
+			<COND (<EQUAL? .ITEM <GET ,FREE-ITEMS .I>>
+				<COND (<GET ,GOT-FREE .I> <SETG SOLD-FREE T>)>
+			)>
+		>
+	)>>
+
+<CONSTANT CHOICES-VERVAYENS-BUY <LTABLE "Buy armours" "Buy weapons" "Buy other items" TEXT-BACK>>
+
+<ROOM VERVAYENS-MARKET-BUY
+	(DESC "318 Vervayens Market")
+	(CHOICES CHOICES-VERVAYENS-BUY)
+	(DESTINATIONS <LTABLE VERVAYENS-BUY-ARMOURS VERVAYENS-BUY-WEAPONS VERVAYENS-BUY-OTHERS STORY318>)
+	(TYPES FOUR-CHOICES)
+	(FLAGS LIGHTBIT)>
+
+<ROOM VERVAYENS-BUY-ARMOURS
+	(DESC "318 Merchant selling armours")
+	(EVENTS VERVAYENS-BUYING-ARMOURS)
+	(CONTINUE VERVAYENS-MARKET-BUY)
+	(FLAGS LIGHTBIT)>
+
+<ROOM VERVAYENS-BUY-WEAPONS
+	(DESC "318 Merchant selling weapons")
+	(EVENTS VERVAYENS-BUYING-WEAPONS)
+	(CONTINUE VERVAYENS-MARKET-BUY)
+	(FLAGS LIGHTBIT)>
+
+<ROOM VERVAYENS-BUY-OTHERS
+	(DESC "318 Merchant selling other items")
+	(EVENTS VERVAYENS-BUYING-OTHERS)
+	(CONTINUE VERVAYENS-MARKET-BUY)
+	(FLAGS LIGHTBIT)>
+
+<ROUTINE VERVAYENS-BUYING-ARMOURS ()
+	<MERCHANT <LTABLE LEATHER-ARMOUR RING-MAIL CHAIN-MAIL> <LTABLE -1 80 150>>>
+
+<ROUTINE VERVAYENS-BUYING-WEAPONS ()
+	<MERCHANT <LTABLE AXE BATTLE-AXE MACE SPEAR STAFF SWORD AXE1 BATTLE-AXE1 MACE1 SPEAR1 STAFF1 SWORD1> <LTABLE -1 -1 -1 -1 -1 -1 180 180 180 180 180 180>>>
+
+<ROUTINE VERVAYENS-BUYING-OTHERS()
+	<MERCHANT <LTABLE CANDLE ROPE LANTERN> <LTABLE -1 -1 75>>>
+
+<CONSTANT CHOICES-VERVAYENS-SELL <LTABLE "Sell armours" "Sell weapons" "Sell weapons (+1 COMBAT)" "Sell weapons (+2 COMBAT)" "Sell weapons (+3 COMBAT)" "Sell other items" TEXT-BACK>>
+
+<ROOM VERVAYENS-MARKET-SELL
+	(DESC "318 Vervayens Market")
+	(CHOICES CHOICES-VERVAYENS-SELL)
+	(DESTINATIONS <LTABLE VERVAYENS-SELL-ARMOURS VERVAYENS-SELL-WEAPONS VERVAYENS-SELL-WEAPONS1 VERVAYENS-SELL-WEAPONS2 VERVAYENS-SELL-WEAPONS3 VERVAYENS-SELL-OTHERS STORY318>)
+	(TYPES SEVEN-CHOICES)
+	(FLAGS LIGHTBIT)>
+
+<ROOM VERVAYENS-SELL-ARMOURS
+	(DESC "318 Merchant buying armours")
+	(EVENTS VERVAYENS-SELLING-ARMOURS)
+	(CONTINUE VERVAYENS-MARKET-SELL)
+	(FLAGS LIGHTBIT)>
+
+<ROOM VERVAYENS-SELL-WEAPONS
+	(DESC "318 Merchant buying weapons")
+	(EVENTS VERVAYENS-SELLING-WEAPONS)
+	(CONTINUE VERVAYENS-MARKET-SELL)
+	(FLAGS LIGHTBIT)>
+
+<ROOM VERVAYENS-SELL-WEAPONS1
+	(DESC "318 Merchant buying weapons")
+	(EVENTS VERVAYENS-SELLING-WEAPONS1)
+	(CONTINUE VERVAYENS-MARKET-SELL)
+	(FLAGS LIGHTBIT)>
+
+<ROOM VERVAYENS-SELL-WEAPONS2
+	(DESC "318 Merchant buying weapons")
+	(EVENTS VERVAYENS-SELLING-WEAPONS2)
+	(CONTINUE VERVAYENS-MARKET-SELL)
+	(FLAGS LIGHTBIT)>
+
+<ROOM VERVAYENS-SELL-WEAPONS3
+	(DESC "318 Merchant buying weapons")
+	(EVENTS VERVAYENS-SELLING-WEAPONS3)
+	(CONTINUE VERVAYENS-MARKET-SELL)
+	(FLAGS LIGHTBIT)>
+
+<ROOM VERVAYENS-SELL-OTHERS
+	(DESC "318 Merchant buying other items")
+	(EVENTS VERVAYENS-SELLING-OTHERS)
+	(CONTINUE VERVAYENS-MARKET-SELL)
+	(FLAGS LIGHTBIT)>
+
+<ROUTINE VERVAYENS-SELLING-ARMOURS ()
+	<MERCHANT <LTABLE LEATHER-ARMOUR RING-MAIL CHAIN-MAIL SPLINT-ARMOUR PLATE-ARMOUR HEAVY-PLATE> <LTABLE 40 80 150 300 700 1000> ,PLAYER T>>
+
+<ROUTINE VERVAYENS-SELLING-WEAPONS ()
+	<MERCHANT <LTABLE AXE BATTLE-AXE MACE SPEAR STAFF SWORD> <LTABLE 40 40 40 40 40 40> ,PLAYER T>>
+
+<ROUTINE VERVAYENS-SELLING-WEAPONS1 ()
+	<MERCHANT <LTABLE AXE1 BATTLE-AXE1 MACE1 SPEAR1 STAFF1 SWORD1> <LTABLE 180 180 180 180 180 180> ,PLAYER T>>
+
+<ROUTINE VERVAYENS-SELLING-WEAPONS2 ()
+	<MERCHANT <LTABLE AXE2 BATTLE-AXE2 MACE2 SPEAR2 STAFF2 SWORD2> <LTABLE 280 280 280 280 280 280> ,PLAYER T>>
+
+<ROUTINE VERVAYENS-SELLING-WEAPONS3 ()
+	<MERCHANT <LTABLE AXE3 BATTLE-AXE3 MACE3 SPEAR3 STAFF3 SWORD3> <LTABLE 400 400 400 400 400 400> ,PLAYER T>>
+
+<ROUTINE VERVAYENS-SELLING-OTHERS ()
+	<MERCHANT <LTABLE CANDLE ROPE LANTERN> <LTABLE 1 30 75> ,PLAYER T>>
 
 ; "Instructions"
 ; ---------------------------------------------------------------------------------------------
@@ -6242,7 +6420,7 @@
 	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
-<CONSTANT TEXT009 "You sail into the coastal waters of Sorcerer's Isle. Here the sea foam takes on an odd pearly glow by moonlight, and strange songs can be heard across the darkling waters.">
+<CONSTANT TEXT009 "You sail into the coastal waters of Sorcerers' Isle. Here the sea foam takes on an odd pearly glow by moonlight, and strange songs can be heard across the darkling waters.">
 <CONSTANT CHOICES009 <LTABLE "Put into Dweomer harbour" "Sail around the island" "Steer out on to the open sea">>
 
 <ROOM STORY009
@@ -6408,18 +6586,18 @@
 	(FLAGS LIGHTBIT)>
 
 <CONSTANT TEXT020 "Did you sell anything at the market that you had previously obtained there for free?">
-<CONSTANT CHOICES020 <LTABLE "If so" IF-NOT>>
-
-; "TO-DO: Figure out how to enforce this"
 
 <ROOM STORY020
 	(IN ROOMS)
 	(DESC "020")
 	(STORY TEXT020)
-	(CHOICES CHOICES020)
-	(DESTINATIONS <LTABLE STORY372 STORY335>)
-	(TYPES TWO-CHOICES)
+	(EVENTS STORY020-EVENTS)
+	(CONTINUE STORY335)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY020-EVENTS ()
+	<COND (,SOLD-FREE <STORY-JUMP ,STORY372>)>
+	<RESET-GOT-FREE>>
 
 <CONSTANT TEXT021 "\"Let's steer clear of Uttaku,\" suggests the first mate with a fearful glance westwards. \"The Uttakin are rank fiends who merely wear the outer guise of men.'\"">
 
@@ -6575,7 +6753,7 @@
 	<EMPHASIZE "Upon death, you will now be resurrected on the Island of Rebirth.">>
 
 <CONSTANT TEXT032 "You pore over the charts, reckoning your position to lie dead south of Knucklebones Point.">
-<CONSTANT CHOICES032 <LTABLE "Head for Sorcerer's Isle" "Steer a course for the Unnumbered Isles" "Head north to the mainland (Cities of Gold and Glory)" "Go eastwards">>
+<CONSTANT CHOICES032 <LTABLE "Head for Sorcerers' Isle" "Steer a course for the Unnumbered Isles" "Head north to the mainland (Cities of Gold and Glory)" "Go eastwards">>
 
 <ROOM STORY032
 	(IN ROOMS)
@@ -6689,7 +6867,7 @@
 	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
 
-<CONSTANT TEXT039 "You are halfway between the Innis Shoals and Braelak, the Sorcerer's Isle.">
+<CONSTANT TEXT039 "You are halfway between the Innis Shoals and Braelak, the Sorcerers' Isle.">
 <CONSTANT CHOICES039 <LTABLE "Go west" "Head for the mainland (The Court of Hidden Faces)" "Go east" "Steer south for open ocean">>
 
 <ROOM STORY039
@@ -7912,7 +8090,7 @@
 	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
-<CONSTANT TEXT122 "You are sailing away from Braelak, the Sorcerer's Isle">
+<CONSTANT TEXT122 "You are sailing away from Braelak, the Sorcerers' Isle">
 <CONSTANT CHOICES122 <LTABLE "Go north" "Go south" "Go east" "Go west">>
 
 <ROOM STORY122
@@ -9678,7 +9856,7 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
-<CONSTANT TEXT238 "You are washed up on a narrow beach at the back of a bay surrounded by high mist-shrouded peaks. After resting to recover your strength, you pick your way up a series of steep paths until you can get a clear view of the island. To the north lies an expanse of glittering blue forest, so there can be no question where you are -- Braelak, the Sorcerer's Isle. Nearer at hand is a tower built of obsidian blocks.">
+<CONSTANT TEXT238 "You are washed up on a narrow beach at the back of a bay surrounded by high mist-shrouded peaks. After resting to recover your strength, you pick your way up a series of steep paths until you can get a clear view of the island. To the north lies an expanse of glittering blue forest, so there can be no question where you are -- Braelak, the Sorcerers' Isle. Nearer at hand is a tower built of obsidian blocks.">
 <CONSTANT CHOICES238 <LTABLE "Enter the forest" "Go to the tower">>
 
 <ROOM STORY238
@@ -10060,7 +10238,8 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY266-BACKGROUND ()
-	<STORY-SET-DOCK ,DOCK-SMOGMAW ,CURRENT-SHIP>>
+	<STORY-SET-DOCK ,DOCK-SMOGMAW ,CURRENT-SHIP>
+	<RETURN ,STORY044>>
 
 <CONSTANT TEXT267 "You help yourself to the pirates' treasure, which amounts to 400 Shards. Their ship's hold contains 1 Cargo Unit of spices, which you can add to your own cargo if your ship has room for it.||Your mate is for taking the pirate captain's head as a gory trophy of your victory.">
 <CONSTANT TEXT267-LEADERSHIP "You've gained a rank after your stirring leadership in battle.">
@@ -10772,49 +10951,28 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 <ROUTINE STORY310-EVENTS ()
 	<UPGRADE-STAMINA 5>
 	<UPGRADE-ABILITY ,ABILITY-COMBAT 1>>
-	
+
+<CONSTANT TEXT311 "You are on the open ocean somewhere north of Braelak, the Sorcerers' Isle.">
+<CONSTANT CHOICES311 <LTABLE "Steer southwards" "Go west" "Go east" "Go north (Cities of Gold and Glory)">>
+
 <ROOM STORY311
 	(IN ROOMS)
 	(DESC "311")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-OCEAN)
+	(STORY TEXT311)
+	(EVENTS STORY-SET-SAIL)
+	(CHOICES CHOICES311)
+	(DESTINATIONS <LTABLE STORY009 STORY129 STORY301 STORY-CITIES-GOLD-GLORY>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT312 "It takes a thief to catch a thief. During a thorough search of the ship, you discover a secret compartment behind the cook's bunk where there is a large stash of stolen property.||\"My old tobacco pipe!\" cries the bosun. He rolls up his sleeves and advances menacingly on the cook. \"You scurvy swab!\"||Another sailor is appointed as cook, to general approval. For his many crimes both in and out of the galley, the cook is sent to feed the sharks.">
 
 <ROOM STORY312
 	(IN ROOMS)
 	(DESC "312")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT312)
+	(CONTINUE STORY154)
 	(FLAGS LIGHTBIT)>
 
 <CONSTANT TEXT313 "You drag yourself up a beach of large pebbles, strewn with fronds of seaweed. Lying for a few hours in the weak sunshine goes some way to restoring your strength, and you manage to stagger inland to look for signs of habitation. The landscape is desolate and windswept, but you can see a few sheep grazing on the hillsides.">
@@ -10826,158 +10984,100 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(CONTINUE STORY436)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT314 "The tavern is just a wooden hut with curtains of woven pandanus leaves serving as partitions. Customers sit or squat on mats on the floor. The place reeks of sharp liquor and pipe smoke.">
+
 <ROOM STORY314
 	(IN ROOMS)
 	(DESC "314")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT314)
+	(EVENTS STORY314-EVENTS)
+	(CONTINUE STORY044)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY314-EVENTS ()
+	<VISIT-TAVERN ,STORY314 1>>
+
+<CONSTANT TEXT315 "You lose your way and end up in a quiet spot behind a row of huts, where a half dozen assailants leap at you. Seconds later you are face down in the rank mud and struggling for your liberty.">
+<CONSTANT CHOICES315 <LTABLE "Break free and escape">>
 
 <ROOM STORY315
 	(IN ROOMS)
 	(DESC "315")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT315)
+	(CHOICES CHOICES315)
+	(DESTINATIONS <LTABLE <LTABLE STORY044 STORY345>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-COMBAT 13>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT316 "\"This is the very idol of which I spoke!\" cries the priest delightedly.||He takes the winged idol from you and installs it inside the teepee.">
 
 <ROOM STORY316
 	(IN ROOMS)
 	(DESC "316")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT316)
+	(EVENTS STORY316-EVENTS)
+	(CONTINUE STORY277)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY316-EVENTS ("AUX" ROLL)
+	<RETURN-ITEM ,WINGED-IDOL T>
+	<GAIN-CODEWORD ,CODEWORD-CUSHAT>
+	<SET ROLL <RANDOM-EVENT 2 0 T>>
+	<COND (<G? .ROLL <GET-ABILITY-SCORE ,CURRENT-CHARACTER ,ABILITY-SCOUTING>>
+		<UPGRADE-ABILITY ,ABILITY-SCOUTING 1>
+	)>>
+
+<CONSTANT TEXT317 "The hills of Copper Island are honeycombed with mine workings. Beside a tunnel mouth you see a hut where the mine foreman conducts business.">
+<CONSTANT CHOICES317 <LTABLE "Go to see the foreman" "Enter the mines" "Return to Brazen">>
 
 <ROOM STORY317
 	(IN ROOMS)
 	(DESC "317")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-COPPER)
+	(STORY TEXT317)
+	(CHOICES CHOICES317)
+	(DESTINATIONS <LTABLE STORY038 STORY394 STORY099>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT318 "On a small island like this there is not much on sale, but at least the villagers fall over themselves to offer you a bargain.||\"Nothing is too good for our saviour!\" declares one old lady with grateful tears in her eyes.">
+<CONSTANT CHOICES318 <LTABLE "Buy armours/weapons/other items" "Sell armours/weapons/other items" "Leave the market">>
 
 <ROOM STORY318
 	(IN ROOMS)
 	(DESC "318")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-VERVAYENS)
+	(STORY TEXT318)
+	(CHOICES CHOICES318)
+	(DESTINATIONS <LTABLE VERVAYENS-MARKET-BUY VERVAYENS-MARKET-SELL STORY020>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT319 "The nobles are so impressed by your wit and good manners that they make you a gift of a courtier's mask.||\"If you should ever visit our land, this will admit you to the highest social circles,\" they tell you.">
 
 <ROOM STORY319
 	(IN ROOMS)
 	(DESC "319")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT319)
+	(CONTINUE STORY078)
+	(ITEMS <LTABLE COURTIERS-MASK>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT320 "You are sailing off the coast of Ankon-Konu just a few leagues north of Smogmaw, the famous trading town that is home to a thousand ne'er-do-wells from all points of the compass.">
+<CONSTANT CHOICES320 <LTABLE "South to Smogmaw" "North-east to Starspike Island" "Due north" "West" "East to the Sea of Hydras">>
 
 <ROOM STORY320
 	(IN ROOMS)
 	(DESC "320")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-OCEAN)
+	(STORY TEXT320)
+	(EVENTS STORY-SET-SAIL)
+	(CHOICES CHOICES320)
+	(DESTINATIONS <LTABLE STORY266 STORY192 STORY303 STORY263 STORY337>)
+	(TYPES FIVE-CHOICES)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY321
@@ -19590,7 +19690,7 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(VICTORY F)
 	(FLAGS LIGHTBIT)>
 
-<CONSTANT TEXT714 "You are washed up on a narrow stretch of beach at the back of a bay surrounded by high mist-shrouded peaks.||A bottle has been swept up on to the shingle beside you. Though your fingers are trembling with cold, you manage to unscrew it. Inside you find a ship's deeds, which you can add to your list of possessions.||After resting to recover your strength, you pick your way up a series of steep paths until you can get a clear view of the island. To the north lies an expanse of glittering blue forest, so there can be no question where you are -- Braelak, the Sorcerer's Isle. Nearer at hand is a tower built of obsidian blocks.">
+<CONSTANT TEXT714 "You are washed up on a narrow stretch of beach at the back of a bay surrounded by high mist-shrouded peaks.||A bottle has been swept up on to the shingle beside you. Though your fingers are trembling with cold, you manage to unscrew it. Inside you find a ship's deeds, which you can add to your list of possessions.||After resting to recover your strength, you pick your way up a series of steep paths until you can get a clear view of the island. To the north lies an expanse of glittering blue forest, so there can be no question where you are -- Braelak, the Sorcerers' Isle. Nearer at hand is a tower built of obsidian blocks.">
 <CONSTANT CHOICES714 <LTABLE "Enter the forest" "Go to the tower">>
 
 <ROOM STORY714
