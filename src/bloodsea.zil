@@ -5861,7 +5861,8 @@
 	<PUTP ,STORY269 ,P?DOOM T>
 	<PUTP ,STORY284 ,P?DOOM T>
 	<PUTP ,STORY286 ,P?DOOM T>
-	<PUTP ,STORY288 ,P?DOOM T>>
+	<PUTP ,STORY288 ,P?DOOM T>
+	<PUTP ,STORY308 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -10628,226 +10629,150 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT301 "\"Ah!\" cries the cook, emerging from the galley to sniff the fresh salt breeze. \"A life on the open waves -- what king in his palace could hope for better contentment?\"">
+
 <ROOM STORY301
 	(IN ROOMS)
 	(DESC "301")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT301)
+	(EVENTS STORY301-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY398 STORY562 STORY011>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 3 5 12> <LTABLE "Pirates" "Storm" "An uneventful voyage">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY301-EVENTS ()
+	<COND (<AND ,RUN-ONCE <L? ,STAMINA ,MAX-STAMINA>> <GAIN-STAMINA 1>)>>
+
+<CONSTANT TEXT302 "Balmy nights filled with a million stars are followed by days of tranquil beauty. With a good following wind, the ship ploughs on through waves the colour of amethyst. What could disturb your mood of perfect contentment?">
 
 <ROOM STORY302
 	(IN ROOMS)
 	(DESC "302")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT302)
+	(EVENTS STORY302-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY176 STORY501 STORY320 STORY285>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 6 9 12> <LTABLE "Pirates" "Flying fish" "Nothing" "A hurricane">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY302-EVENTS ()
+	<COND (<AND ,RUN-ONCE <L? ,STAMINA ,MAX-STAMINA>> <GAIN-STAMINA 1>)>>
+
+<CONSTANT TEXT303 "The sun's rim dips, the stars rush out -- at one strife comes the dark. By the stern lamp you can see the helmsman's face gleaming pale and gaunt. Like all the crew, he senses something uncanny on the air.||\"I don't mind admitting it,\" mutters the mate, \"fear sips at the blood of my heart as from a frosted cup.\"||\"Hold steady, mister,\" you tell him. \"We must set a stout example for the crew.\"">
 
 <ROOM STORY303
 	(IN ROOMS)
 	(DESC "303")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT303)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY080 STORY683 STORY428 STORY693>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 7 9 12> <LTABLE "Barnacle men" "A dreadful doom" "A skeletal ship" "The Furies descend">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT304 "\"Ah, this is the life,\" declares the bosun as he stretches contentedly in the shade under a palm tree. The exertion in the heat of the afternoon has made you all drowsy.">
+<CONSTANT CHOICES304 <LTABLE "Stay awake" TEXT-ROLL-MAGIC "Fall asleep">>
 
 <ROOM STORY304
 	(IN ROOMS)
 	(DESC "304")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT304)
+	(CHOICES CHOICES304)
+	(DESTINATIONS <LTABLE STORY005 <LTABLE STORY005 STORY582> STORY582>)
+	(REQUIREMENTS <LTABLE CODEWORD-CHILL <LTABLE ABILITY-MAGIC 12> NONE>)
+	(TYPES <LTABLE R-CODEWORD R-TEST-ABILITY R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT305 "They doze off. You shake each man and yell in his ears, but this is an enchanted slumber.">
 
 <ROOM STORY305
 	(IN ROOMS)
 	(DESC "305")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT305)
+	(EVENTS STORY305-EVENTS)
+	(CHOICES CHOICES-MAGIC)
+	(DESTINATIONS <LTABLE <LTABLE STORY045 STORY064>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-MAGIC 17>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY305-EVENTS ()
+	<COND (,RUN-ONCE <DELETE-CODEWORD ,CODEWORD-COSY>)>>
+
+<CONSTANT TEXT306 "The pirates pull alongside and cast grappling hooks to seize your vessel. Within moments they are swarming aboard. You offer them you goods, but plead for the freedom of your crew.">
 
 <ROOM STORY306
 	(IN ROOMS)
 	(DESC "306")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT306)
+	(CHOICES CHOICES-CHARISMA)
+	(DESTINATIONS <LTABLE <LTABLE STORY416 STORY435>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-CHARISMA 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT307 "You help yourself to the pirates' treasure, which amounts to 150 Shards. Their ship's hold contains 1 Cargo Unit of furs, which you can add to your own cargo if your ship has room for it. You can also take the pirate captain's head -- such a trophy can fetch a good reward in civilized ports.">
 
 <ROOM STORY307
 	(IN ROOMS)
 	(DESC "307")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT307)
+	(EVENTS STORY307-EVENTS)
+	(CONTINUE STORY101)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY307-EVENTS ()
+	<GAIN-MONEY 150>
+	<STORY-GAIN-CARGO ,CARGO-FURS 1>
+	<KEEP-ITEM ,PIRATE-CAPTAINS-HEAD>>
+
+<CONSTANT TEXT308-AIR "You vainly struggle for breath in the thin air.">
+<CONSTANT TEXT308-SURVIVE "You climb back down to your ship and cut the cable loose before continuing on your way.">
 
 <ROOM STORY308
 	(IN ROOMS)
 	(DESC "308")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(EVENTS STORY308-EVENTS)
+	(CONTINUE STORY228)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY308-EVENTS ()
+	<COND (<CHECK-CODEWORD ,CODEWORD-CALCIUM>
+		<PREVENT-DOOM ,STORY309>
+	)(ELSE
+		<CONTINUE-TEXT ,TEXT308-AIR>
+		<LOSE-STAMINA <ROLL-DICE 1> ,DIED-GREW-WEAKER ,STORY308>
+	)>
+	<CONTINUE-TEXT ,TEXT308-SURVIVE>>
+
+<CONSTANT TEXT309 "\"Sail away from dusk and death,\" says the glowing image. \"Long before you reach the place of many-headed ones you will encounter a grim stranger. Unarmed you must struggle with him, and three times cast him to the deck; then you can demand your boon.\"||The figure vanishes in a spray of wispy green lights.">
 
 <ROOM STORY309
 	(IN ROOMS)
 	(DESC "309")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT309)
+	(CONTINUE STORY252)
+	(CODEWORDS <LTABLE CODEWORD-CERTAIN>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT310 "For the third time in a row, you lift the stranger clear off his feet and smash him hard against the deck. This time he raises his hand in submission.||\"Enough. You win,\" he says, staggering to his feet. \"You're the strongest there is.\"||So saying, he jumps back down to his boat and sails off.">
 
 <ROOM STORY310
 	(IN ROOMS)
 	(DESC "310")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT310)
+	(EVENTS STORY310-EVENTS)
+	(CONTINUE STORY125)
 	(FLAGS LIGHTBIT)>
 
+<ROUTINE STORY310-EVENTS ()
+	<UPGRADE-STAMINA 5>
+	<UPGRADE-ABILITY ,ABILITY-COMBAT 1>>
+	
 <ROOM STORY311
 	(IN ROOMS)
 	(DESC "311")
