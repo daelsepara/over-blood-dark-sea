@@ -3725,6 +3725,10 @@
 	(DESC "treasure map")
 	(FLAGS TAKEBIT)>
 
+<OBJECT WINGED-IDOL
+	(DESC "winged idol")
+	(FLAGS TAKEBIT)>
+
 <OBJECT WITCH-HAND
 	(DESC "witch's hand")
 	(FLAGS TAKEBIT)>
@@ -5536,7 +5540,6 @@
 ; ---------------------------------------------------------------------------------------------
 
 <CONSTANT CHOICES-SMOGMAW-BUY <LTABLE "Buy armours/weapons (without COMBAT bonus)" "Buy weapons (with COMBAT bonus)" "Buy other items" TEXT-BACK>>
-<CONSTANT CHOICES-SMOGMAW-SELL <LTABLE "Sell armours/weapons (without COMBAT bonus)" "Sell weapons (+1 COMBAT)" "Sell weapons (+2 COMBAT)" "Sell weapons (+3 COMBAT)" "Sell other items"  TEXT-BACK>>
 
 <ROOM SMOGMAW-MARKET-BUY
 	(DESC "086 Smogmaw Market")
@@ -5571,6 +5574,8 @@
 
 <ROUTINE SMOGMAW-BUYING-OTHERS ()
 	<MERCHANT <LTABLE COMPASS CROSS-STAFF SEXTANT LOCKPICKS HOLY-SYMBOL ROPE LANTERN PARROT PARROT-FUNGUS> <LTABLE 400 800 1200 250 200 40 140 75 150>>>
+
+<CONSTANT CHOICES-SMOGMAW-SELL <LTABLE "Sell armours/weapons (without COMBAT bonus)" "Sell weapons (+1 COMBAT)" "Sell weapons (+2 COMBAT)" "Sell weapons (+3 COMBAT)" "Sell other items"  TEXT-BACK>>
 
 <ROOM SMOGMAW-MARKET-SELL
 	(DESC "086 Smogmaw Market")
@@ -5632,6 +5637,90 @@
 			<SETG SOLD-PIRATES-HEAD T>
 		)>
 	)>>
+
+; "Copper Island Market"
+; ---------------------------------------------------------------------------------------------
+
+<CONSTANT CHOICES-COPPER-BUY <LTABLE "Buy armours/weapons" "Buy weapons (with COMBAT bonus)" "Buy other items" TEXT-BACK>>
+
+<ROOM COPPER-ISLAND-BUY
+	(DESC "297 Copper Island Market")
+	(CHOICES CHOICES-COPPER-BUY)
+	(DESTINATIONS <LTABLE COPPER-BUY-ARMOURS COPPER-BUY-WEAPONS COPPER-BUY-OTHERS STORY297>)
+	(TYPES FOUR-CHOICES)
+	(FLAGS LIGHTBIT)>
+
+<ROOM COPPER-BUY-ARMOURS
+	(DESC "297 Merchant selling armours/weapons")
+	(EVENTS COPPER-BUYING-ARMOURS)
+	(CONTINUE COPPER-ISLAND-BUY)
+	(FLAGS LIGHTBIT)>
+
+<ROOM COPPER-BUY-WEAPONS
+	(DESC "297 Merchant selling weapons")
+	(EVENTS COPPER-BUYING-WEAPONS)
+	(CONTINUE COPPER-ISLAND-BUY)
+	(FLAGS LIGHTBIT)>
+
+<ROOM COPPER-BUY-OTHERS
+	(DESC "297 Merchant selling other items")
+	(EVENTS COPPER-BUYING-OTHERS)
+	(CONTINUE COPPER-ISLAND-BUY)
+	(FLAGS LIGHTBIT)>
+
+<ROUTINE COPPER-BUYING-ARMOURS ()
+	<MERCHANT <LTABLE LEATHER-ARMOUR RING-MAIL CHAIN-MAIL AXE BATTLE-AXE MACE SPEAR STAFF SWORD> <LTABLE 60 120 240 50 50 50 50 50 50>>>
+
+<ROUTINE COPPER-BUYING-WEAPONS ()
+	<MERCHANT <LTABLE AXE1 BATTLE-AXE1 MACE1 SPEAR1 STAFF1 SWORD1> <LTABLE 250 250 250 250 250 250>>>
+
+<ROUTINE COPPER-BUYING-OTHERS ()
+	<MERCHANT <LTABLE COMPASS CROSS-STAFF SEXTANT LANTERN> <LTABLE 500 900 1300 80>>>
+
+<ROOM COPPER-ISLAND-SELL
+	(DESC "297 Copper Island Market")
+	(CHOICES CHOICES-COPPER-SELL)
+	(DESTINATIONS <LTABLE COPPER-SELL-ARMOURS COPPER-SELL-WEAPONS1 COPPER-SELL-WEAPONS2 COPPER-SELL-OTHERS STORY297>)
+	(TYPES FIVE-CHOICES)
+	(FLAGS LIGHTBIT)>
+
+<ROOM COPPER-SELL-ARMOURS
+	(DESC "297 Merchant buying armours/weapons/magic")
+	(EVENTS COPPER-SELLING-ARMOURS)
+	(CONTINUE COPPER-ISLAND-SELL)
+	(FLAGS LIGHTBIT)>
+
+<ROOM COPPER-SELL-WEAPONS1
+	(DESC "297 Merchant buying weapons (+1 COMBAT)")
+	(EVENTS COPPER-SELLING-WEAPONS1)
+	(CONTINUE COPPER-ISLAND-SELL)
+	(FLAGS LIGHTBIT)>
+
+<ROOM COPPER-SELL-WEAPONS2
+	(DESC "297 Merchant buying weapons (+2 COMBAT)")
+	(EVENTS COPPER-SELLING-WEAPONS2)
+	(CONTINUE COPPER-ISLAND-SELL)
+	(FLAGS LIGHTBIT)>
+
+<CONSTANT CHOICES-COPPER-SELL <LTABLE "Sell armours/magic/weapons" "Sell weapons (+1 COMBAT)" "Sell weapons (+2 COMBAT)" "Sell other items"  TEXT-BACK>>
+
+<ROOM COPPER-SELL-OTHERS
+	(DESC "297 Merchant buying other items")
+	(EVENTS COPPER-SELLING-OTHERS)
+	(CONTINUE COPPER-ISLAND-SELL)
+	(FLAGS LIGHTBIT)>
+
+<ROUTINE COPPER-SELLING-ARMOURS ()
+	<MERCHANT <LTABLE LEATHER-ARMOUR RING-MAIL CHAIN-MAIL AXE BATTLE-AXE MACE SPEAR STAFF SWORD AMBER-WAND> <LTABLE 45 90 180 40 40 40 40 40 40 300> ,PLAYER T>>
+
+<ROUTINE COPPER-SELLING-WEAPONS1 ()
+	<MERCHANT <LTABLE AXE1 BATTLE-AXE1 MACE1 SPEAR1 STAFF1 SWORD1> <LTABLE 200 200 200 200 200 200> ,PLAYER T>>
+
+<ROUTINE COPPER-SELLING-WEAPONS2 ()
+	<MERCHANT <LTABLE AXE2 BATTLE-AXE2 MACE2 SPEAR2 STAFF2 SWORD2> <LTABLE 400 400 400 400 400 400> ,PLAYER T>>
+
+<ROUTINE COPPER-SELLING-OTHERS ()
+	<MERCHANT <LTABLE COMPASS CROSS-STAFF SEXTANT LANTERN SELENIUM-ORE> <LTABLE 400 700 1100 40 700> ,PLAYER T>>
 
 ; "Instructions"
 ; ---------------------------------------------------------------------------------------------
@@ -10096,7 +10185,7 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 <ROUTINE STORY273-EVENTS ("AUX" ITEM)
 	<STORY-LOSE-SHIP>
 	<DO (I 1 6)
-		<SET ITEM <GET-ITEM .I ,PLAYER>>
+		<SET ITEM <GET-ITEM 1 ,PLAYER>>
 		<COND (.ITEM <REMOVE-ITEM .ITEM "lost" T T>)>
 	>
 	<SETG MONEY 0>
@@ -10404,224 +10493,139 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT291 "She climbs up the lifeline like a fat black spider. A claw of a hand reaches up, grey and liver-spotted.||\"Help an old lady, then, my dears,\" she wheezes.||\"Help her be damned!\" snarls the mate, brandishing his flensing knife. \"Let me cut her loose. Drowning's a fair fate for such as her.\"">
+<CONSTANT CHOICES291 <LTABLE "Agree to the mate's suggestion" "Pull her up on deck">>
+
 <ROOM STORY291
 	(IN ROOMS)
 	(DESC "291")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT291)
+	(CHOICES CHOICES291)
+	(DESTINATIONS <LTABLE STORY070 STORY089>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT292 "Someone must have slipped a sleeping powder in your drink, because you wake late with an aching head. Feeling slightly sick, you go straight to your travelling chest. Your worst fears are confirmed -- all your cash and possessions are gone.">
 
 <ROOM STORY292
 	(IN ROOMS)
 	(DESC "292")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT292)
+	(EVENTS STORY292-EVENTS)
+	(CHOICES CHOICES-THIEVERY)
+	(DESTINATIONS <LTABLE <LTABLE STORY312 STORY329>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-THIEVERY 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY292-EVENTS ()
+	<COND (,RUN-ONCE <STORY-LOSE-EVERYTHING F>)>>
+
+<CONSTANT TEXT293 "It will cost you 30 Shards to buy a blessing. The blessing allows you to reroll any one dice result. This needn't necessarily be an ability roll; you could use it to reroll an encounter result that you don't want. You can have only one Luck blessing at a time, and it will work only once.">
 
 <ROOM STORY293
 	(IN ROOMS)
 	(DESC "293")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT293)
+	(EVENTS STORY293-EVENTS)
+	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY293-EVENTS ()
+	<PURCHASE-BLESSING 30 30 ,GOD-THREE-FORTUNES ,BLESSING-LUCK>>
+
+<CONSTANT TEXT294 "You are transformed into a bird and have no cares other than to soar off with the rest of the flock. After many months, you chance to alight on the deck of a ship and when the other birds fly off you are left behind -- human once more. The captain of the vessel listens to your tale with astonishment, but seems to accept it as true. \"I have heard that the natives of the Weeping Jungle believe that all mankind were birds once.\"||You have not lost your money or possessions, which were transformed with you, but your ship is gone; The captain agrees to drop you off in Smogmaw, unless you would rather pay him 30 Shards to take you back to Dweomer.">
+<CONSTANT CHOICES294 <LTABLE "Go to Dweomer" "Disembark at Smogmaw" >>
 
 <ROOM STORY294
 	(IN ROOMS)
 	(DESC "294")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT294)
+	(EVENTS STORY294-EVENTS)
+	(CHOICES CHOICES294)
+	(DESTINATIONS <LTABLE STORY100 STORY044 >)
+	(REQUIREMENTS <LTABLE 30 NONE>)
+	(TYPES ONE-MONEY)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY294-EVENTS ()
+	<COND (,RUN-ONCE <STORY-LOSE-SHIP>)>>
+
+<CONSTANT TEXT295 "The streets of Smogmaw are narrow boardwalks, some of them floating on pontoons out over the sluggish yellow river. The air is hot and sticky like watery treacle. At dusk a sparkling haze crawls out from the jungle, giving this place its name: the Misty Estuary.">
 
 <ROOM STORY295
 	(IN ROOMS)
 	(DESC "295")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT295)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY315 STORY044 STORY332>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 9 12> <LTABLE "Press-ganged!" "A pleasant stroll" "A mysterious hut">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT296 "\"How can I offer blessing and the like?\" laments the priest, a stooped little man with a bald pate and, appropriately enough, a hooked beak of a nose.||\"What's the problem?\"||\"The idol of the god was stolen by unscrupulous people of the Macaw Tribe. Until it is returned, there is no divine power here.\"">
 
 <ROOM STORY296
 	(IN ROOMS)
 	(DESC "296")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT296)
+	(CHOICES CHOICES-HAVE-NOT)
+	(DESTINATIONS <LTABLE STORY316 STORY044>)
+	(REQUIREMENTS <LTABLE WINGED-IDOL NONE>)
+	(TYPES ONE-ITEM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT297 "The market is held in a warren of booths set up in a roofed arcade at the eastern edge of town. If you have a ship and want to load a cargo of copper ore, you should visit the mines.">
+
+<CONSTANT CHOICES297 <LTABLE "Buy armours/weapons/other items" "Sell armours/weapons/magic/other items" "Leave the market">>
 
 <ROOM STORY297
 	(IN ROOMS)
 	(DESC "297")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-COPPER)
+	(STORY TEXT297)
+	(CHOICES CHOICES297)
+	(DESTINATIONS <LTABLE COPPER-ISLAND-BUY COPPER-ISLAND-SELL STORY099>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT298 "\"Where to now, skipper?\" asks the helmsman as he takes the ship out of Vervayens harbour.">
+<CONSTANT CHOICES298 <LTABLE "Steer north" "Steer south" "Steer west" "Steer east">>
 
 <ROOM STORY298
 	(IN ROOMS)
 	(DESC "298")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-OCEAN)
+	(STORY TEXT298)
+	(EVENTS STORY-SET-SAIL)
+	(CHOICES CHOICES298)
+	(DESTINATIONS <LTABLE STORY119 STORY263 STORY042 STORY303>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT299 "A shrieking phantom becomes lodged at the top of the main-mast, where it rants and flickers like a ball of lightning. The mate comes to you with his hair on end and pleads for you to exorcize it before the ship is doomed.">
 
 <ROOM STORY299
 	(IN ROOMS)
 	(DESC "299")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT299)
+	(CHOICES CHOICES-SANCTITY)
+	(DESTINATIONS <LTABLE <LTABLE STORY280 STORY014>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-SANCTITY 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT300 "Far out at sea with only the stars to guide you, you taste the salty wind and ponder your next course.">
+<CONSTANT CHOICES300 <LTABLE "Steer west" "Steer east" "Steer north" "Steer south">>
 
 <ROOM STORY300
 	(IN ROOMS)
 	(DESC "300")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-OCEAN)
+	(STORY TEXT300)
+	(CHOICES CHOICES300)
+	(DESTINATIONS <LTABLE STORY370 STORY153 STORY208 STORY468>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY301
