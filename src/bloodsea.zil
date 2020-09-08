@@ -577,6 +577,7 @@
 						)>
 					)(<AND <EQUAL? .TYPE ,R-DOCKED> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
 						<COND (<CHECK-DOCKED .LIST>
+							<COND (<N=? ,CURRENT-SHIP <CHECK-DOCKED .LIST>> <SETG CURRENT-SHIP <CHECK-DOCKED .LIST>>)>
 							<SETG HERE <GET .DESTINATIONS .CHOICE>>
 							<CRLF>
 						)(ELSE
@@ -3248,6 +3249,7 @@
 ; ---------------------------------------------------------------------------------------------
 
 <OBJECT CODEWORD-AID (DESC "Aid")>
+<OBJECT CODEWORD-BALUSTER (DESC "Baluster")>
 <OBJECT CODEWORD-DANGLE (DESC "Dangle")>
 
 ; "Shack in Smogmaw (Added by SD Separa)"
@@ -3518,6 +3520,10 @@
 <OBJECT CROSS-STAFF
 	(DESC "cross-staff")
 	(SCOUTING 2)
+	(FLAGS TAKEBIT)>
+
+<OBJECT DECKED-MARKED-CARDS
+	(DESC "deck of marked cards")
 	(FLAGS TAKEBIT)>
 
 <OBJECT FAERY-MEAD
@@ -3935,7 +3941,7 @@
 
 ; "Titles and Honours for Over the Blood-Dark Sea"
 ; ---------------------------------------------------------------------------------------------
-
+<OBJECT TITLE-ILLUMINATE-MOLHERN (DESC "Illuminate of Molhern") (FLAGS VOWELBIT)>
 <OBJECT TITLE-SAVIOUR-VERVAYENS (DESC "Saviour of Vervayens Isle")>
 <OBJECT TITLE-UNSPEAKABLE-CULTIST (DESC "Unspeakable Cultist") (EFFECTS <LTABLE 0 0 0 -1 0 0>) (FLAGS VOWELBIT)>
 
@@ -6238,6 +6244,7 @@
 <CONSTANT IF-NOT "If not">
 <CONSTANT OTHERWISE "Otherwise">
 <CONSTANT YOU-ARE-A "You are a">
+<CONSTANT YOU-ARE-AN "You are an">
 
 <CONSTANT TEXT-AFFLICTED "afflicted">
 <CONSTANT TEXT-BACK "Back">
@@ -7514,51 +7521,16 @@
 	<KEEP-ITEM ,WITCH-HAND>>
 
 <CONSTANT TEXT071 "You can set sail -- either on to the open ocean or up the wide Nozama river.">
-<CONSTANT TEXT071-DOCKED "You do not have a ship docked here; you will have to buy a ship or pay for passage">
 <CONSTANT CHOICES071 <LTABLE "Put to sea" "Sail upriver (The Serpent King's Domain)" "Remain in Smogmaw">>
 
 <ROOM STORY071
 	(IN ROOMS)
 	(DESC "071")
-	(EVENTS STORY071-EVENTS)
 	(CHOICES CHOICES071)
 	(DESTINATIONS <LTABLE STORY320 STORY-SERPENT-KINGS-DOMAIN STORY044>)
-	(TYPES THREE-CHOICES)
+	(REQUIREMENTS <LTABLE DOCK-SMOGMAW NONE NONE>)
+	(TYPES <LTABLE R-DOCKED R-NONE R-NONE>)
 	(FLAGS LIGHTBIT)>
-
-<ROUTINE STORY071-EVENTS ()
-	<COND (<CHECK-DOCKED ,DOCK-SMOGMAW>
-		<REPEAT ()
-			<COND (,CURRENT-SHIP
-				<REPEAT ()
-					<COND (<IS-DOCKED ,DOCK-SMOGMAW>
-						<REPEAT ()
-							<COND (<VALIDATE-CARGO ,SMOGMAW-GOODS-SELL>
-								<RETURN>
-							)(ELSE
-								<EMPHASIZE "You cannot put out to sea unless you dispose of your excess cargo!">
-							)>
-						>
-						<RETURN>
-					)(ELSE
-						<CRLF>
-						<TELL "Your ">
-						<PRINT-ITEM ,CURRENT-SHIP T>
-						<TELL " is not docked at " <GET ,DOCKS ,DOCK-SMOGMAW> ,EXCLAMATION-CR>
-						<VIEW-SHIP-MANIFEST>
-					)>
-				>
-				<RETURN>
-			)(ELSE
-				<EMPHASIZE "You must choose a ship that is docked here!">
-				<VIEW-SHIP-MANIFEST>
-			)>
-		>
-		<CONTINUE-TEXT ,TEXT071>
-	)(ELSE
-		<CONTINUE-TEXT ,TEXT071-DOCKED>
-		<STORY-JUMP ,STORY110>
-	)>>
 
 <CONSTANT TEXT072 "The priestess stretches like a cat, making no effort to stifle a yawn. \"If you'll excuse me, it is time for my siesta.\" She lies back on the divan and closes her eyes. You quietly withdraw from the temple.">
 
@@ -11461,11 +11433,12 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(EVENTS STORY335-EVENTS)
 	(CHOICES CHOICES335)
 	(DESTINATIONS <LTABLE STORY318 STORY390 STORY349 STORY298>)
-	(TYPES FOUR-CHOICES)
+	(REQUIREMENTS <LTABLE NONE NONE NONE DOCK-VERVAYENS>)
+	(TYPES <LTABLE R-NONE R-NONE R-NONE R-DOCKED>)
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY335-EVENTS ()
-	<VISIT-STORAGE ,STORY335 ,HOUSE-VERVAYENS>>
+	<COND (,RUN-ONCE <VISIT-STORAGE ,STORY335 ,HOUSE-VERVAYENS>)>>
 
 <CONSTANT TEXT336 "A gilded pleasure barge sails by, bearing noblemen from Aku to Metriciens. They pull alongside to converse with you for a short while before proceeding on their way.">
 
@@ -11538,225 +11511,170 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 <ROUTINE STORY340-EVENTS ()
 	<STORY-LOSE-SHIP>>
 
+<CONSTANT TEXT341 "You put into a bay on a small uncharted island. Going ashore to replenish your supplies, you come across a huge serpent with skin like tree-bark lying in the shade of the trees. It watches you with cold intensity.||\"Shall we kill it, skipper?\" asks the master of arms.">
+<CONSTANT CHOICES341 <LTABLE "Have the men attack it" "Kill it yourself" "Leave without disturbing it">>
+
 <ROOM STORY341
 	(IN ROOMS)
 	(DESC "341")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT341)
+	(EVENTS STORY341-EVENTS)
+	(CHOICES CHOICES341)
+	(DESTINATIONS <LTABLE STORY328 STORY211 STORY125>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY341-EVENTS ()
+	<DELETE-CODEWORD ,CODEWORD-CORADE>>
+
+<CONSTANT TEXT342 "You climb back up the sinkhole and hurry away from the Gorgons' lair. What now?">
+<CONSTANT CHOICES342 <LTABLE "Put to sea in one of the fishing boats" "Cross to the other side of the island" "Pray to your god for deliverance">>
 
 <ROOM STORY342
 	(IN ROOMS)
 	(DESC "342")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT342)
+	(CHOICES CHOICES342)
+	(DESTINATIONS <LTABLE STORY411 STORY449 STORY467>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT343 "A clap of her hands brings two more slave boys scurrying over with a card table. A second divan is placed for you to recline. Goblets of chilled fruit juice are set beside you.||If you have a deck of marked cards you have the option to use them in the game. Otherwise you will have to play with the priestess's deck.">
+<CONSTANT CHOICES343 <LTABLE "Use" "Agree to play with her deck">>
 
 <ROOM STORY343
 	(IN ROOMS)
 	(DESC "343")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT343)
+	(CHOICES CHOICES343)
+	(DESTINATIONS <LTABLE STORY015 STORY034>)
+	(REQUIREMENTS <LTABLE DECKED-MARKED-CARDS NONE>)
+	(TYPES ONE-ITEM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT344 "You plant yourself beside the mat where they're sitting. \"Get up, you dogs, so I can whip you off to hell.\"||They get unsteadily to their feet, all the worse for drink. \"Aye, aye, skipper,\" says your former mate, Mister Fryer. \"And we'll be happy to take you with us.\"">
 
 <ROOM STORY344
 	(IN ROOMS)
 	(DESC "344")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT344)
+	(CHOICES CHOICES-CODEWORD)
+	(DESTINATIONS <LTABLE STORY112 STORY073>)
+	(REQUIREMENTS <LTABLE CODEWORD-AID NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT345 "You are coshed and dragged aboard a Sokaran merchant ship, the Tidy Sum. By the time you come round the ship has already put to sea. You also discover that the press-gang took all your cash, though at least they left your possessions.">
 
 <ROOM STORY345
 	(IN ROOMS)
 	(DESC "345")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT345)
+	(EVENTS STORY345-EVENTS)
+	(CHOICES CHOICES-HAVE-NOT)
+	(DESTINATIONS <LTABLE STORY017 STORY036>)
+	(REQUIREMENTS <LTABLE DOCK-SMOGMAW NONE>)
+	(TYPES <LTABLE R-DOCKED R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY345-EVENTS ()
+	<COND (,RUN-ONCE
+		<SETG MONEY 0>
+		<UPDATE-STATUS-LINE>
+	)>>
+
+<CONSTANT TEXT346 "The other cultists nod as you enter. \"May His name never be spoken,\" they intone in ritual greeting.||\"Whose name? Shush!\" you reply in the words of the time-honoured catechism.||It is almost time for supper.">
+<CONSTANT TEXT346-CONTINUED "After having your loathsome meal, you slip furtively back to town.">
 
 <ROOM STORY346
 	(IN ROOMS)
 	(DESC "346")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT346)
+	(EVENTS STORY346-EVENTS)
+	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY346-EVENTS ("AUX" (INGREDIENT NONE))
+	<COND (<CHECK-ITEM ,PIRATE-CAPTAINS-HEAD>
+		<SET INGREDIENT ,PIRATE-CAPTAINS-HEAD>
+	)(<CHECK-ITEM ,WITCH-HAND>
+		<SET INGREDIENT ,WITCH-HAND>
+	)>
+	<COND (.INGREDIENT
+		<CRLF>
+		<TELL "Add the ">
+		<PRINT-ITEM .INGREDIENT T>
+		<TELL " to the simmering stew?">
+		<COND (<YES?> <REMOVE-ITEM .INGREDIENT "added" T T>)>
+	)>
+	<CONTINUE-TEXT ,TEXT346-CONTINUED>>
+
+<CONSTANT TEXT347 "The only temple in Brazen is consecrated to Molhern. It is a low stone building, artfully fashioned to reflect the style of ancient menhirs.||The priest cannot induct you into the inner mysteries of Molhern's worship. \"I am not senior enough for that, but I can grant blessings.\"">
+<CONSTANT CHOICES347 <LTABLE YOU-ARE-AN IF-NOT>>
 
 <ROOM STORY347
 	(IN ROOMS)
 	(DESC "347")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT347)
+	(CHOICES CHOICES347)
+	(DESTINATIONS <LTABLE STORY517 STORY498>)
+	(REQUIREMENTS <LTABLE TITLE-ILLUMINATE-MOLHERN NONE>)
+	(TYPES <LTABLE R-TITLE R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT348 "To keep the crew busy you set them to making a thorough inspection of the ship. It is soon discovered that someone has been breaking into the food supplies. You have a stowaway on board.">
 
 <ROOM STORY348
 	(IN ROOMS)
 	(DESC "348")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT348)
+	(CHOICES CHOICES-CODEWORD)
+	(DESTINATIONS <LTABLE STORY049 STORY120>)
+	(REQUIREMENTS <LTABLE CODEWORD-BALUSTER NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT349 "Half the young men of Vervayens are eager to ship with you, so you have no trouble getting a good stock of volunteers. You cannot get better crew than this on such a small island. \"What now, skipper?\" asks your new cabin boy.">
+<CONSTANT CHOICES349 <LTABLE "Visit the market" "Consult the wise woman" "Go to your house" "Put to sea">>
 
 <ROOM STORY349
 	(IN ROOMS)
 	(DESC "349")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT349)
+	(EVENTS STORY349-EVENTS)
+	(CHOICES CHOICES349)
+	(DESTINATIONS <LTABLE STORY318 STORY390 STORY335 STORY298>)
+	(REQUIREMENTS <LTABLE NONE NONE NONE DOCK-VERVAYENS>)
+	(TYPES <LTABLE R-NONE R-NONE R-NONE R-DOCKED>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY349-EVENTS ("AUX" SHIP CONDITION)
+	<COND (,RUN-ONCE
+		<SET SHIP <CHECK-DOCKED ,DOCK-VERVAYENS>>
+		<COND (.SHIP
+			<SET CONDITION <GETP .SHIP ,P?CONDITION>>
+			<COND (<EQUAL? .CONDITION ,CONDITION-POOR> <STORY-RESET-CREW ,CONDITION-AVERAGE .SHIP>)>
+		)>
+	)>>
+
+<CONSTANT TEXT350 "The stowaway is a runaway slave who has spent his whole life at sea. He has no money, but in return for you letting him stay aboard till you reach port he helps teach your crew what he knows of seafaring.">
 
 <ROOM STORY350
 	(IN ROOMS)
 	(DESC "350")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT350)
+	(EVENTS STORY350-EVENTS)
+	(CONTINUE STORY078)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY350-EVENTS ("AUX" CONDITION)
+	<COND (<AND ,RUN-ONCE ,CURRENT-SHIP>
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<COND (<N=? .CONDITION ,CONDITION-EXCELLENT>
+			<INC .CONDITION>
+			<STORY-RESET-CREW .CONDITION ,CURRENT-SHIP>
+		)>
+	)>>
 
 <ROOM STORY351
 	(IN ROOMS)
