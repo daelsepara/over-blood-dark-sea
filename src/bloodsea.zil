@@ -3226,6 +3226,7 @@
 <OBJECT CODEWORD-CLUTCH (DESC "Clutch")>
 <OBJECT CODEWORD-CORADE (DESC "Corade")>
 <OBJECT CODEWORD-COSY (DESC "Cosy")>
+<OBJECT CODEWORD-COVER (DESC "Cover")>
 <OBJECT CODEWORD-COVET (DESC "Covet")>
 <OBJECT CODEWORD-CROCUS (DESC "Crocus")>
 <OBJECT CODEWORD-CULL (DESC "Cull")>
@@ -3891,6 +3892,12 @@
 	(COMBAT 15)
 	(DEFENSE 18)
 	(STAMINA 18)>
+
+<OBJECT MONSTER-VIOLET-MAN
+	(DESC "Violet man")
+	(COMBAT 9)
+	(DEFENSE 12)
+	(STAMINA 9)>
 
 ; "Titles and Honours for Over the Blood-Dark Sea"
 ; ---------------------------------------------------------------------------------------------
@@ -6013,6 +6020,7 @@
 	<RESET-ODDS 2 0 ,STORY186>
 	<RESET-ODDS 2 0 ,STORY194>
 	<RESET-ODDS 2 0 ,STORY268>
+	<RESET-ODDS 2 0 ,STORY324>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUTP ,STORY006 ,P?DOOM T>
 	<PUTP ,STORY007 ,P?DOOM T>
@@ -6042,7 +6050,8 @@
 	<PUTP ,STORY286 ,P?DOOM T>
 	<PUTP ,STORY288 ,P?DOOM T>
 	<PUTP ,STORY308 ,P?DOOM T>
-	<PUTP ,STORY314 ,P?DOOM T>>
+	<PUTP ,STORY314 ,P?DOOM T>
+	<PUTP ,STORY326 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -8134,6 +8143,7 @@
 	(DESC "125")
 	(LOCATION LOCATION-OCEAN)
 	(STORY TEXT125)
+	(EVENTS STORY-SET-SAIL)
 	(CHOICES CHOICES125)
 	(DESTINATIONS <LTABLE STORY266 STORY004 STORY227 STORY302>)
 	(TYPES FOUR-CHOICES)
@@ -11082,225 +11092,157 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(TYPES FIVE-CHOICES)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT321 "Your ordeal is over. You resolve to leave these bane-drenched waters with all speed.">
+<CONSTANT CHOICES321 <LTABLE "Go north" "Go south" "Go east" "Go west">>
+
 <ROOM STORY321
 	(IN ROOMS)
 	(DESC "321")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT321)
+	(CHOICES CHOICES321)
+	(DESTINATIONS <LTABLE STORY119 STORY302 STORY156 STORY004>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT322 "You are south of Marlock City -- or Old Sokar, to give the port its original name, which still appears on most charts. The helmsman asks for a new bearing.">
+<CONSTANT CHOICES322 <LTABLE "Steer west" "South" "North (The War-Torn Kingdom)" "East">>
 
 <ROOM STORY322
 	(IN ROOMS)
 	(DESC "322")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT322)
+	(CHOICES CHOICES322)
+	(DESTINATIONS <LTABLE STORY402 STORY081 STORY-WAR-TORN-KINGDOM STORY066>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT323 "Obviously a powerful sleep spell permeates this island. You know you can only overcome it by using stronger magic of your own. The song of the mermaids bursts to your lips as a result of sudden inspiration. It has the desired effect -- the men rise from the stone couches and follow you like sleepwalkers along the causeway.">
 
 <ROOM STORY323
 	(IN ROOMS)
 	(DESC "323")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT323)
+	(CONTINUE STORY102)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY324
 	(IN ROOMS)
 	(DESC "324")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(EVENTS STORY324-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY286 STORY024>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 6 100> <LTABLE "The pirates overtake you" "You outrun them">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY324-EVENTS ("AUX" (MODIFIER 0) (CONDITION 0))
+	<SET MODIFIER <GETP ,CURRENT-CHARACTER ,P?RANK>>
+	<COND (,CURRENT-SHIP
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<COND (<EQUAL? .CONDITION ,CONDITION-AVERAGE>
+			<INC .MODIFIER>
+		)(<EQUAL? .CONDITION ,CONDITION-GOOD>
+			<SET MODIFIER <+ .MODIFIER 2>>
+		)(<EQUAL? .CONDITION ,CONDITION-EXCELLENT>
+			<SET MODIFIER <+ .MODIFIER 3>>
+		)>
+	)>
+	<RESET-ODDS 2 .MODIFIER ,STORY324>>
+
+<CONSTANT TEXT325 "The discovery of a rat's skeleton at the bottom of a used beer barrel provokes discontent among the crew. Matters are worsened by the first mate's jocular remark that the rat will have given the beer some flavour. The men become surly.||At seven bells in the forenoon watch, you come on deck to discover the men on duty have broken a keg of black Barony wine out of ship's stores and are blind drunk. The ship has been drifting untended for hours!">
 
 <ROOM STORY325
 	(IN ROOMS)
 	(DESC "325")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT325)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY055 STORY210 STORY172 STORY246 STORY303 STORY-LORDS-RISING-SUN>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 6 7 9 11 12> NONE>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT326 "It is getting harder to breathe.">
+<CONSTANT TEXT326-CONTINUED "You see three men of violet hue come dashing at you wielding thin rapiers of unearthly metal. Your stout seamen of Golnir are at your side, leaving you to deal with the leader of these alien skyfarers.">
+<CONSTANT TEXT326-HIT "They strike at your retreating back, causing some damage.">
 
 <ROOM STORY326
 	(IN ROOMS)
 	(DESC "326")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT326)
+	(EVENTS STORY326-EVENTS)
+	(CONTINUE STORY339)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY326-EVENTS ()
+	<COND (<NOT <CHECK-CODEWORD ,CODEWORD-CALCIUM>> <LOSE-STAMINA 3 ,DIED-GREW-WEAKER ,STORY326>)>
+	<COND (<IS-ALIVE>
+		<CONTINUE-TEXT ,TEXT326-CONTINUED>
+		<CRLF>
+		<TELL "Do you wish to give up and flee?">
+		<COND (<YES?>
+			<CONTINUE-TEXT ,TEXT326-HIT>
+			<LOSE-STAMINA <ROLL-DICE 1> ,DIED-FROM-INJURIES ,STORY326>
+			<COND (<IS-ALIVE> <STORY-JUMP ,STORY308>)>
+		)(ELSE
+			<COMBAT-MONSTER ,MONSTER-VIOLET-MAN 9 12 9>
+			<CHECK-COMBAT ,MONSTER-VIOLET-MAN ,STORY326>
+		)>
+	)>>
+
+<CONSTANT TEXT327 "The spectre's face is formed of faint patches of shadow in the green glare. \"From the Nozama to the Grimm, from Hypnos' isle to his black-winged mother's spire -- at the heart of this cross you'll find the contentment you seek.\"||The light flickers, flares briefly, and goes out. You feel as if you have awakened from a dream.">
 
 <ROOM STORY327
 	(IN ROOMS)
 	(DESC "327")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT327)
+	(CONTINUE STORY252)
+	(CODEWORDS <LTABLE CODEWORD-COVER>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT328 "The serpent is big, but old and slow. The sailors slaughter it easily, one man holding down its head with the end of an oar, whilst the others slice it up with their swords.||The island appears deserted. You return to the ship and give the order to be under way.">
 
 <ROOM STORY328
 	(IN ROOMS)
 	(DESC "328")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT328)
+	(CONTINUE STORY125)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT329 "You search high and low, but the stolen items are nowhere to be found.">
 
 <ROOM STORY329
 	(IN ROOMS)
 	(DESC "329")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT329)
+	(EVENTS STORY329-EVENTS)
+	(CONTINUE STORY154)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY329-EVENTS ()
+	<STORY-LOSE-EVERYTHING F>>
+
+<CONSTANT TEXT330 "You tell the priestess you no longer wish to be an initiate. She utters a long weary sigh and throws her head back in the slumbrous heat. \"Go then.\"||\"Do I not have to pay compensation? That is customary.\"||\"Not here in the tropics. Every exertion only makes a pool for flies to paddle in. I cannot be bothered to rise from my divan to open the strongbox. Now, begone.\"">
 
 <ROOM STORY330
 	(IN ROOMS)
 	(DESC "330")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT330)
+	(EVENTS STORY330-EVENTS)
+	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY330-EVENTS ()
+	<CRLF>
+	<COND (<CHECK-GOD ,GOD-THREE-FORTUNES>
+		<TELL "You renounce the worship of the ">
+		<PRINT-ITEM ,GOD-THREE-FORTUNES T>
+		<TELL ,PERIOD-CR>
+	)(ELSE
+		<TELL "Your are not an initiate of the ">
+		<PRINT-ITEM ,GOD-THREE-FORTUNES T>
+		<TELL ,EXCLAMATION-CR>
+	)>>
 
 <ROOM STORY331
 	(IN ROOMS)
