@@ -261,7 +261,6 @@
 		<UPDATE-STATUS-LINE>
 	)>>
 
-; "TO-DO: Verify that Resurrection at the Island of Rebirth is used only 3 times"
 <ROUTINE CHECK-DOOM ("AUX" DOOM HAS-ROYAL-RING)
 	<SET DOOM <GETP ,HERE ,P?DOOM>>
 	<COND (.DOOM
@@ -3781,6 +3780,11 @@
 	(DESC "treasure map")
 	(FLAGS TAKEBIT)>
 
+<OBJECT VERDIGRIS-KEY
+	(DESC "verdigris key")
+	(QUANTITY 1)
+	(FLAGS TAKEBIT)>
+
 <OBJECT WINGED-IDOL
 	(DESC "winged idol")
 	(FLAGS TAKEBIT)>
@@ -3913,6 +3917,12 @@
 	(DESC "Assassin")
 	(COMBAT 8)
 	(DEFENSE 10)
+	(STAMINA 8)>
+
+<OBJECT MONSTER-GORGON
+	(DESC "Gorgon")
+	(COMBAT 4)
+	(DEFENSE 5)
 	(STAMINA 8)>
 
 <OBJECT MONSTER-MUTINEER
@@ -4542,38 +4552,33 @@
 <CONSTANT TEXT-GUILD-NONE "You have not made any investments!">
 <CONSTANT TEXT-GUILD-BROKE "You do not have enough money!">
 
-<CONSTANT TEXT-INVESTMENT-LOST "You lost the entire sum!">
-<CONSTANT TEXT-INVESTMENT-LOSE50 "You lost 50%">
+<CONSTANT TEXT-INVESTMENT-LOSE20 "You lost 20%">
 <CONSTANT TEXT-INVESTMENT-LOSE10 "You lost 10%">
-<CONSTANT TEXT-INVESTMENT-UNCHANGED "Your investments remain unchanged.">
 <CONSTANT TEXT-INVESTMENT-PROFIT10 "You gain a 10% profit!">
-<CONSTANT TEXT-INVESTMENT-PROFIT50 "You gain a 50% profit!">
-<CONSTANT TEXT-INVESTMENT-DOUBLED "Your investments are doubled!">
+<CONSTANT TEXT-INVESTMENT-PROFIT20 "You gain a 20% profit!">
+<CONSTANT TEXT-INVESTMENT-PROFIT25 "You gain a 25% profit!">
 
-<ROUTINE CHECK-INVESTMENTS (STORY "AUX" INVESTMENTS ROLL)
+; "Modified for Over the Blood-Dark Sea"
+<ROUTINE CHECK-INVESTMENTS (STORY "AUX" INVESTMENTS ROLL (MODIFIER 0))
 	<SET INVESTMENTS <GETP .STORY ,P?INVESTMENTS>>
 	<COND (.INVESTMENTS
-		<SET ROLL <ROLL-DICE 2>>
+		<COND (<CHECK-GOD ,GOD-THREE-FORTUNES> <SET MODIFIER 1>)>
+		<SET ROLL <RANDOM-EVENT 2 .MODIFIER T>>
 		<COND (<L=? .ROLL 4>
-			<EMPHASIZE ,TEXT-INVESTMENT-LOST ,TEXT-GUILD>
-			<SET .INVESTMENTS 0>
+			<EMPHASIZE ,TEXT-INVESTMENT-LOSE20 ,TEXT-GUILD>
+			<SET .INVESTMENTS <- </ .INVESTMENTS 5>>>
 		)(<L=? .ROLL 6>
-			<EMPHASIZE ,TEXT-INVESTMENT-LOSE50 ,TEXT-GUILD>
-			<SET .INVESTMENTS </ .INVESTMENTS 2>>
-		)(<L=? .ROLL 8>
 			<EMPHASIZE ,TEXT-INVESTMENT-LOSE10 ,TEXT-GUILD>
 			<SET .INVESTMENTS <- </ .INVESTMENTS 10>>>
-		)(<L=? .ROLL 10>
-			<EMPHASIZE ,TEXT-INVESTMENT-UNCHANGED ,TEXT-GUILD>
-		)(<L=? .ROLL 12>
+		)(<L=? .ROLL 8>
 			<EMPHASIZE ,TEXT-INVESTMENT-PROFIT10 ,TEXT-GUILD>
 			<SET .INVESTMENTS <+ </ .INVESTMENTS 10>>>
-		)(<L=? .ROLL 14>
-			<EMPHASIZE ,TEXT-INVESTMENT-PROFIT50 ,TEXT-GUILD>
-			<SET .INVESTMENTS <+ </ .INVESTMENTS 2>>>
+		)(<L=? .ROLL 11>
+			<EMPHASIZE ,TEXT-INVESTMENT-PROFIT20 ,TEXT-GUILD>
+			<SET .INVESTMENTS <+ </ .INVESTMENTS 5>>>
 		)(ELSE
-			<EMPHASIZE ,TEXT-INVESTMENT-DOUBLED ,TEXT-GUILD>
-			<SET .INVESTMENTS <* .INVESTMENTS 2>>
+			<EMPHASIZE ,TEXT-INVESTMENT-PROFIT25 ,TEXT-GUILD>
+			<SET .INVESTMENTS <+ </ .INVESTMENTS 4>>>
 		)>
 		<COND (<L? .INVESTMENTS 0> <SET .INVESTMENTS 0>)>
 		<PUTP .STORY ,P?INVESTMENTS .INVESTMENTS>
@@ -6152,6 +6157,7 @@
 	<PUTP ,SILVER-HORSESHOE ,P?QUANTITY 1>
 	<PUTP ,SMOULDER-FISH ,P?QUANTITY 1>
 	<PUTP ,SPECTRAL-VEIL ,P?QUANTITY 1>
+	<PUTP ,VERDIGRIS-KEY ,P?QUANTITY 1>
 	<PUTP ,WITCH-HAND ,P?QUANTITY 1>
 	<RESET-CARGO-GOODS>
 	<RESET-GEAR>
@@ -6208,7 +6214,8 @@
 	<PUTP ,STORY288 ,P?DOOM T>
 	<PUTP ,STORY308 ,P?DOOM T>
 	<PUTP ,STORY314 ,P?DOOM T>
-	<PUTP ,STORY326 ,P?DOOM T>>
+	<PUTP ,STORY326 ,P?DOOM T>
+	<PUTP ,STORY356 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -11680,221 +11687,130 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(IN ROOMS)
 	(DESC "351")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY351-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY351-BACKGROUND ()
+	<COND (<CHECK-VISITS-MORE ,STORY351 3>
+		<SETG RESURRECTION-ARRANGEMENTS NONE>
+		<RETURN ,STORY123>
+	)>
+	<RETURN ,STORY069>>
+
+<CONSTANT TEXT352 "Looking south, you can see the shoreline of Ankon-Konu as a faint mauve line beneath a sky of cobalt blue.">
+<CONSTANT CHOICES352 <LTABLE "Go south (The Lone and Level Sands)" "Go north" "Go east" "Go west">>
 
 <ROOM STORY352
 	(IN ROOMS)
 	(DESC "352")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT352)
+	(CHOICES CHOICES352)
+	(DESTINATIONS <LTABLE STORY-LONE-LEVEL-SANDS STORY370 STORY117 STORY040>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT353 "You tie yourself to the wheel and stand steadfast as the sweet singing of the mermaids wafts across the water. It sounds so lovely, so ethereally unattainable, that you have a wild impulse to hurl yourself into the sea and drift down to meet with the maidens on the sea bed. You even find yourself untying the knots, and you have to punch your fingers against the wheel to make them sore and numb so that you cannot get free.||The ordeal is indescribable. It is like hearing the dying song of your true love, like climbing to the verge of paradise only to slip away at the last instant, like the last day of childhood's innocence...||It ends at last. The crewmen come back on deck with ashen faces. The bosun tells you that you are weeping -- you hadn't noticed. He unties the knots and you stagger below, for a while inconsolable.">
 
 <ROOM STORY353
 	(IN ROOMS)
 	(DESC "353")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT353)
+	(CONTINUE STORY300)
+	(CODEWORDS <LTABLE CODEWORD-CERUMEN>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT354 "The approaching vessel announces her hostile intent by hoisting the baleful red pennant of the Reavers. Her oars give her a good burst of speed over short distances, and she is soon bearing down on you.">
+<CONSTANT CHOICES354 <LTABLE "Make a run for it" "Parley" "Fight it out">>
 
 <ROOM STORY354
 	(IN ROOMS)
 	(DESC "354")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT353)
+	(CHOICES CHOICES354)
+	(DESTINATIONS <LTABLE STORY324 STORY306 STORY286>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT355 "The sky is the colour of thunder. From behind the clouds comes the muttering of a great storm. The sailors chatter in fear. \"It is the voice of Elnir,\" says the cook. \"And he ain't inviting us to dance no blessed jig!\"">
+<CONSTANT CHOICES355 <LTABLE "The storm hits with titanic fury, tossing huge waves across the deck">>
 
 <ROOM STORY355
 	(IN ROOMS)
 	(DESC "355")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT355)
+	(EVENTS STORY355-EVENTS)
+	(CHOICES CHOICES355)
+	(DESTINATIONS <LTABLE <LTABLE STORY486 STORY718 STORY262>>)
+	(REQUIREMENTS STORY-STORM-REQUIREMENTS)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY355-EVENTS ()
+	<STORM-AT-SEA ,STORY355 ,STORY648>>
+
+<CONSTANT TEXT356 "The strange women come closer and one of them touches your face with her long dry fingers. Immediately her crowing laughter turns to a strangled cry of alarm: \"Warm living flesh! Our powers did not work, my sister--!\"||You take advantage of her surprise to deal her a vicious blow that lays her senseless. Now you have only one of them to fight.">
 
 <ROOM STORY356
 	(IN ROOMS)
 	(DESC "356")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT356)
+	(EVENTS STORY356-EVENTS)
+	(CONTINUE STORY393)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY356-EVENTS ()
+	<COMBAT-MONSTER ,MONSTER-GORGON 4 5 8>
+	<CHECK-COMBAT ,MONSTER-GORGON ,STORY356>>
+
+<CONSTANT TEXT357 "Originally there were three gods, those who created the world. These are hardly mentioned in the legends. They are dim, shadowy figures of a primordial age. Even their names bespeak dream-like obscurity: Harkun, He Who Is Like Harkun, and The Third God.||These three having died, their place was taken by powerful demiurges, each with his or her own delineated jurisdiction. Thus there is Tyrnai, overseer of war; Elnir, lord of the sky; irascible Maka, who brings disease and famine if not appeased with sacrifices; Lacuna, lady of the hunt; Nagil, king of the dead; wise Molhern, deity of craftsmen; Sig, who guides the soft footsteps of thieves; the Three Fortunes, goddesses of destiny; and the twin gods Alvir and Valmir, who rule the land under the waves.||Those, at least, are the gods of the northern continent; other countries have their own beliefs. Only a simpleton clings to the concept of one absolute truth.">
 
 <ROOM STORY357
 	(IN ROOMS)
 	(DESC "357")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT357)
+	(CONTINUE STORY368)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT358 "On the far side of the cavern you find three copper doors. To open them you will need a verdigris key.">
+<CONSTANT CHOICES358 <LTABLE "Open a door" "Turn back">>
 
 <ROOM STORY358
 	(IN ROOMS)
 	(DESC "358")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT358)
+	(CHOICES CHOICES358)
+	(DESTINATIONS <LTABLE STORY395 STORY633>)
+	(REQUIREMENTS <LTABLE VERDIGRIS-KEY NONE>)
+	(TYPES ONE-ITEM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT359 "\"How about that money I put into your business venture?\" you ask him.||\"Oh yes,\" he says, \"that.\"">
 
 <ROOM STORY359
 	(IN ROOMS)
 	(DESC "359")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT359)
+	(EVENTS STORY359-EVENTS)
+	(CONTINUE STORY652)
 	(FLAGS LIGHTBIT)>
+
+; "TO-DO: Make sure STORY652 has INVESTMENTS property"
+<ROUTINE STORY359-EVENTS ()
+	<CHECK-INVESTMENTS ,STORY652>>
+
+<CONSTANT TEXT360 "By the time the ship has reversed course, the poor surgeon is no longer in sight. \"He's been swept away to the sea gods' hall,\" says the bosun in a voice of great lament.||\"What will we do without a surgeon?\" says the second mate. \"Now I'll have to wait till we get to Dweomer to get my hair cut.\"||Your confidence in your sailing skills has been badly shaken.">
 
 <ROOM STORY360
 	(IN ROOMS)
 	(DESC "360")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT360)
+	(EVENTS STORY360-EVENTS)
+	(CONTINUE STORY022)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY360-EVENTS ()
+	<LOSE-ABILITY ,ABILITY-SCOUTING 1>>
 
 <ROOM STORY361
 	(IN ROOMS)
