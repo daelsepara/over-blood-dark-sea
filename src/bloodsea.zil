@@ -6215,7 +6215,10 @@
 	<PUTP ,STORY308 ,P?DOOM T>
 	<PUTP ,STORY314 ,P?DOOM T>
 	<PUTP ,STORY326 ,P?DOOM T>
-	<PUTP ,STORY356 ,P?DOOM T>>
+	<PUTP ,STORY356 ,P?DOOM T>
+	<PUTP ,STORY361 ,P?DOOM T>
+	<PUTP ,STORY367 ,P?DOOM T>
+	<PUTP ,STORY369 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -9992,12 +9995,13 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(FLAGS LIGHTBIT)>
 
 <CONSTANT TEXT237 "A wind of frightening intensity blows up out of nowhere. \"This weather cannot be natural!\" says the bosun with a shiver.||You round on him. \"You always say that, mister. Where's your evidence?\"||He points all around. \"The sheets of green lightning beyond the clouds. The thick sulphurous dust in the air. The presence of frogs and other unexplained debris in the water all around us.\"||You give a snort. \"Fair enough.\"">
+<CONSTANT CHOICES237 <LTABLE "Cancel the supernatural wind">>
 
 <ROOM STORY237
 	(IN ROOMS)
 	(DESC "237")
 	(STORY TEXT237)
-	(CHOICES CHOICES-MAGIC)
+	(CHOICES CHOICES237)
 	(DESTINATIONS <LTABLE <LTABLE STORY188 STORY255>>)
 	(REQUIREMENTS <LTABLE <LTABLE ABILITY-MAGIC 15>>)
 	(TYPES ONE-ABILITY)
@@ -11014,13 +11018,14 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(FLAGS LIGHTBIT)>
 
 <CONSTANT TEXT305 "They doze off. You shake each man and yell in his ears, but this is an enchanted slumber.">
+<CONSTANT CHOICES305 <LTABLE "Wake them">>
 
 <ROOM STORY305
 	(IN ROOMS)
 	(DESC "305")
 	(STORY TEXT305)
 	(EVENTS STORY305-EVENTS)
-	(CHOICES CHOICES-MAGIC)
+	(CHOICES CHOICES305)
 	(DESTINATIONS <LTABLE <LTABLE STORY045 STORY064>>)
 	(REQUIREMENTS <LTABLE <LTABLE ABILITY-MAGIC 17>>)
 	(TYPES ONE-ABILITY)
@@ -11812,225 +11817,180 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 <ROUTINE STORY360-EVENTS ()
 	<LOSE-ABILITY ,ABILITY-SCOUTING 1>>
 
+<CONSTANT TEXT361 "The ship lurches with the impact. Timbers groan and crack. Pirates pour over the rail with a lusty yell, eager on seasoning your decks with blood.">
+
 <ROOM STORY361
 	(IN ROOMS)
 	(DESC "361")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT361)
+	(EVENTS STORY361-EVENTS)
+	(CONTINUE STORY379)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY361-EVENTS ("AUX" ROLL (DICE 2) (MODIFIER -2) (CONDITION 0))
+	<COND (<CHECK-PROFESSION ,PROFESSION-WARRIOR> <SET DICE 3>)>
+	<COND (,CURRENT-SHIP
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<COND (<EQUAL? .CONDITION ,CONDITION-POOR>
+			<SET MODIFIER -2>
+		)(<EQUAL? .CONDITION ,CONDITION-AVERAGE>
+			<SET MODIFIER 0>
+		)(<EQUAL? .CONDITION ,CONDITION-GOOD>
+			<SET MODIFIER 2>
+		)(ELSE
+			<SET MODIFIER 3>
+		)>
+	)>
+	<PREVENT-DOOM ,STORY201>
+	<SET ROLL <RANDOM-EVENT .DICE .MODIFIER T>>
+	<COND (<L=? .ROLL 4>
+		<EMPHASIZE "Calamity! You are killed!">
+		<STORY-JUMP ,STORY123>
+	)(<L=? .ROLL 9>
+		<EMPHASIZE "Crushing defeat!">
+		<LOSE-STAMINA <ROLL-DICE 2> ,DIED-FROM-INJURIES ,STORY201>
+		<COND (<IS-ALIVE> <STORY-JUMP ,STORY435>)>
+	)(<L=? .ROLL 13>
+		<EMPHASIZE "Forced to give in!">
+		<LOSE-STAMINA <ROLL-DICE 1> ,DIED-FROM-INJURIES ,STORY201>
+		<COND (<IS-ALIVE> <STORY-JUMP ,STORY416>)>
+	)(<L=? .ROLL 17>
+		<EMPHASIZE "The pirates withdraw!">
+		<STORY-JUMP ,STORY311>
+	)(ELSE
+		<EMPHASIZE "Outright victory!">
+	)>>
+
+<CONSTANT TEXT362 "The moon is a dim patch behind the clouds, as if seen through smoked glass. Sentries patrol the fortress walls.">
 
 <ROOM STORY362
 	(IN ROOMS)
 	(DESC "362")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT362)
+	(CHOICES CHOICES-THIEVERY)
+	(DESTINATIONS <LTABLE <LTABLE STORY690 STORY114>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-THIEVERY 13>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT363 "The Reavers notice the medallion that hangs from your neck. One of them steps forward. His bow to the King is clumsy because his stance is skewed by an old back injury, but he speaks with great eloquence: \"Once a great service was done to me by this seafarer. When sore-pressed by Sokaran warships, the god Sig saw fit to send me a saviour. That saviour, O King, was the one who stands before you now -- one to whom I pledged to give aid whenever it was needed.\"||The King would probably rather torture you to death, but Verin Crookback is highly respected among the Reavers. You are granted your freedom.">
 
 <ROOM STORY363
 	(IN ROOMS)
 	(DESC "363")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT363)
+	(CONTINUE STORY656)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT364 "You slam open the door and go marching straight up to Lauria's table. Ignoring her companion, you launch straight into a rant which eloquently expresses your feelings towards her. You don't trouble with niceties; your oaths and curses are such that even the shameless Lauria starts to blush.||Her elderly companion removes his monocle and peers at you in amazement.||\"Look, this just won't do,\" he says.||You turn to give him a piece of your mind too, but you find yourself staring at a treetrunk covered in blue moss--||You look all around. What happened to the tavern? All of a sudden you're in the middle of a dense forest!">
 
 <ROOM STORY364
 	(IN ROOMS)
 	(DESC "364")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT364)
+	(CONTINUE STORY697)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT365 "The matter is judged a draw. Neither you nor Talanexor are satisfied, but you must abide by the local duelling code. You stomp off without speaking a word to each other.">
 
 <ROOM STORY365
 	(IN ROOMS)
 	(DESC "365")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT365)
+	(CONTINUE STORY571)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT366 "Rocks rain down like cannon shells, but you are safely clear of the island and they only throw up plumes of spray far astern. You hold off the shore until the eruption is spent. After a night turned to hellish twilight by the flaming torrents of lava, the volcano lapses back into peaceful slumber.||\"Jiarosh is content,\" says the shaman. \"We can return and rebuild our homes.\"||Filled with gratitude for your help, the shaman rewards you with a blessing of Safety from Storms.">
 
 <ROOM STORY366
 	(IN ROOMS)
 	(DESC "366")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT366)
+	(EVENTS STORY366-EVENTS)
+	(CONTINUE STORY479)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY366-EVENTS ()
+	<GAIN-BLESSING ,BLESSING-SAFETY-FROM-STORMS>>
+
+<CONSTANT TEXT367 "He is happy to have a companion on his quest. You tell your men to take the ship to Yellowport, where you will join them later. Then you climb up behind him and fly off.||The sea whips past far below, then you are over the coast and speeding north. Glimpsed through wispy cloud, the farms and villages look like toys.||The horse rears -- you don't know why. Realizing he is losing control of his mount, the hero urges it closer to the ground.||You can see the treetops when suddenly you slip from the saddle and fall. You crash through branches; leaves whip across your face. Then you hit the ground.">
+<CONSTANT TEXT367-CONTINUED "You look up but there is no sign of the horse or its rider.">
 
 <ROOM STORY367
 	(IN ROOMS)
 	(DESC "367")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT367)
+	(EVENTS STORY367-EVENTS)
+	(CONTINUE STORY-WAR-TORN-KINGDOM)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY367-EVENTS ()
+	<LOSE-STAMINA <ROLL-DICE 2> ,DIED-FROM-INJURIES ,STORY367>
+	<CONTINUE-TEXT ,TEXT367-CONTINUED>>
+
+<CONSTANT TEXT368 "The college library contains thousands of dusty tomes. Few of them have been properly catalogued.||\"There's something written about just about anything you could mention,\" says the librarian, sweeping his hand along the stacks.||You peer towards the end of the room -- except that it hasn't got one. \"Er ... the stacks look as if they go on for ever.\" you say.||The librarian nods. \"They do. It's a simple infinity spell.\"">
+<CONSTANT CHOICES368 <LTABLE "Find the book you're after">>
 
 <ROOM STORY368
 	(IN ROOMS)
 	(DESC "368")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT368)
+	(EVENTS STORY368-EVENTS)
+	(CHOICES CHOICES368)
+	(DESTINATIONS <LTABLE <LTABLE STORY386 STORY607>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-MAGIC 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY368-EVENTS ()
+	<COND (,RUN-ONCE
+		<COND (<G=? ,MONEY 50>
+			<EMPHASIZE "You pay the library fees.">
+			<COST-MONEY 50 ,TEXT-PAID>
+		)(ELSE
+			<STORY-JUMP ,STORY607>
+		)>
+	)>>
+
+<CONSTANT TEXT369 "The forest is inhabited by a malevolent unseen spirit that is slowly leeching your life-energy.||You realize you must muster a burst of effort to break out of the wood before you are lost forever.">
 
 <ROOM STORY369
 	(IN ROOMS)
 	(DESC "369")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT369)
+	(EVENTS STORY369-EVENTS)
+	(CHOICES CHOICES-SCOUTING)
+	(DESTINATIONS <LTABLE <LTABLE STORY706 STORY388>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-SCOUTING 17>>)
+	(TYPES ONE-ABILITY)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY369-EVENTS ()
+	<COND (,RUN-ONCE
+		<DO (I 1 6)
+			<LOSE-ABILITY .I 1>
+		>
+		<LOSE-STAMINA <ROLL-DICE 1> ,DIED-GREW-WEAKER ,STORY369>
+	)>>
+
+<CONSTANT TEXT370 "The ship drifts along in a gentle wind. The slow creak of the ship's timbers and the fluttering of the sails makes a sound that lulls you off to sleep at night.">
 
 <ROOM STORY370
 	(IN ROOMS)
 	(DESC "370")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT370)
+	(EVENTS STORY370-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY204 STORY022 STORY478>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 5 8 12> <LTABLE "Nightmares become real" "An uneventful journey" "Man overboard!">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY370-EVENTS ()
+	<COND (<AND ,RUN-ONCE <L? ,STAMINA ,MAX-STAMINA>> <GAIN-STAMINA 1>)>>
 
 <ROOM STORY371
 	(IN ROOMS)
