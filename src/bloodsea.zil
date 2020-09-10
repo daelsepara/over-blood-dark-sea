@@ -3350,6 +3350,12 @@
 	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
+<OBJECT PICKAXE2
+	(DESC "pickaxe")
+	(COMBAT 2)
+	(QUANTITY 1)
+	(FLAGS TAKEBIT)>
+
 <OBJECT SPEAR
 	(DESC "spear")
 	(QUANTITY 1)
@@ -6123,6 +6129,7 @@
 	<PUTP ,MACE2 ,P?QUANTITY 1>
 	<PUTP ,MACE3 ,P?QUANTITY 1>
 	<PUTP ,MAGIC-SPEAR ,P?QUANTITY 1>
+	<PUTP ,PICKAXE2 ,P?QUANTITY 1>
 	<PUTP ,SPEAR ,P?QUANTITY 1>
 	<PUTP ,SPEAR1 ,P?QUANTITY 1>
 	<PUTP ,SPEAR2 ,P?QUANTITY 1>
@@ -6218,7 +6225,8 @@
 	<PUTP ,STORY356 ,P?DOOM T>
 	<PUTP ,STORY361 ,P?DOOM T>
 	<PUTP ,STORY367 ,P?DOOM T>
-	<PUTP ,STORY369 ,P?DOOM T>>
+	<PUTP ,STORY369 ,P?DOOM T>
+	<PUTP ,STORY372 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -11995,221 +12003,124 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 <ROOM STORY371
 	(IN ROOMS)
 	(DESC "371")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY371-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY371-BACKGROUND ()
+	<REMOVE-ITEM ,SELENIUM-ORE F T>
+	<TAKE-ITEM ,SELENIUM-WAND>
+	<RETURN ,STORY262>>
+
+<CONSTANT TEXT372 "The villagers are furiously angry at you for taking advantage of their goodwill. You are pelted first with rotten fruit, then with cobblestones prised up from the streets.">
+<CONSTANT TEXT372-CONTINUED "You rejoin your ship. The plank is hauled up and you hastily cast off.">
 
 <ROOM STORY372
 	(IN ROOMS)
 	(DESC "372")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT372)
+	(EVENTS STORY372-EVENTS)
+	(CONTINUE STORY298)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY372-EVENTS ()
+	<LOSE-STAMINA <ROLL-DICE 1> ,DIED-FROM-INJURIES ,STORY372>
+	<DELETE-TITLE ,TITLE-SAVIOUR-VERVAYENS>>
+
+<CONSTANT TEXT373 "The pirates pull alongside and cast grappling hooks to seize your vessel. Within moments they are swarming aboard. You offer them your goods, but plead for the freedom of your crew.">
 
 <ROOM STORY373
 	(IN ROOMS)
 	(DESC "373")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT373)
+	(CHOICES CHOICES-CHARISMA)
+	(DESTINATIONS <LTABLE <LTABLE STORY431 STORY435>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-CHARISMA 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT374 "You forgot you were standing at the end of the headland. You take a step back, lose your footing, and fall to your death on the sharp rocks below.">
 
 <ROOM STORY374
 	(IN ROOMS)
 	(DESC "374")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT374)
+	(CONTINUE STORY123)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT375 "The Mannekyn People are a race of small winged folk. Their home is in the high caves of Sky Mountain, but some have taken up residence among humankind. One such is the famous Tekshin, whose tavern is a favourite halt for travellers on the road from Wheatfields to Haggart's Corner.">
 
 <ROOM STORY375
 	(IN ROOMS)
 	(DESC "375")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT375)
+	(CONTINUE STORY368)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT376 "There is nothing of interest of the trau's body but a pickaxe (COMBAT +2)">
 
 <ROOM STORY376
 	(IN ROOMS)
 	(DESC "376")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT376)
+	(CONTINUE STORY358)
+	(ITEMS <LTABLE PICKAXE2>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT377 "There is a sparkle of green light in the gloom. Bending down, you find a sea-green lens. Who could have dropped that? One of the miners? You drop the sea-green lens into your pocket.">
 
 <ROOM STORY377
 	(IN ROOMS)
 	(DESC "377")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT377)
+	(CONTINUE STORY396)
+	(ITEMS <LTABLE SEA-GREEN-LENS>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT378 "The crewmen are too drunk to take any notice of your orders.||\"Shtop bleatin' an' have yourself a lil'l drink!\" declares the cabin boy boldly, brandishing a bottle of wine in your face.||You give him a sound buffet for his impertinence and then try to think what to do. You can't sail the ship single-handed. But what if the Reavers turn up while your crew are in this hopeless state?">
+<CONSTANT CHOICES378 <LTABLE "Wait till they sober up" "Leave and travel on foot">>
 
 <ROOM STORY378
 	(IN ROOMS)
 	(DESC "378")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT378)
+	(CHOICES CHOICES378)
+	(DESTINATIONS <LTABLE STORY397 STORY417>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT379 "The pirates' treasure comprises 900 Shards. Their ship's hold contains 1 Cargo Unit of textiles, which you can add to your own cargo if you have room for it. Your mate suggests taking the pirate captain's head in case it carries a bounty.">
+<CONSTANT TEXT379-LEADERSHIP "You've gained a rank after your stirring leadership in battle.">
 
 <ROOM STORY379
 	(IN ROOMS)
 	(DESC "379")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT379)
+	(EVENTS STORY379-EVENTS)
+	(CONTINUE STORY311)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY379-EVENTS ()
+	<GAIN-MONEY 900>
+	<STORY-GAIN-CARGO ,CARGO-TEXTILES 1>
+	<KEEP-ITEM ,PIRATE-CAPTAINS-HEAD>
+	<COND (<G? <RANDOM-EVENT 2 0 T> <GETP ,CURRENT-CHARACTER ,P?RANK>>
+		<CONTINUE-TEXT ,TEXT379-LEADERSHIP>
+		<GAIN-RANK 1>
+		<UPGRADE-STAMINA <ROLL-DICE 1>>
+	)>>
+
+<CONSTANT TEXT380 "You stow away in the hold of one of the pirate ships and wait for her to be put to sea.">
+<CONSTANT CHOICES380 <LTABLE "Attempt to avoid being discovered">>
 
 <ROOM STORY380
 	(IN ROOMS)
 	(DESC "380")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT380)
+	(CHOICES CHOICES380)
+	(DESTINATIONS <LTABLE <LTABLE STORY419 STORY114>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-THIEVERY 16>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY381
