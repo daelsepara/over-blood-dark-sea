@@ -5511,11 +5511,15 @@
 							)>
 							<COND (<IS-ALIVE>
 								<COND (<G=? ,STAMINA ,MAX-STAMINA>
+									<PREVENT-DOOM .STORY>
 									<RETURN>
 								)(ELSE
 									<CRLF>
 									<TELL "Do you wish to continue your stay at the tavern?">
-									<COND (<NOT <YES?>> <RETURN>)>
+									<COND (<NOT <YES?>>
+										<COND (<IS-ALIVE> <PREVENT-DOOM .STORY>)>
+										<RETURN>
+									)>
 								)>
 							)(ELSE
 								<RETURN>
@@ -5527,14 +5531,17 @@
 					)>
 				)(ELSE
 					<EMPHASIZE "You decide not to rest here.">
+					<PREVENT-DOOM .STORY>
 					<RETURN>
 				)>
 			>
 		)(ELSE
 			<EMPHASIZE "You cannot afford to rest here.">
+			<PREVENT-DOOM .STORY>
 		)>
 	)(ELSE
 		<EMPHASIZE "You are not injured and do not need to recover.">
+		<PREVENT-DOOM .STORY>
 	)>>
 
 ; "Temple Routines"
