@@ -3229,6 +3229,7 @@
 <OBJECT CODEWORD-CERTAIN (DESC "Certain")>
 <OBJECT CODEWORD-CERUMEN (DESC "Cerumen")>
 <OBJECT CODEWORD-CHANCE (DESC "Chance")>
+<OBJECT CODEWORD-CHEESE (DESC "Cheese")>
 <OBJECT CODEWORD-CHEOPS (DESC "Cheops")>
 <OBJECT CODEWORD-CHILL (DESC "Chill")>
 <OBJECT CODEWORD-CITRUS (DESC "Citrus")>
@@ -3248,8 +3249,10 @@
 ; ---------------------------------------------------------------------------------------------
 
 <OBJECT CODEWORD-AID (DESC "Aid")>
+<OBJECT CODEWORD-ANGER (DESC "Anger")>
 <OBJECT CODEWORD-BALUSTER (DESC "Baluster")>
 <OBJECT CODEWORD-DANGLE (DESC "Dangle")>
+<OBJECT CODEWORD-DIAMOND (DESC "Diamond")>
 
 ; "Shack in Smogmaw (Added by SD Separa)"
 
@@ -5603,8 +5606,7 @@
 
 <ROUTINE PURCHASE-BLESSING (FEE DISCOUNT INITIATE BLESSING)
 	<COND (<NOT .BLESSING> <RETURN>)>
-	<COND (<NOT .INITIATE> <RETURN>)>
-	<COND (<CHECK-GOD .INITIATE> <SET FEE .DISCOUNT>)>
+	<COND (<AND .INITIATE <CHECK-GOD .INITIATE>> <SET FEE .DISCOUNT>)>
 	<COND (<CHECK-BLESSING .BLESSING>
 		<CRLF>
 		<TELL "You already have the ">
@@ -6191,6 +6193,7 @@
 	<RESET-ODDS 2 0 ,STORY194>
 	<RESET-ODDS 2 0 ,STORY268>
 	<RESET-ODDS 2 0 ,STORY324>
+	<RESET-ODDS 1 0 ,STORY384>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUTP ,STORY006 ,P?DOOM T>
 	<PUTP ,STORY007 ,P?DOOM T>
@@ -12123,225 +12126,149 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT381 "A ship comes alongside showing the banner of the High King: a golden starburst on a field of azure blue.||\"Long live the King!\" cries your helmsman, a gruff old Harkunan who at heart is a wild romantic.">
+
 <ROOM STORY381
 	(IN ROOMS)
 	(DESC "381")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT381)
+	(CHOICES CHOICES-CODEWORD)
+	(DESTINATIONS <LTABLE STORY676 STORY490>)
+	(REQUIREMENTS <LTABLE CODEWORD-DIAMOND NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT382 "\"Ah,\" says Lauria as you approach her table. \"I don't think I had the chance to introduce my father the last time you were here...\"||You bow to him. \"Sir.\"||\"Father is the Warden of All Hellions College,\" says Lauria.||You'll get further playing in cool this time. \"Are you aware,\" you ask Lauria, \"that because of you I was whipped half to death? Look, I still bear the scars.\"||\"Please,\" says her father, \"I do not care to have you expose yourself to me over dinner. And in any case, those can hardly be called scars.\"||He traces his finger over your injuries, which heal completely.||\"There,\" says Lauria. \"Now perhaps you'll stop being such a pest.\" But she says it with a smile.">
 
 <ROOM STORY382
 	(IN ROOMS)
 	(DESC "382")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT382)
+	(EVENTS STORY382-EVENTS)
+	(CONTINUE STORY571)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY382-EVENTS ()
+	<SETG STAMINA ,MAX-STAMINA>
+	<UPGRADE-ABILITY ,ABILITY-CHARISMA 1>
+	<DELETE-CODEWORD ,CODEWORD-ANGER>
+	<UPDATE-STATUS-LINE>>
+
+<CONSTANT TEXT383 "Talanexor concedes defeat rather than suffer the full effect of your conjurations. A tribunal finds him guilty of besmirching your good name and orders him to pay you 500 Shards by way of compensation. As he counts out the money he gives you a glowering look and says under his breath: \"You'll lie in your grave before you can spend the last of these coins. See if you can deflect that curse!\"||He turns and strides away.">
 
 <ROOM STORY383
 	(IN ROOMS)
 	(DESC "383")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT383)
+	(EVENTS STORY383-EVENTS)
+	(CONTINUE STORY571)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY383-EVENTS ()
+	<GAIN-MONEY 500>
+	<GAIN-CODEWORD ,CODEWORD-CHEESE>>
+
+<CONSTANT TEXT384 "The terrified islanders swarm about your ship. Women and children are put in the hold, and any cargo you had is jettisoned. Others must cling to the rigging or perch on the rail. The extra load makes the ship float alarmingly low in the water.||As you put out from the shore, the volcano is already starting to spit out long fiery torrents of lava. But the danger isn't over yet.">
 
 <ROOM STORY384
 	(IN ROOMS)
 	(DESC "384")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT384)
+	(EVENTS STORY384-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY486 STORY366>>)
+	(REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 2 7> <LTABLE "The ship capsizes" "Luck is with you">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY384-EVENTS ("AUX" (MODIFIER 0))
+	<COND (,RUN-ONCE <RESET-CARGO>)>
+	<COND (,CURRENT-SHIP
+		<COND (<EQUAL? ,CURRENT-SHIP ,SHIP-GALLEON>
+			<INC .MODIFIER>
+		)(<EQUAL? ,CURRENT-SHIP ,SHIP-BARQUE>
+			<DEC .MODIFIER>
+		)>
+	)(ELSE
+		<DEC .MODIFIER>
+	)>
+	<RESET-ODDS 1 .MODIFIER ,STORY384>>
+
+<CONSTANT TEXT385 "You manage to convince the hero that it would be unwise to confront the gods. \"Men have been stricken with madness for such prideful folly,\" you remind him.||He agrees at last. \"In that case I must return to the enchantress who lent me this marvellous steed, back in Atticala. Do you wish to join me?\"||\"What of my ship?\"||\"You go ahead and enjoy yourself, skipper,\" says the first mate. \"We'll meet up with you in Port Skios.\"">
+<CONSTANT CHOICES385 <LTABLE "Go with the horseman (Legions of the Labyrinth)" "Decline his offer">>
 
 <ROOM STORY385
 	(IN ROOMS)
 	(DESC "385")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT385)
+	(CHOICES CHOICES385)
+	(DESTINATIONS <LTABLE STORY-LEGIONS-OF-LABYRINTH STORY135>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT386 "What are you interested in finding out about?">
+<CONSTANT CHOICES386 <LTABLE "The Bluewood" "The key of stars" "Estragon" "The Feathered Lands" "Akatsurai" "The gods" "Ghosts" "Trau" "Mannekyn People" "The Uttakin" "Old Harkuna" "The Innis Shoals" "The city of Dangor" "The Shadar" "The Forest of Larun" "Mermaids">>
 
 <ROOM STORY386
 	(IN ROOMS)
 	(DESC "386")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT386)
+	(CHOICES CHOICES386)
+	(DESTINATIONS <LTABLE STORY573 STORY591 STORY609 STORY627 STORY645 STORY357 STORY247 STORY663 STORY375 STORY681 STORY698 STORY002 STORY650 STORY668 STORY542 STORY063>)
+	(TYPES <LTABLE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT387 "You climb back down the cliff to the beach.">
+<CONSTANT CHOICES387 <LTABLE "You have a ship" "If not, you have no option but to climb back up and try to make your way through the Bluewood to Dweomer">>
 
 <ROOM STORY387
 	(IN ROOMS)
 	(DESC "387")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT387)
+	(CHOICES CHOICES387)
+	(DESTINATIONS <LTABLE STORY122 STORY407>)
+	(REQUIREMENTS <LTABLE DOCK-SORCERERS NONE>)
+	(TYPES <LTABLE R-DOCKED R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT388 "You look back. The path you came along is not there anymore. You are lost in the Bluewood.">
+<CONSTANT CHOICES388 <LTABLE "Find your way out again">>
 
 <ROOM STORY388
 	(IN ROOMS)
 	(DESC "388")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT388)
+	(CHOICES CHOICES388)
+	(DESTINATIONS <LTABLE <LTABLE STORY705 STORY369>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-SCOUTING 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT389 "It is possible to forge a powerful wand with this substance, but if the alloy is not prepared using exactly the right mixture then the ore could decay explosively.">
+<CONSTANT CHOICES389 <LTABLE "Make the attempt" "Don't attempt it -- Leave well enough alone">>
 
 <ROOM STORY389
 	(IN ROOMS)
 	(DESC "389")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT389)
+	(CHOICES CHOICES389)
+	(DESTINATIONS <LTABLE <LTABLE STORY371 STORY708> STORY262>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-MAGIC 16> NONE>)
+	(TYPES <LTABLE R-TEST-ABILITY R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT390 "The wise woman lives a reclusive existence. Her home is a cave in the cliffs high above the village. The islanders turn to her for medicine, soothsaying and the favour of the gods.||She greets you with a sticky yellow smile and waits for you to fill her hand with silver. For 5 Shards she will give you a blessing of Safety from Storms. You can have only one Safety from Storms blessing at a time, and it will work only once.">
 
 <ROOM STORY390
 	(IN ROOMS)
 	(DESC "390")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT390)
+	(EVENTS STORY390-EVENTS)
+	(CONTINUE STORY335)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY390-EVENTS ()
+	<PURCHASE-BLESSING 5 5 NONE ,BLESSING-SAFETY-FROM-STORMS>>
 
 <ROOM STORY391
 	(IN ROOMS)
