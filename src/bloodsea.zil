@@ -5131,7 +5131,7 @@
 		<TELL "Select primary ship: ">
 		<REPEAT ()
 			<SET KEY <INPUT 1>>
-			<COND (<OR <EQUAL? .KEY !\0 !\C !\c> <AND <G=? .KEY !\1> <L=? .KEY <+ .COUNT !\0>>>> <RETURN>)>
+			<COND (<OR <EQUAL? .KEY !\0 !\C !\c> <AND <G=? .KEY !\1> <L=? .KEY <+ .COUNT !\0>> <N=? ,CURRENT-LOCATION ,LOCATION-OCEAN>>> <RETURN>)>
 		>
 		<CRLF>
 		<COND (<EQUAL? .KEY !\0>
@@ -5144,11 +5144,13 @@
 			<DESCRIBE-PLAYER-SHIPS>
 			<PRESS-A-KEY>
 		)(ELSE
-			<SET KEY <- .KEY !\0>>
-			<COND (<EQUAL? ,CURRENT-SHIP <GET .LIST .KEY>>
-				<SETG CURRENT-SHIP NONE>
-			)(ELSE
-				<SETG CURRENT-SHIP <GET .LIST .KEY>>
+			<COND (<N=? ,CURRENT-LOCATION ,LOCATION-OCEAN>
+				<SET KEY <- .KEY !\0>>
+				<COND (<EQUAL? ,CURRENT-SHIP <GET .LIST .KEY>>
+					<SETG CURRENT-SHIP NONE>
+				)(ELSE
+					<SETG CURRENT-SHIP <GET .LIST .KEY>>
+				)>
 			)>
 		)>
 		<UPDATE-STATUS-LINE>
@@ -6199,6 +6201,7 @@
 	<RESET-ODDS 2 0 ,STORY268>
 	<RESET-ODDS 2 0 ,STORY324>
 	<RESET-ODDS 1 0 ,STORY384>
+	<RESET-ODDS 2 0 ,STORY403>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUT <GET <GETP ,STORY391 ,P?REQUIREMENTS> 1> 2 14>
 	<PUTP ,STORY006 ,P?DOOM T>
@@ -12490,225 +12493,163 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	<COND (,RUN-ONCE <LOSE-STAMINA 1 ,DIED-GREW-WEAKER ,STORY400>)>
 	<CONTINUE-TEXT ,TEXT400-CONTINUED>>
 
+<CONSTANT TEXT401 "Lauria goes through a doorway. A few moments later an upstairs light comes on and you see her outlined against the window pane. You glance around to find out the name of the street, but you can hardly see ten paces because of the dense fog.||The light goes out. You wait outside until Lauria must be asleep, then you let yourself into the house and tiptoe upstairs.">
+
 <ROOM STORY401
 	(IN ROOMS)
 	(DESC "401")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT401)
+	(CHOICES CHOICES-THIEVERY)
+	(DESTINATIONS <LTABLE <LTABLE STORY421 STORY514>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-THIEVERY 13>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT402 "\"I don't like it skipper,\" says the pilot, gazing at the charts. \"We're steering betwixt Death and the wine-dark sea.\"||Arrant superstition. You will have none of it.">
 
 <ROOM STORY402
 	(IN ROOMS)
 	(DESC "402")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT402)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY511 STORY580 STORY032 STORY530>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 4 5 8 12> <LTABLE "Pirates" "Storm" "An uneventful voyage" "A ghost ship">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT403 "The ship plunges on as though hauled by sea demons. Indeed, some of your crew even claim to have caught glimpses of such creatures, which they say resemble giant horses with manes of green froth plunging neck-deep through the sea.">
 
 <ROOM STORY403
 	(IN ROOMS)
 	(DESC "403")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-OCEAN)
+	(STORY TEXT403)
+	(EVENTS STORY403-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY486 STORY468>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 6 13> <LTABLE "Abandon ship!" "The tempest passes">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY403-EVENTS ("AUX" (MODIFIER 0))
+	<COND (,CURRENT-SHIP
+		<COND (<EQUAL? ,CURRENT-SHIP ,SHIP-BARQUE>
+			<SET MODIFIER -1>
+		)(<EQUAL? ,CURRENT-SHIP ,SHIP-BARQUE>
+			<SET MODIFIER 1>
+		)>
+	)(ELSE
+		<SET MODIFIER -1>
+	)>
+	<RESET-ODDS 2 .MODIFIER ,STORY403>>
+
+<CONSTANT TEXT404 "You raise your arms to the volcano and plead with the god Jiarosh to stay his wrath.">
 
 <ROOM STORY404
 	(IN ROOMS)
 	(DESC "404")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT404)
+	(CHOICES CHOICES-SANCTITY)
+	(DESTINATIONS <LTABLE <LTABLE STORY425 STORY444>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-SANCTITY 14>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT405 "Targdaz's horse flies you back to your castle in a matter of hours.||\"I didn't want to waste the spell,\" he says as it flies off. \"Each time I summon that steed it costs a year of my life.\"||You are more concerned about your ship and crew.">
 
 <ROOM STORY405
 	(IN ROOMS)
 	(DESC "405")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT405)
+	(EVENTS STORY405-EVENTS)
+	(CONTINUE STORY-COURT-HIDDEN-FACES)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY405-EVENTS ()
+	<CRLF>
+	<COND (<TEST-ABILITY ,CURRENT-CHARACTER ,ABILITY-CHARISMA 13>
+		<EMPHASIZE "The crew followed your orders">
+	)(ELSE
+		<EMPHASIZE "They sailed off">
+		<STORY-LOSE-SHIP>
+	)>>
+
+<CONSTANT TEXT406 "There is one ship for sale. She is a barque with a carrying capacity of 1 Cargo Unit; she will cost you 320 Shards.||\"What about the crew?\" you ask the man who is selling her.||\"Men from Marmorek,\" he says. \"Landlubbers everyone of them, but they're willing to learn.\"">
 
 <ROOM STORY406
 	(IN ROOMS)
 	(DESC "406")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-DWEOMER)
+	(BACKGROUND STORY406-BACKGROUND)
+	(STORY TEXT406)
+	(EVENTS STORY406-EVENTS)
+	(CONTINUE STORY100)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY406-BACKGROUND ()
+	<COND (<CHECK-ITEM ,SHIPS-DEEDS> <RETURN ,STORY710>)>
+	<RETURN ,STORY406>>
+
+<ROUTINE STORY406-EVENTS ()
+	<COND (<AND <NOT <IN? ,SHIP-BARQUE ,SHIPS>> <G=? ,MONEY 320>>
+		<CRLF>
+		<TELL "Buy the ship for 320 " D ,CURRENCY "?">
+		<COND (<YES?>
+			<COST-MONEY 320 ,TEXT-PAID>
+			<MOVE ,SHIP-BARQUE ,SHIPS>
+			<STORY-RESET-CREW ,CONDITION-POOR ,SHIP-BARQUE>
+			<STORY-SET-DOCK ,DOCK-DWEOMER ,SHIP-BARQUE F>
+		)>
+	)>>
+
+<CONSTANT TEXT407 "You are at the top of high cliffs swathed in mist. Nearby stands a gloomy tower. Looking north, you are faced by the impenetrable mass of the Bluewood, that trackless forest from whose bourne few travellers return except as mindless shrieking zombies with a ravenous thirst for human blood ...||No, no; that's just an old wives' tale. Or so you tell yourself.">
+<CONSTANT CHOICES407 <LTABLE "Venture into the Bluewood" "Go to the tower" "Descend the cliffs">>
 
 <ROOM STORY407
 	(IN ROOMS)
 	(DESC "407")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT407)
+	(CHOICES CHOICES407)
+	(DESTINATIONS <LTABLE STORY697 STORY426 STORY387>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY408
 	(IN ROOMS)
 	(DESC "408")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY408-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY408-BACKGROUND ()
+	<COND (<CHECK-ITEM ,WITCH-HAND> <RETURN ,STORY555>)>
+	<RETURN ,STORY388>>
+
+<CONSTANT TEXT409 "A chunk of selenium ore is discovered embedded in a coral reef. It is still hot from its fall, causing the sea to hiss each time a wave laps over it.||\"Heaven must be hotter than hell,\" is the bosun's eminently scientific conjecture based on the evidence.">
 
 <ROOM STORY409
 	(IN ROOMS)
 	(DESC "409")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT409)
+	(EVENTS STORY409-EVENTS)
+	(CONTINUE STORY262)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY409-EVENTS ()
+	<TAKE-ITEM ,SELENIUM-ORE>
+	<COND (<CHECK-GOD ,GOD-MOLHERN> <STORY-JUMP ,STORY389>)>>
+
+<CONSTANT TEXT410 "The captain rewards you with the contents of his hold: 2 Cargo Units of metals.||\"What will you do now?\" you ask the captain.||He gives a quick bray of exhausted laughter. \"Get my ship into port, sell her, and use the money to buy a tavern. I'll never put to sea again, that's for sure.\"">
 
 <ROOM STORY410
 	(IN ROOMS)
 	(DESC "410")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT410)
+	(EVENTS STORY410-EVENTS)
+	(CONTINUE STORY137)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY410-EVENTS ()
+	<STORY-GAIN-CARGO ,CARGO-METALS 2>>
 
 <ROOM STORY411
 	(IN ROOMS)
