@@ -6242,7 +6242,8 @@
 	<PUTP ,STORY369 ,P?DOOM T>
 	<PUTP ,STORY372 ,P?DOOM T>
 	<PUTP ,STORY392 ,P?DOOM T>
-	<PUTP ,STORY400 ,P?DOOM T>>
+	<PUTP ,STORY400 ,P?DOOM T>
+	<PUTP ,STORY426 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -12793,224 +12794,132 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT421 "You could never normally sneak in on a master thief like Lauria, but after a heavy meal of venison and roast parsnips washed down with cider she is sleeping as soundly as a gorged vampire at noonday.">
+<CONSTANT CHOICES421 <LTABLE "Rob her" "Kidnap her">>
+
 <ROOM STORY421
 	(IN ROOMS)
 	(DESC "421")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT421)
+	(CHOICES CHOICES421)
+	(DESTINATIONS <LTABLE STORY440 STORY459>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT422 "Black clouds boil up suddenly across a clear sky. Within minutes the ship is bucking wildly in an icy gale as sheets of lightning crackle overhead. \"No natural storm could come up so quick,\" says the bosun. \"this is sorcery.\"">
+<CONSTANT CHOICES422 <LTABLE "Assuming he's right, you can try to cancel the storm">>
 
 <ROOM STORY422
 	(IN ROOMS)
 	(DESC "422")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT422)
+	(CHOICES CHOICES422)
+	(DESTINATIONS <LTABLE <LTABLE STORY226 STORY403>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-MAGIC 14>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT423 "With a heart full of sadness, you watch your ship drop out of sight beyond the horizon.||Rowing on with dogged perseverance, you wait for the Three Fortunes to deal you another hand.">
 
 <ROOM STORY423
 	(IN ROOMS)
 	(DESC "423")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT423)
+	(EVENTS STORY423-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY505 STORY472 STORY430>>)
+	(REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 2 4 6> <LTABLE "Wrecked on a beach" "Picked up by pirates" "Reach the mainland">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY423-EVENTS ()
+	<COND (,RUN-ONCE <STORY-LOSE-SHIP>)>>
+
+<CONSTANT TEXT424 "The rider is an adventurer from Atticala, the lands that lie across the Sea of Stilts.||\"I am flying to the top of Sky Mountain,\" he declares, \"where I expect to confront the gods themselves!\"">
+<CONSTANT CHOICES424 <LTABLE "Ask to go with him" "Advise him not to go" "Bid him farewell">>
 
 <ROOM STORY424
 	(IN ROOMS)
 	(DESC "424")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT424)
+	(CHOICES CHOICES424)
+	(DESTINATIONS <LTABLE STORY367 STORY385 STORY135>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT425 "Jiarosh hears and heeds your prayers. The groundshocks die down. The smoke blows away on the wind. All is quiet.||The villagers are jubilant. \"You are a mighty shaman,\" they say. \"Honour us by staying here as our guest.\"">
+<CONSTANT CHOICES425 <LTABLE "Stay on the island" "Set to sea">>
 
 <ROOM STORY425
 	(IN ROOMS)
 	(DESC "425")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT425)
+	(CHOICES CHOICES425)
+	(DESTINATIONS <LTABLE STORY706 STORY479>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT426 "You peer into the translucent walls of the tower, but it is like looking into a deep green pond. You can make out nothing of what lies within.||Entering, you find a winding staircase which you climb up to a landing. All the way you are beset by tiny stinging creatures.">
+<CONSTANT CHOICES426 <LTABLE "Leave the tower" "Press on up the staircase">>
 
 <ROOM STORY426
 	(IN ROOMS)
 	(DESC "426")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT426)
+	(EVENTS STORY426-EVENTS)
+	(CHOICES CHOICES426)
+	(DESTINATIONS <LTABLE STORY407 STORY680>)
+	(TYPES TWO-CHOICES)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY426-EVENTS ()
+	<COND (,RUN-ONCE <LOSE-STAMINA <ROLL-DICE 1> ,DIED-FROM-INJURIES ,STORY426>)>>
+
+<CONSTANT TEXT427 "The men raise three cheers as you get hold of the surgeon under one arm and swim back toward the ship. When he has somewhat recovered, the surgeon administers himself a measure of brandy 'for medicinal purposes'.||You are the hero of the hour.">
 
 <ROOM STORY427
 	(IN ROOMS)
 	(DESC "427")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT427)
+	(EVENTS STORY427-EVENTS)
+	(CONTINUE STORY022)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY427-EVENTS ()
+	<COND (<G? <RANDOM-EVENT 2 0 T> <GETP ,CURRENT-CHARACTER ,P?RANK>> <GAIN-RANK 1>)>>
+
+<CONSTANT TEXT428 "The first mate rushes into your cabin one day toward dusk. Deep in calculation over your charts, you barely glance up when he blurts out: \"Captain, an ancient hulk has drifted alongside.\"||\"She's adrift, you say? A derelict?\"||\"No derelict,\" he replies in an agitated voice, \"She has a skeleton crew!\"||\"Hmm.\" You sit back, folding your arms behind you head. \"Perhaps her skipper wants to flesh out his crew with some of our men...\"||\"I think you're right!\" cries the mate, staring past you with wild eyes.||Something is tapping on the window pane -- something that has terrified the mate. You turn to see what it is. A host of ivory faces are leering in through the casement window. It is a skeleton crew indeed! Crashing through the glass, the bony sailors leap among you chittering in ghastly glee.">
+<CONSTANT CHOICES428 <LTABLE "Fight them" "Drive them off with prayer" "Cast yourself at their mercy">>
 
 <ROOM STORY428
 	(IN ROOMS)
 	(DESC "428")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT428)
+	(CHOICES CHOICES428)
+	(DESTINATIONS <LTABLE STORY539 STORY575 STORY447>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT429 "The wind dies away, leaving the sails sagging. At first the crew jokes about getting a break from duties, but days turn to weeks and the wind does not pick up. All around the sea lies as flat as a mirror. The mood of the crew is grim; many wonder if they will die here, out of sight of land.||You take a drink of water from the barrel on deck. It is the last cupful. Without a wind you are surely doomed. You and your officers could strike out for the mainland in the cutter, but that would mean abandoning the rest of the men.">
+<CONSTANT CHOICES429 <LTABLE "Whistle a tune" "Abandon ship in the cutter" "Stay with your crewmen">>
 
 <ROOM STORY429
 	(IN ROOMS)
 	(DESC "429")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT429)
+	(CHOICES CHOICES429)
+	(DESTINATIONS <LTABLE STORY391 STORY520 STORY590>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT430 "By the time you arrive in a port you are ankle-deep in water and exhausted from your ordeal. You stumble out of the boat, which goes listing off with the current, and wearily make your way towards the town.">
 
 <ROOM STORY430
 	(IN ROOMS)
 	(DESC "430")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT430)
+	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY431
