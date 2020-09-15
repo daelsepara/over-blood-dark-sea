@@ -12922,115 +12922,72 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT431 "The pirates take your cargo, your personal belongings and any cash you have on board. To your surprise, they agree to leave you with your ship.||\"In truth, it's not worth the effort of hauling back home,\" remarks the pirate captain acerbically as he goes back aboard his own vessel.||You watch them sail away.">
+
 <ROOM STORY431
 	(IN ROOMS)
 	(DESC "431")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT431)
+	(EVENTS STORY431-EVENTS)
+	(CONTINUE STORY648)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY431-EVENTS ()
+	<STORY-LOSE-EVERYTHING F>
+	<RESET-CARGO>>
+
+<CONSTANT TEXT432 "The Gorgons go to their beds only once the moon has set. You peer down at them in the faint lamplight. While they doze, their ophidian tresses sway drowsily on the pillows.">
 
 <ROOM STORY432
 	(IN ROOMS)
 	(DESC "432")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT432)
+	(CHOICES CHOICES-SCOUTING)
+	(DESTINATIONS <LTABLE <LTABLE STORY451 STORY469>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-SCOUTING 10>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT433 "Instead of the idyllic garden you found on your first visit, the place is now a rank wilderness. The lawns have become a waterlogged marsh dotted with fungi. Insects swirl above stagnant ponds and dense weeds have choked the life from the trees. A creeping miasma cloaks out the sunlight. A single breath of this foul air is enough to slay your men.">
 
 <ROOM STORY433
 	(IN ROOMS)
 	(DESC "433")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT433)
+	(EVENTS STORY433-EVENTS)
+	(CONTINUE STORY123)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY433-EVENTS ()
+	<COND (<CHECK-BLESSING ,BLESSING-IMMUNITY-POISON-DISEASE>
+		<DELETE-BLESSING ,BLESSING-IMMUNITY-POISON-DISEASE>
+		<STORY-JUMP ,STORY064>
+	)>>
+
+<CONSTANT TEXT434 "You pass a group of miners on their way back to the surface. They are bony sallow-faced wretches clad in rags. The well-to-do lords who own this mine pay their workers barely more than they need to stay alive.">
 
 <ROOM STORY434
 	(IN ROOMS)
 	(DESC "434")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT434)
+	(CHOICES CHOICES-CODEWORD)
+	(DESTINATIONS <LTABLE STORY453 STORY471>)
+	(REQUIREMENTS <LTABLE CODEWORD-CHURCH NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT435 "The pirates seize you and clap you in iron fetters, then put your own vessel in tow and start the long haul back to the base.||You may still be able to escape from your captors...">
 
 <ROOM STORY435
 	(IN ROOMS)
 	(DESC "435")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT435)
+	(EVENTS STORY435-EVENTS)
+	(CONTINUE STORY454)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY435-EVENTS ()
+	<RESET-CARGO>>
 
 <CONSTANT TEXT436 "You must fend for yourself, surviving on little more than wild berries and cold spring water while you scour the bleak hills.">
 
@@ -13043,93 +13000,67 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT437 "A pack of hellions erupt out of the sea by night and pelt your vessel with burning pitch. To repulse them you must use a combination of sorcery and holy force.">
+
 <ROOM STORY437
 	(IN ROOMS)
 	(DESC "437")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT437)
+	(EVENTS STORY437-EVENTS)
+	(CONTINUE STORY-INTO-THE-UNDERWORLD)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY437-EVENTS ("AUX" MAGIC-ROLL SANCTITY-ROLL)
+	<CRLF>
+	<SET MAGIC-ROLL <TEST-ABILITY ,CURRENT-CHARACTER ,ABILITY-MAGIC 17>>
+	<CRLF>
+	<SET SANCTITY-ROLL <TEST-ABILITY ,CURRENT-CHARACTER ,ABILITY-SANCTITY 17>>
+	<COND (<AND .MAGIC-ROLL .SANCTITY-ROLL>
+		<EMPHASIZE "The hellions retreat!">
+		<STORY-JUMP ,STORY322>
+	)(<OR .MAGIC-ROLL .SANCTITY-ROLL>
+		<EMPHASIZE "The ship's aflame!">
+		<STORY-JUMP ,STORY249>
+	)(ELSE
+		<EMPHASIZE "You are carried off to hell!">
+	)>>
+
+<CONSTANT TEXT438 "You arrive at the coast to see your own ship riding at anchor. A gang of pirates armed with whips are forcing your own sailors to equip her as a war vessel. Your blood boils at the thought of the Reavers using your ship for their own ends.">
+<CONSTANT CHOICES438 <LTABLE "Charge in to rescue your men" "Reconnoitre the island first">>
 
 <ROOM STORY438
 	(IN ROOMS)
 	(DESC "438")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT438)
+	(CHOICES CHOICES438)
+	(DESTINATIONS <LTABLE STORY603 STORY655>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT439 "Along with your crew, you cower below decks with your hands over your ears. The ship drifts on untended with no on but Fate at the tiller, and slowly that deathly singing fades into the distance.">
 
 <ROOM STORY439
 	(IN ROOMS)
 	(DESC "439")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT439)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <LTABLE <LTABLE STORY486 STORY244>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <LTABLE 6 100> <LTABLE "The ship hits a reef" "Adrift in unknown waters">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT440 "You take 250 Shards from her money pouch. It is little enough compensation for all she's put you through in the past. Hearing her moan and turn over in her sleep, you give her the empty money pouch to cuddle. What a grand joke, when the swashbuckling burglar wakes to find she's been robbed!||You quietly let yourself out, pleased to have settled the score after so long.">
 
 <ROOM STORY440
 	(IN ROOMS)
 	(DESC "440")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT440)
+	(EVENTS STORY440-EVENTS)
+	(CONTINUE STORY675)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY440-EVENTS ()
+	<DELETE-CODEWORD ,CODEWORD-ANGER>>
 
 <ROOM STORY441
 	(IN ROOMS)
