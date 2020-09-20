@@ -3227,6 +3227,7 @@
 <OBJECT CODEWORD-CHEOPS (DESC "Cheops")>
 <OBJECT CODEWORD-CHILL (DESC "Chill")>
 <OBJECT CODEWORD-CITRUS (DESC "Citrus")>
+<OBJECT CODEWORD-CIVIL (DESC "Civil")>
 <OBJECT CODEWORD-CHURCH (DESC "Church")>
 <OBJECT CODEWORD-CLUTCH (DESC "Clutch")>
 <OBJECT CODEWORD-COLOUR (DESC "Colour")>
@@ -6257,7 +6258,8 @@
 	<PUTP ,STORY392 ,P?DOOM T>
 	<PUTP ,STORY400 ,P?DOOM T>
 	<PUTP ,STORY426 ,P?DOOM T>
-	<PUTP ,STORY441 ,P?DOOM T>>
+	<PUTP ,STORY441 ,P?DOOM T>
+	<PUTP ,STORY457 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -8924,6 +8926,7 @@
 	(DESC "164")
 	(LOCATION LOCATION-OCEAN)
 	(STORY TEXT164)
+	(EVENTS STORY-SET-SAIL)
 	(CHOICES CHOICES164)
 	(DESTINATIONS <PLTABLE STORY504 STORY402 STORY042 STORY081>)
 	(TYPES FOUR-CHOICES)
@@ -13235,224 +13238,139 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT451 "You know that the snakes will detect your approach even in darkness, because they can sense your body heat. To counteract this you take a long dip in the ocean until you are shivering with cold. Then you return to slay the Gorgons in their sleep...">
+
 <ROOM STORY451
 	(IN ROOMS)
 	(DESC "451")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT451)
+	(CHOICES CHOICES-THIEVERY)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY487 STORY506>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-THIEVERY 10>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT452 "To one side of the tunnel is a shaft that has been boarded up. On it is stuck a label which reads: 'Danger. This section of the mines closed on account of spectres. By order of the Mine Supervisor.'">
+<CONSTANT CHOICES452 <LTABLE "Break down the boards" "Venture deeper" "Head for the surface">>
 
 <ROOM STORY452
 	(IN ROOMS)
 	(DESC "452")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT452)
+	(CHOICES CHOICES452)
+	(DESTINATIONS <PLTABLE STORY470 STORY651 STORY025>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT453 "Among the shambling miners you notice one face -- your former helmsman, Gaspar Savaloy. His cheeks, once ruddy and well-larded as any yeoman of Golnir, are now hollow; his formerly ample belly has been lost along with memories of good meals.||\"Mister Savaloy,\" you say. \"Here's a pretty pass, eh?\" It takes a few seconds for recognition to strike. \"Skipper! If it ain't me old skipper what I unjustly abandoned on that isle.\" He starts to sway his head, eyes too parched for tears. \"Help yer old helmsman, skipper.\"||You discover from the mine supervisor that it will cost 30 Shards to pay off Savaloy's indenture.">
+<CONSTANT CHOICES453 <LTABLE "Pay to have him free" "Ignore him and walk on">>
 
 <ROOM STORY453
 	(IN ROOMS)
 	(DESC "453")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT453)
+	(CHOICES CHOICES453)
+	(DESTINATIONS <PLTABLE STORY489 STORY471>)
+	(REQUIREMENTS <PLTABLE 30 NONE>)
+	(TYPES ONE-MONEY)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY454
 	(IN ROOMS)
 	(DESC "454")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY454-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY454-BACKGROUND ()
+	<GAIN-CODEWORD ,CODEWORD-COLOUR>
+	<RETURN ,STORY472>>
+
+<CONSTANT TEXT455 "The tavern is a shambles. Several of your men lie dead in the wreckage. The first mate staggers over and you are horrified to see that one of his eyes has been gouged out in the fighting.||\"Yeah, but you should see the other bloke,\" he quips gamely.||Your men are in no shape to tackle the Reavers now. \"He who fights and runs away, skipper...\" urges the bosun.||You nod in agreement. \"Get back aboard, you swabs. We're setting sail!\"">
 
 <ROOM STORY455
 	(IN ROOMS)
 	(DESC "455")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT455)
+	(EVENTS STORY455-EVENTS)
+	(CONTINUE STORY164)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY455-EVENTS ()
+	<COND (<G? <RANDOM-EVENT 2 0 T> <GETP ,CURRENT-CHARACTER ,P?RANK>>
+		<GAIN-RANK 1>
+		<UPGRADE-STAMINA <ROLL-DICE 1>>
+	)>>
+
+<CONSTANT TEXT456 "The pirates pull alongside and cast grappling hooks to seize your vessel.||Within moments they are swarming aboard. You offer them your goods, but plead for the freedom of your crew.">
 
 <ROOM STORY456
 	(IN ROOMS)
 	(DESC "456")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT456)
+	(CHOICES CHOICES-CHARISMA)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY416 STORY435>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-CHARISMA 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT457 "\"We ought to get under way,\" says the first mate. \"They'll be
+back with reinforcements soon.\"||You agree.">
 
 <ROOM STORY457
 	(IN ROOMS)
 	(DESC "457")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(EVENTS STORY457-EVENTS)
+	(CONTINUE STORY164)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY457-EVENTS ()
+	<LOSE-STAMINA <ROLL-DICE 1> ,DIED-FROM-INJURIES ,STORY457>
+	<COND (<IS-ALIVE>
+		<CONTINUE-TEXT ,TEXT457>
+		<KEEP-ITEM ,SWORD2>
+		<KEEP-ITEM ,CHAIN-MAIL>
+		<DELETE-CODEWORD ,CODEWORD-COLOUR>
+	)>>
+
+<CONSTANT TEXT458 "The Reavers have no intention of releasing your ship and crew; slave labour is too valuable.">
+<CONSTANT CHOICES458 <LTABLE HAVE-A "Sneak off and rescue your men" "Forget about them and see to your own future">>
 
 <ROOM STORY458
 	(IN ROOMS)
 	(DESC "458")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT458)
+	(CHOICES CHOICES458)
+	(DESTINATIONS <PLTABLE STORY567 STORY438 STORY476>)
+	(REQUIREMENTS <PLTABLE SILVER-MEDALLION NONE NONE>)
+	(TYPES <PLTABLE R-ITEM R-NONE R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT459 "Lauria is sleeping like an innocent babe. She barely murmurs in her sleep as you toss her over your shoulder and carry her down to the docks. There you find an Uttakin slaver who is delighted to buy her off you for 150 Shards. \"She has very white skin,\" he says appreciatively.||You nod. \"And a black heart.\"">
 
 <ROOM STORY459
 	(IN ROOMS)
 	(DESC "459")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT459)
+	(EVENTS STORY459-EVENTS)
+	(CONTINUE STORY100)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY459-EVENTS ()
+	<GAIN-MONEY 150>
+	<DELETE-CODEWORD ,CODEWORD-ANGER>
+	<GAIN-CODEWORD ,CODEWORD-CIVIL>>
+
+<CONSTANT TEXT460 "The lookout reports seeing a meteor plunge out of the sky a few leagues to southward. The first mate thinks it might be worth investigating, but it is not as easy as he thinks. You will have to calculate how far the ship has gone since the meteor fell and then plot a course back.">
 
 <ROOM STORY460
 	(IN ROOMS)
 	(DESC "460")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT460)
+	(CHOICES CHOICES-SCOUTING)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY409 STORY262>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-SCOUTING 16>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY461
