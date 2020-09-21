@@ -6218,6 +6218,7 @@
 	<RESET-ODDS 1 0 ,STORY384>
 	<RESET-ODDS 2 0 ,STORY403>
 	<RESET-ODDS 2 0 ,STORY418>
+	<RESET-ODDS 1 0 ,STORY465>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUT <GET <GETP ,STORY391 ,P?REQUIREMENTS> 1> 2 14>
 	<PUTP ,STORY006 ,P?DOOM T>
@@ -13373,225 +13374,136 @@ back with reinforcements soon.\"||You agree.">
 	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT461 "The fertile slopes of the volcano are covered with lush vegetation. The islanders are pleased to gather round and offer you a feast of fried yams, shellfish stew, barbecued fowl and beer made from pineapple juice.">
+
 <ROOM STORY461
 	(IN ROOMS)
 	(DESC "461")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT461)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY442 STORY706>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE 2 0 <PLTABLE 6 12> <LTABLE "The volcano starts to rumble" "The volcano remains dormant">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT462 "It is the wizard Targdaz, whom you freed from imprisonment inside a giant ruby. \"I have come to tell you of a vacant castle in Old Harkuna,\" he says. \"If you'd care to take up residence there I'd be happy to serve as your court sorcerer.\"||\"Fine, but where is it exactly?\"||He throws up his hands. \"I didn't bring a map! It can't be that hard to find.\"||So saying, he flies off.">
 
 <ROOM STORY462
 	(IN ROOMS)
 	(DESC "462")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT462)
+	(CONTINUE STORY135)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT463 "You believe that everything points to the bosun as the man responsible for this heinous crime. You order him clapped in irons, but the crew protest that he is a man of unblemished character who would never kill anyone except in an honest brawl.">
+<CONSTANT CHOICES463 <LTABLE "Press the matter" "Let it drop">>
 
 <ROOM STORY463
 	(IN ROOMS)
 	(DESC "463")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT463)
+	(CHOICES CHOICES463)
+	(DESTINATIONS <PLTABLE STORY677 STORY554>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT464 "You walk down into pitch darkness. The scent is of damp loam and ozone. Sorcery is in the very air here, strong enough to make your skin tingle.">
+<CONSTANT CHOICES464 <LTABLE "Master the winding paths below the world">>
 
 <ROOM STORY464
 	(IN ROOMS)
 	(DESC "464")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT464)
+	(CHOICES CHOICES464)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY445 STORY-INTO-THE-UNDERWORLD>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-SCOUTING 17>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT465 "You are gazing over the side when you see a dark shadow rising from the depths. It is huge.||Before you have a chance to shout any warning, colossal tentacles rear up from the water and grapple the ship.">
 
 <ROOM STORY465
 	(IN ROOMS)
 	(DESC "465")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT465)
+	(EVENTS STORY465-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY592 STORY610 STORY135>>)
+	(REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 9 15 100> <LTABLE "The ship is lost" "You escape in the cutter" "The Kraken departs">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY465-EVENTS ("AUX" (DICE 1) (MODIFIER 0))
+	<COND (,CURRENT-SHIP
+		<COND (<EQUAL? ,CURRENT-SHIP ,SHIP-BRIGANTINE>
+			<SET DICE 2>
+		)(<EQUAL? ,CURRENT-SHIP ,SHIP-GALLEON>
+			<SET DICE 3>
+		)>
+	)>
+	<SET MODIFIER <GET-RANK ,CURRENT-CHARACTER>>
+	<RESET-ODDS .DICE .MODIFIER ,STORY465>>
+
+<CONSTANT TEXT466 "The skeletons have sailed from the Night Country to pay homage to you. Your men are astonished to see them kneel down in your cabin and bow their bald white heads, as docile as page-boys.">
 
 <ROOM STORY466
 	(IN ROOMS)
 	(DESC "466")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT466)
+	(EVENTS STORY466-EVENTS)
+	(CONTINUE STORY502)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY466-EVENTS ()
+	<COND (<CHECK-VISITS-MORE ,STORY466 1> <STORY-JUMP ,STORY521>)>>
+
+<CONSTANT TEXT467 "You kneel at the end of the headland and concentrate on your prayers. Towards dusk, with the sun a pulsing globe of orange fire on the horizon, you hear a footstep on the rocks behind you.">
 
 <ROOM STORY467
 	(IN ROOMS)
 	(DESC "467")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT467)
+	(CHOICES CHOICES-SANCTITY)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY485 STORY121>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-SANCTITY 12>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT468 "You reach the coastal waters of the Sleeping Isle.||\"We're going to have to find anchorage here,\" says the first mate when you ask for his report. \"We're in need of fresh supplies and the ship could do with light repairs.\"||You drop anchor in a bay fringed by coconut palms and go ashore in the rowboat. While the men gather supplies, you have the opportunity to explore a little way inland if you wish.">
+<CONSTANT CHOICES468 <LTABLE "Explore the island" "Help gather supplies">>
 
 <ROOM STORY468
 	(IN ROOMS)
 	(DESC "468")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT468)
+	(CHOICES CHOICES468)
+	(DESTINATIONS <PLTABLE STORY265 STORY284>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT469 "You lower yourself to the floor and pad softly over to where the two Gorgons lie sleeping. In that sleep of dreams what death may come ... if only you are stealthy enough.">
 
 <ROOM STORY469
 	(IN ROOMS)
 	(DESC "469")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT469)
+	(CHOICES CHOICES-THIEVERY)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY487 STORY506>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-THIEVERY 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY470
 	(IN ROOMS)
 	(DESC "470")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY470-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY470-BACKGROUND ()
+	<COND (<CHECK-VISITS-MORE ,STORY470 1> <RETURN ,STORY507>)>
+	<RETURN ,STORY488>>
 
 <ROOM STORY471
 	(IN ROOMS)
