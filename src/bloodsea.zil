@@ -3219,6 +3219,7 @@
 <OBJECT CODEWORD-CACOGAST (DESC "Cacogast")>
 <OBJECT CODEWORD-CALCIUM (DESC "Calcium")>
 <OBJECT CODEWORD-CALLID (DESC "Callid")>
+<OBJECT CODEWORD-CANCEL (DESC "Cancel")>
 <OBJECT CODEWORD-CATALYST (DESC "Catalyst")>
 <OBJECT CODEWORD-CERTAIN (DESC "Certain")>
 <OBJECT CODEWORD-CERUMEN (DESC "Cerumen")>
@@ -6320,7 +6321,8 @@
 	<PUTP ,STORY426 ,P?DOOM T>
 	<PUTP ,STORY441 ,P?DOOM T>
 	<PUTP ,STORY457 ,P?DOOM T>
-	<PUTP ,STORY474 ,P?DOOM T>>
+	<PUTP ,STORY474 ,P?DOOM T>
+	<PUTP ,STORY486 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -11278,11 +11280,10 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(CONTINUE STORY277)
 	(FLAGS LIGHTBIT)>
 
-<ROUTINE STORY316-EVENTS ("AUX" ROLL)
+<ROUTINE STORY316-EVENTS ()
 	<RETURN-ITEM ,WINGED-IDOL T>
 	<GAIN-CODEWORD ,CODEWORD-CUSHAT>
-	<SET ROLL <RANDOM-EVENT 2 0 T>>
-	<COND (<G? .ROLL <GET-ABILITY-SCORE ,CURRENT-CHARACTER ,ABILITY-SCOUTING>>
+	<COND (<G? <RANDOM-EVENT 2 0 T> <GET-ABILITY-SCORE ,CURRENT-CHARACTER ,ABILITY-SCOUTING>>
 		<UPGRADE-ABILITY ,ABILITY-SCOUTING 1>
 	)>>
 
@@ -13732,224 +13733,138 @@ back with reinforcements soon.\"||You agree.">
 	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT481 "You give each man a biscuit from the cabin boy's locker and tell him to swallow it. One of the ordinary seamen, a hulking fellow called Timung, is unable to do so. Guilt has left his mouth too dry.||Later, a gold chain that belonged to the victim is found under Timung's pillow, showing that his motive was simple theft. You have no compunction about casting the villain over board to try his luck in battle with the sharks.">
+
 <ROOM STORY481
 	(IN ROOMS)
 	(DESC "481")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT481)
+	(EVENTS STORY481-EVENTS)
+	(CONTINUE STORY188)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY481-EVENTS ()
+	<COND (<G? <RANDOM-EVENT 2 0 T> <GET-ABILITY-SCORE ,CURRENT-CHARACTER ,ABILITY-THIEVERY>>
+		<UPGRADE-ABILITY ,ABILITY-THIEVERY 1>
+	)>>
+
+<CONSTANT TEXT482 "\"Few reach this far,\" booms a voice. Startled, you whirl around and peer in all directions, but there is nothing to be seen except the pall of leaves and trees like silent sentinels.||The branches of the plane tree move - sluggish serpents stirred to drowsy life, unfolding to reveal a fissure in the earth.||\"Where does it lead?\" you ask the unseen presence.||\"Anywhere you wish, if you have the science to find your way. But to the unskilled it is only a gateway to hell.\"">
+<CONSTANT CHOICES482 <LTABLE "Enter the hole" "Turn back">>
 
 <ROOM STORY482
 	(IN ROOMS)
 	(DESC "482")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT482)
+	(CHOICES CHOICES482)
+	(DESTINATIONS <PLTABLE STORY464 STORY388>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT483 "At dawn you find you are in the Misty Estuary. The helmsman is at a loss to explain it. \"I could have sworn we were a hundred leagues north of here,\" he says.||You are not one to ignore the suggestions of providence. Since some force has seen fit to bring you here, it may be worth staying a while.">
 
 <ROOM STORY483
 	(IN ROOMS)
 	(DESC "483")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-SMOGMAW)
+	(STORY TEXT483)
+	(EVENTS STORY483-EVENTS)
+	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY483-EVENTS ()
+	<COND (,CURRENT-SHIP <STORY-SET-DOCK ,DOCK-SMOGMAW ,CURRENT-SHIP F>)>>
+
+<CONSTANT TEXT484 "Clutched in bony fingers, you and your men are hauled across to the other ship. Shrouds catch a foetid wind and slowly she picks up speed, leaving your own ship to drift abandoned.||You are pressed into service below decks - a harsh servitude from which not even death can bring deliverance. Each day you watch with horror as your flesh dries up and sloughs away, leaving you a macabre living skeleton.||Nothing can save you from undeath - not even any resurrection you may have arranged.">
 
 <ROOM STORY484
 	(IN ROOMS)
 	(DESC "484")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT484)
+	(EVENTS STORY484-EVENTS)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY484-EVENTS ()
+	<SETG RESURRECTION-ARRANGEMENTS NONE>>
+
+<CONSTANT TEXT485 "You are dazzled from staring so long in the direction of the setting sun, so that all you can see when you turn is the silhouettes of the two tall women who have come to confront you. Their hair seems to move -- not lightly, as though whipped by the sea breeze, but with the oily sluggishness of snakes.">
+<CONSTANT CHOICES485 <LTABLE "Attack them" "Freeze" "Retreat">>
 
 <ROOM STORY485
 	(IN ROOMS)
 	(DESC "485")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT485)
+	(CHOICES CHOICES485)
+	(DESTINATIONS <PLTABLE STORY685 STORY356 STORY374>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT486 "The ship keels over; timbers warp and split; mere anarchy is loosed upon you. Seawater rushes into the broken shell of the hull drowning out the cries of your crewmen.||You can think of nothing now but saving yourself.">
 
 <ROOM STORY486
 	(IN ROOMS)
 	(DESC "486")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT486)
+	(EVENTS STORY486-EVENTS)
+	(CONTINUE STORY505)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY486-EVENTS (STORY "AUX" (RANK 1))
+	<PUTP ,STORY486 ,P?DOOM F>
+	<SET RANK <GET-RANK ,CURRENT-CHARACTER>>
+	<COND (<G? <RANDOM-EVENT 2> .RANK>
+		<EMPHASIZE ,TEXT-DROWNED>
+		<STORY-JUMP ,STORY123>
+	)(ELSE
+		<STORY-LOSE-SHIP>
+		<CRLF>
+		<TELL "You are swept miraculously towards a shore of white coral sand" ,PERIOD-CR>
+		<LOSE-STAMINA <ROLL-DICE 2> ,DIED-GREW-WEAKER ,STORY486>
+	)>>
+
+<CONSTANT TEXT487 "Near their bedside is a dagger which you can add to your list of possessions if you wish. Whether you keep it or not, it is a handy tool with which to do your night's business. The Gorgons' necks are tough and fibrous with almost no blood, and once the heads are hacked off the serpentine coiffure wilts like a tom-up weed.">
 
 <ROOM STORY487
 	(IN ROOMS)
 	(DESC "487")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT487)
+	(EVENTS STORY487-EVENTS)
+	(CONTINUE STORY393)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY487-EVENTS ()
+	<KEEP-ITEM ,DAGGER>>
+
+<CONSTANT TEXT488 "The weight of the air above becomes almost palpable as you descend deep into the ground. A trickle of sweat runs down your spine. Each breath you take tastes hot and stale.||Turning a bend in the passage, you see a sight to harrow your soul. Wreathed in silver light, a group of frightful-visaged spectres are turning slowly in the air, dancing a slow minuet to the mournful tune of an invisible harpsichord.">
+<CONSTANT CHOICES488 <LTABLE "Use a" "Banish them with holy words" "Leave before they see you">>
 
 <ROOM STORY488
 	(IN ROOMS)
 	(DESC "488")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT488)
+	(CHOICES CHOICES488)
+	(DESTINATIONS <PLTABLE STORY525 STORY543 STORY561>)
+	(REQUIREMENTS <PLTABLE SPECTRAL-VEIL NONE NONE>)
+	(TYPES <PLTABLE R-ITEM R-NONE R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT489 "You go back to the mine office and sign the necessary papers.||Gaspar Savaloy falls on his knees to thank you. You look down in a mixture of contempt and pity as he kisses your boots.||\"A tidy reward for mutiny, wouldn't you say, Mister Savaloy?\"||He cannot look you in the eye. \"I'm shamed, skipper; you've shamed me. But I'll make up all I owe you an' more, you see if I don't. I'm bound for Dweomer, where I'll make good. Then I can pay you back.\"||He scurries off.">
 
 <ROOM STORY489
 	(IN ROOMS)
 	(DESC "489")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT489)
+	(CODEWORDS CODEWORD-CANCEL)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT490 "You hail the other ship, asking its crew why they serve a monarch who is long dead.||\"Not dead but sleeping,\" counters the captain. \"We are the keepers of the flame until that time when the Rimewater thaws and our liege-lord shall rise up to sweep the Uttakin into the sea.\"||Your first mate leans over and whispers in your ear. \"Fanatics, by the sound of it, captain.\"||You shrug. \"Who knows?\"||The royalist ship sails off.">
 
 <ROOM STORY490
 	(IN ROOMS)
 	(DESC "490")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT490)
+	(CONTINUE STORY475)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY491
