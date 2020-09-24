@@ -3250,6 +3250,8 @@
 <OBJECT CODEWORD-BALUSTER (DESC "Baluster")>
 <OBJECT CODEWORD-DANGLE (DESC "Dangle")>
 <OBJECT CODEWORD-DIAMOND (DESC "Diamond")>
+<OBJECT CODEWORD-DRAGON (DESC "Dragon")>
+<OBJECT CODEWORD-EDIFICE (DESC "Edifice")>
 
 ; "Shack in Smogmaw (Added by SD Separa)"
 
@@ -3874,6 +3876,9 @@
 <OBJECT GOD-MAKA
 	(DESC "Maka")>
 
+<OBJECT GOD-MOLHEM
+	(DESC "Molhem")>
+
 <OBJECT GOD-MOLHERN
 	(DESC "Molhern, the God of Craftsmen")>
 
@@ -3925,12 +3930,13 @@
 <CONSTANT CONDITION-GOOD 2>
 <CONSTANT CONDITION-EXCELLENT 3>
 
-<CONSTANT DOCKS <LTABLE "Smogmaw" "Dweomer" "Vervayens" "Sorcerers' Isle">>
+<CONSTANT DOCKS <LTABLE "Smogmaw" "Dweomer" "Vervayens" "Sorcerers' Isle" "Copper Island">>
 
 <CONSTANT DOCK-SMOGMAW 1>
 <CONSTANT DOCK-DWEOMER 2>
 <CONSTANT DOCK-VERVAYENS 3>
 <CONSTANT DOCK-SORCERERS 4>
+<CONSTANT DOCK-COPPER 5>
 
 <OBJECT SHIP-BARQUE
 	(DESC "barque")
@@ -3967,6 +3973,12 @@
 	(COMBAT 4)
 	(DEFENSE 5)
 	(STAMINA 8)>
+
+<OBJECT MONSTER-HEAD
+	(DESC "Head")
+	(COMBAT 7)
+	(DEFENSE 14)
+	(STAMINA 5)>
 
 <OBJECT MONSTER-MUTINEER
 	(DESC "Mutineer")
@@ -6864,6 +6876,7 @@
 	(IN ROOMS)
 	(DESC "019")
 	(STORY TEXT019)
+	(EVENTS STORY-SET-SAIL)
 	(CHOICES CHOICES019)
 	(DESTINATIONS <PLTABLE STORY630 STORY081 STORY004 STORY227>)
 	(TYPES FOUR-CHOICES)
@@ -8042,10 +8055,14 @@
 	(DESC "099")
 	(LOCATION LOCATION-COPPER)
 	(STORY TEXT099)
+	(EVENTS STORY099-EVENTS)
 	(CHOICES CHOICES099)
 	(DESTINATIONS <PLTABLE STORY297 STORY317 STORY334 STORY347 STORY495>)
 	(TYPES FIVE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY099-EVENTS ()
+	<STORY-SET-DOCK ,DOCK-COPPER ,CURRENT-SHIP>>
 
 <CONSTANT TEXT100 "You are on a broad platform of polished basalt that extends into the sea. The city of Dweomer lies some way inland, along a paved avenue with stone sentinels on either side.">
 <CONSTANT CHOICES100 <LTABLE "Put to sea" "Acquire a ship" "Arrange passage to the mainland" "Go along the avenue to Dweomer">>
@@ -13867,225 +13884,145 @@ back with reinforcements soon.\"||You agree.">
 	(CONTINUE STORY475)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT491 "It is as though night has fallen suddenly in the middle of the day. Thunderheads hunch on the horizon like vast brooding crows. Lightning streaks yellow fire across the tortured sky.||\"Doomsday!\" shrieks the bosun. \"Repent or be damned!\"">
+
 <ROOM STORY491
 	(IN ROOMS)
 	(DESC "491")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT491)
+	(EVENTS STORY491-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY157 STORY672 STORY042>>)
+	(REQUIREMENTS <LTABLE <LTABLE 1 0 <PLTABLE 4 6 19>>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY491-EVENTS ()
+	<STORM-AT-SEA ,STORY491 ,STORY024>>
+
+<CONSTANT TEXT492 "The pirates' treasure amounts to 600 Shards. Their ship's hold contains 1 Cargo Unit of metals, which you can add to your own cargo if you have room for it. The mate advises you take the pirate captain's head, which may bring a reward.||It was your leadership that won the day.">
 
 <ROOM STORY492
 	(IN ROOMS)
 	(DESC "492")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT492)
+	(EVENTS STORY492-EVENTS)
+	(CONTINUE STORY013)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY492-EVENTS ()
+	<GAIN-MONEY 600>
+	<STORY-GAIN-CARGO ,CARGO-METALS 1>
+	<KEEP-ITEM ,PIRATE-CAPTAINS-HEAD>
+	<COND (<G? <RANDOM-EVENT 2 0 T> <GETP ,CURRENT-CHARACTER ,P?RANK>>
+		<GAIN-RANK 1>
+		<UPGRADE-STAMINA <ROLL-DICE 1>>
+	)>>
+
+<CONSTANT TEXT493 "The pirates do not stand on ceremony. You are hauled out on to the high terrace of the citadel and impaled on an iron spike. Your body will hang there, staring sightlessly out to sea, until the carrion birds have eaten their fill.">
 
 <ROOM STORY493
 	(IN ROOMS)
 	(DESC "493")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT493)
+	(EVENTS STORY493-EVENTS)
+	(CONTINUE STORY123)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY493-EVENTS ()
+	<COND (<CHECK-CODEWORD ,CODEWORD-COLOUR> <DELETE-CODEWORD ,CODEWORD-COLOUR>)>
+	<COND (<CHECK-CODEWORD ,CODEWORD-CROCUS> <DELETE-CODEWORD ,CODEWORD-CROCUS>)>>
 
 <ROOM STORY494
 	(IN ROOMS)
 	(DESC "494")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY494-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY494-BACKGROUND ()
+	<COND (<CHECK-VISITS-MORE ,STORY494 1> <RETURN ,STORY639>)>
+	<RETURN ,STORY621>>
+
+<CONSTANT TEXT495 "If your ship is docked here you can put to sea. If not, you could pay for passage to either Dweomer or Metriciens, at a cost of 35 Shards in each case. or to Smogmaw for 15 Shards.">
+<CONSTANT CHOICES495 <LTABLE "Put to sea" "Pay for passage to Smogmaw" "Pay for passage to Dweomer" "Pay for passage to Metriciens">>
 
 <ROOM STORY495
 	(IN ROOMS)
 	(DESC "495")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT495)
+	(CHOICES CHOICES495)
+	(DESTINATIONS <PLTABLE STORY019 STORY535 STORY242 STORY260>)
+	(REQUIREMENTS <PLTABLE DOCK-COPPER 15 35 35>)
+	(TYPES <PLTABLE R-DOCKED R-MONEY R-MONEY R-MONEY>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT496 "The horse, a magnificent white stallion with a mane of silver threads, drops rapidly out of the sky to alight gently on the deck.">
+<CONSTANT CHOICES496 <LTABLE HAVE-CODEWORD HAVE-CODEWORD IF-NOT>>
 
 <ROOM STORY496
 	(IN ROOMS)
 	(DESC "496")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT496)
+	(CHOICES CHOICES496)
+	(DESTINATIONS <PLTABLE STORY462 STORY443 STORY424>)
+	(REQUIREMENTS <PLTABLE CODEWORD-DRAGON CODEWORD-EDIFICE NONE>)
+	(TYPES <PLTABLE R-CODEWORD R-CODEWORD R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT497 "The mountain turns out to be a hollow rocky shell with steps winding down inside it. You stand at the top and gaze down the deep shaft. A faint sulphurous tang rises on the wind from far below.">
+<CONSTANT CHOICES497 <LTABLE "Descend the steps" "Return down the mountainside">>
 
 <ROOM STORY497
 	(IN ROOMS)
 	(DESC "497")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT497)
+	(CHOICES CHOICES497)
+	(DESTINATIONS <PLTABLE STORY-INTO-THE-UNDERWORLD STORY606>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT498 "A blessing costs 20 Shards if you are an initiate, 40 Shards otherwise. You cannot buy a blessing from Molhem if you already have one.||Molhem's blessing allows you a second attempt at any one failed MAGIC roll. After the second roll (whether successful or not) the blessing is used up.">
 
 <ROOM STORY498
 	(IN ROOMS)
 	(DESC "498")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT498)
+	(EVENTS STORY498-EVENTS)
+	(CONTINUE STORY099)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY498-EVENTS ()
+	<PURCHASE-BLESSING 40 20 ,GOD-MOLHEM ,BLESSING-MAGIC>>
+
+<CONSTANT TEXT499 "There is an old adage: set a thief to catch a thief. Presumably, with a little leeway, the same principle should mean that any crafty rogue can spot the loopholes in a villain's alibi.">
 
 <ROOM STORY499
 	(IN ROOMS)
 	(DESC "499")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT499)
+	(CHOICES CHOICES-THIEVERY)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY481 STORY463>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-THIEVERY 14>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT500 "The witch's hand casts a spell, animating the head so that it flies from your belt and tries to snap your throat between its teeth.||You must fight the grisly thing.||You cannot flee.">
 
 <ROOM STORY500
 	(IN ROOMS)
 	(DESC "500")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT500)
+	(EVENTS STORY500-EVENTS)
+	(CONTINUE STORY482)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY500-EVENTS ()
+	<COMBAT-MONSTER ,MONSTER-HEAD 7 14 5>
+	<COND (<CHECK-COMBAT ,MONSTER-HEAD ,STORY500>
+		<LOSE-ITEM ,PIRATE-CAPTAINS-HEAD T>
+	)>>
 
 <ROOM STORY501
 	(IN ROOMS)
