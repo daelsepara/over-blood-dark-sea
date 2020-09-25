@@ -368,7 +368,7 @@
 		<CRLF>
 	)>>
 
-<ROUTINE PROCESS-CHOICES (CHOICES "AUX" DESTINATIONS REQUIREMENTS TYPES KEY CHOICE TYPE LIST)
+<ROUTINE PROCESS-CHOICES (CHOICES "AUX" DESTINATIONS REQUIREMENTS TYPES KEY CHOICE TYPE LIST MODIFIER)
 	<SET DESTINATIONS <GETP ,HERE ,P?DESTINATIONS>>
 	<SET REQUIREMENTS <GETP ,HERE ,P?REQUIREMENTS>>
 	<SET TYPES <GETP ,HERE ,P?TYPES>>
@@ -406,7 +406,12 @@
 					)(<AND <EQUAL? .TYPE ,R-TEST-ABILITY> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
 						<CRLF>
 						<CRLF>
-						<COND (<TEST-ABILITY ,CURRENT-CHARACTER <GET .LIST 1> <GET .LIST 2>>
+						<COND (<G? <GET .LIST 0> 2>
+							<SET MODIFIER <GET .LIST 3>>
+						)(ELSE
+							<SET MODIFIER 0>
+						)>
+						<COND (<TEST-ABILITY ,CURRENT-CHARACTER <GET .LIST 1> <GET .LIST 2> .MODIFIER>
 							<SETG HERE <GET <GET .DESTINATIONS .CHOICE> 1>>
 						)(ELSE
 							<SETG HERE <GET <GET .DESTINATIONS .CHOICE> 2>>
@@ -3221,6 +3226,7 @@
 <OBJECT CODEWORD-CALLID (DESC "Callid")>
 <OBJECT CODEWORD-CANCEL (DESC "Cancel")>
 <OBJECT CODEWORD-CATALYST (DESC "Catalyst")>
+<OBJECT CODEWORD-CENOTAPH (DESC "Cenotaph")>
 <OBJECT CODEWORD-CERTAIN (DESC "Certain")>
 <OBJECT CODEWORD-CERUMEN (DESC "Cerumen")>
 <OBJECT CODEWORD-CHANCE (DESC "Chance")>
@@ -3968,6 +3974,12 @@
 	(DEFENSE 10)
 	(STAMINA 8)>
 
+<OBJECT MONSTER-FLYING-SHARK
+	(DESC "Flying shark")
+	(COMBAT 9)
+	(DEFENSE 10)
+	(STAMINA 27)>
+
 <OBJECT MONSTER-GORGON
 	(DESC "Gorgon")
 	(COMBAT 4)
@@ -4415,7 +4427,7 @@
 	<HLIGHT 0>
 	<TELL ,PERIOD-CR>>
 
-<ROUTINE TEST-ABILITY (CHARACTER ABILITY DIFFICULTY "OPT" (MODIFIER 0) "AUX" SCORE (ROLL 0) (RESULT F) (TOTAL 0))
+<ROUTINE TEST-ABILITY (CHARACTER ABILITY DIFFICULTY "OPT" (MODIFIER 0) "AUX" SCORE (ROLL 0) (RESULT F) (TOTAL 0) (INITIAL-MODIFIER 0))
 	<REPEAT ()
 		<SET SCORE <CALCULATE-ABILITY .CHARACTER .ABILITY>>
 		<TELL "Making a ">
@@ -4432,8 +4444,9 @@
 		<HLIGHT 0>
 		<TELL " difficulty.." ,PERIOD-CR>
 		<SET MODIFIER <+ .MODIFIER <TEST-ABILITY-GOD .ABILITY>>>
+		<SET INITIAL-MODIFIER .MODIFIER>
 		<SET MODIFIER <+ .MODIFIER <TEST-ABILITY-POTION .ABILITY>>>
-		<COND (<L=? .MODIFIER 0> <PRESS-A-KEY>)>
+		<COND (<L=? .MODIFIER .INITIAL-MODIFIER> <PRESS-A-KEY>)>
 		<COND (<CHECK-AILMENT ,CURSE-THREE-FORTUNES>
 			<SET ROLL <ROLL-DICE 1>>
 		)(ELSE
@@ -6293,6 +6306,7 @@
 	<RESET-ODDS 1 0 ,STORY465>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUT <GET <GETP ,STORY391 ,P?REQUIREMENTS> 1> 2 14>
+	<PUT <GET <GETP ,STORY510 ,P?REQUIREMENTS> 1> 3 0>
 	<PUTP ,STORY006 ,P?DOOM T>
 	<PUTP ,STORY007 ,P?DOOM T>
 	<PUTP ,STORY010 ,P?DOOM T>
@@ -6334,7 +6348,8 @@
 	<PUTP ,STORY441 ,P?DOOM T>
 	<PUTP ,STORY457 ,P?DOOM T>
 	<PUTP ,STORY474 ,P?DOOM T>
-	<PUTP ,STORY486 ,P?DOOM T>>
+	<PUTP ,STORY486 ,P?DOOM T>
+	<PUTP ,STORY501 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -14024,92 +14039,55 @@ back with reinforcements soon.\"||You agree.">
 		<LOSE-ITEM ,PIRATE-CAPTAINS-HEAD T>
 	)>>
 
+<CONSTANT TEXT501 "You don't even bother to look round when you hear the lookout call, \"Flying fish!\"||A moment later you are hit in the back by a shark that has soared out of the sea on wide fins. Other flying sharks are attacking your crew, who are joining up to deal with them. But you are alone on the poopdeck, and must fight your shark unaided.">
+
 <ROOM STORY501
 	(IN ROOMS)
 	(DESC "501")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT501)
+	(EVENTS STORY501-EVENTS)
+	(CONTINUE STORY320)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY501-EVENTS ()
+	<COMBAT-MONSTER ,MONSTER-FLYING-SHARK 9 10 27>
+	<CHECK-COMBAT ,MONSTER-FLYING-SHARK ,STORY501 0 NONE 0 T F>>
+
+<CONSTANT TEXT502 "The jaw of the skeletal captain drops open and a chilling voice issues forth: \"Go to Chompo in Akatsurai. There you will find a clue that will lead you to the tomb of the necromancer Dawatsu Morituri, whom you must set free. This is our dread lord's command.\"||They return to their vessel and sail off.">
 
 <ROOM STORY502
 	(IN ROOMS)
 	(DESC "502")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT502)
+	(CONTINUE STORY321)
+	(CODEWORDS <PLTABLE CODEWORD-CENOTAPH>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT503 "The shrine consists of nothing more than an obelisk of smooth green stone raised on a sandbank out in the estuary. The priest tells you that to gain a blessing you must swim out to the obelisk.">
+<CONSTANT CHOICES503 <LTABLE TEXT-ROLL-SCOUTING "Don't make the attempt">>
 
 <ROOM STORY503
 	(IN ROOMS)
 	(DESC "503")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT503)
+	(CHOICES CHOICES503)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY147 STORY165> STORY044>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-SCOUTING 11> NONE>)
+	(TYPES <PLTABLE R-TEST-ABILITY R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT504 "You sail into the stretch of ocean known as the Sea of Reeds, which lies between Braelak and the Unnumbered Isles.">
 
 <ROOM STORY504
 	(IN ROOMS)
 	(DESC "504")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT504)
+	(EVENTS STORY-SET-SAIL)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY598 STORY480 STORY050 STORY516>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE 2 0 <PLTABLE 3 6 8 12> <LTABLE "Storm" "A gypsy caravan?" "An uneventful voyage" "A bank of reeds">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
 <CONSTANT TEXT505 "You are on a stretch of shore. Surf pounds on white sand. At the back of the beach is a wall of craggy grey rocks covered with hanging ferns. It is the classic desert island.">
@@ -14121,115 +14099,75 @@ back with reinforcements soon.\"||You agree.">
 	(CONTINUE STORY177)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT506 "You step softly across the cavern floor. A hiss and spit makes you jump and look over your shoulder, but it is only a damp log gleaming sullenly in the embers of the hearth.||You look back at the beds. With a thrill of alarm you see they are now empty.">
+
 <ROOM STORY506
 	(IN ROOMS)
 	(DESC "506")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT506)
+	(CONTINUE STORY121)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT507 "You descend into a small chamber where some boxes are stacked up. Four men who are playing cards by the light of an oil lamp turn to you with startled looks. Before you can say a word, they have drawn cudgels from inside their jerkins and are advancing to do business.">
 
 <ROOM STORY507
 	(IN ROOMS)
 	(DESC "507")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT507)
+	(CHOICES CHOICES-COMBAT)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY579 STORY597>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-COMBAT 13>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT508 "You are wandering through the picturesque cobbled streets of old Dweomer. The place lies under a perpetual shroud of drizzle, except when thick fog billows in off the sea each morning. Narrow latticed windows give glimpses of warm drawing-rooms inside the colleges.">
 
 <ROOM STORY508
 	(IN ROOMS)
 	(DESC "508")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-DWEOMER)
+	(STORY TEXT508)
+	(CHOICES CHOICES-CODEWORD)
+	(DESTINATIONS <PLTABLE STORY526 STORY687>)
+	(REQUIREMENTS <PLTABLE CODEWORD-CANCEL NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT509 "You continue down the shaft until you reach the rock face, where there are several wheelbarrows stacked with copper ore. No one is working here at the moment, but the next shift will arrive soon.">
 
 <ROOM STORY509
 	(IN ROOMS)
 	(DESC "509")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT509)
+	(EVENTS STORY509-EVENTS)
+	(CONTINUE STORY377)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY509-EVENTS ()
+	<COND (<CHECK-VISITS-MORE ,STORY509 1> <STORY-JUMP ,STORY396>)>>
+
+<CONSTANT TEXT510 "People come flocking down from the citadel to watch you sail into the bay. There are hundreds of them - not just the crews of the pirate vessels, but their wives and children too. This is a complete community, just like any number of other towns around the world except that their livelihood rests on bare-faced villainy.">
+<CONSTANT CHOICES510 <LTABLE "Impress on them that you are not to be trifled with">>
 
 <ROOM STORY510
 	(IN ROOMS)
 	(DESC "510")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT510)
+	(EVENTS STORY510-EVENTS)
+	(CHOICES CHOICES-CHARISMA)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY656 STORY114>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-CHARISMA 15 0>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY510-EVENTS ("AUX" (MODIFIER 0) ODDS)
+	<COND (,CURRENT-SHIP
+		<COND (<EQUAL? ,CURRENT-SHIP ,SHIP-GALLEON> <SET MODIFIER <+ .MODIFIER 2>>)>
+		<COND (<EQUAL? <GETP ,CURRENT-SHIP ,P?CONDITION> ,CONDITION-EXCELLENT> <INC .MODIFIER>)>
+	)>
+	<SET ODDS <GET <GETP ,STORY510 ,P?REQUIREMENTS> 1>>
+	<PUT .ODDS 3 .MODIFIER>>
 
 <ROOM STORY511
 	(IN ROOMS)
