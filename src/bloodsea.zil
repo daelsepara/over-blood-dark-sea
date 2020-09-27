@@ -3329,6 +3329,12 @@
 	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
+<OBJECT GOLDEN-KATANA
+	(DESC "golden katana")
+	(COMBAT 1)
+	(QUANTITY 1)
+	(FLAGS WEAPONBIT TAKEBIT)>
+
 <OBJECT MACE
 	(DESC "mace")
 	(QUANTITY 1)
@@ -3571,10 +3577,6 @@
 <OBJECT GOLD-COMPASS
 	(DESC "gold compass")
 	(SCOUTING 2)
-	(FLAGS TAKEBIT)>
-
-<OBJECT GOLDEN-KATANA
-	(DESC "golden katana")
 	(FLAGS TAKEBIT)>
 
 <OBJECT GREEN-GEM
@@ -6228,6 +6230,7 @@
 	<PUTP ,BATTLE-AXE3 ,P?QUANTITY 1>
 	<PUTP ,ENCHANTED-SPEAR ,P?QUANTITY 1>
 	<PUTP ,ENCHANTED-SWORD ,P?QUANTITY 1>
+	<PUTP ,GOLDEN-KATANA ,P?QUANTITY 1>
 	<PUTP ,MACE ,P?QUANTITY 1>
 	<PUTP ,MACE1 ,P?QUANTITY 1>
 	<PUTP ,MACE2 ,P?QUANTITY 1>
@@ -14159,6 +14162,7 @@ back with reinforcements soon.\"||You agree.">
 	(DESTINATIONS <PLTABLE <PLTABLE STORY656 STORY114>>)
 	(REQUIREMENTS <LTABLE <LTABLE ABILITY-CHARISMA 15 0>>)
 	(TYPES ONE-ABILITY)
+	(CODEWORDS <PLTABLE CODEWORD-COLOUR>)
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY510-EVENTS ("AUX" (MODIFIER 0) ODDS)
@@ -14169,225 +14173,123 @@ back with reinforcements soon.\"||You agree.">
 	<SET ODDS <GET <GETP ,STORY510 ,P?REQUIREMENTS> 1>>
 	<PUT .ODDS 3 .MODIFIER>>
 
+<CONSTANT TEXT511 "\"A pirate galley!\" cries the lookout. You follow the direction he's pointing to see a ship flying the red pennant of the Kingdom of the Reavers. Her oars give her a good burst of speed over short distances, and she is soon bearing down on you.">
+<CONSTANT CHOICES511 <LTABLE "Make a run for it" "Parley" "Fight it out">>
+
 <ROOM STORY511
 	(IN ROOMS)
 	(DESC "511")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT511)
+	(CHOICES CHOICES511)
+	(DESTINATIONS <PLTABLE STORY529 STORY547 STORY565>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT512 "Your answer seems to put Isthmus Jack in a good mood. He bellows with vicious laughter and tells several stories that portray the old king, Amcha One-Eye, in a bad light.||Suddenly he stops laughing and gives you a long hard stare. It is at this moment that you realize he's quite insane.">
+<CONSTANT CHOICES512 <LTABLE HAVE-A OTHERWISE>>
 
 <ROOM STORY512
 	(IN ROOMS)
 	(DESC "512")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT512)
+	(CHOICES CHOICES512)
+	(DESTINATIONS <PLTABLE STORY638 STORY656>)
+	(REQUIREMENTS <PLTABLE PIRATE-CAPTAINS-HEAD NONE>)
+	(TYPES ONE-ITEM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT513 "You rise to the rank of second mate, but a couple of close shaves with the Sokaran navy convince you to get out while the going's good.||You jump ship in Smogmaw after first helping yourself to a sword (COMBAT +1) from the ship's magazine.">
 
 <ROOM STORY513
 	(IN ROOMS)
 	(DESC "513")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT513)
+	(CONTINUE STORY044)
+	(ITEMS <PLTABLE SWORD1>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT514 "Lauria wakes up and launches herself across the darkened bedroom with a blood-curdling yell. In the faint stray beam of a street lamp you see a glint of metal in her hand.">
 
 <ROOM STORY514
 	(IN ROOMS)
 	(DESC "514")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT514)
+	(CHOICES CHOICES-COMBAT)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY532 STORY550>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-COMBAT 13>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT515 "You come across a man crouching miserably on a desolate reef. \"If you had not come along I would have been dead before the end of the week,\" he says tearfully as you help him aboard.">
 
 <ROOM STORY515
 	(IN ROOMS)
 	(DESC "515")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT515)
+	(EVENTS STORY515-EVENTS)
+	(CONTINUE STORY608)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY515-EVENTS ()
+	<COND (<CHECK-VISITS-MORE ,STORY515 1> <STORY-JUMP ,STORY572>)>>
+
+<CONSTANT TEXT516 "\"Curse the luck!\" snarls the helmsman. \"We're caught in these reeds.\"||You look over the side. Thick fronds of drifting weed snag your rudder and choke the water in all directions.">
 
 <ROOM STORY516
 	(IN ROOMS)
 	(DESC "516")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT516)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY534 STORY552 STORY570 STORY050>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE 1 0 <PLTABLE 2 4 5 6> <LTABLE "Drift with the current" "Sea gypsies arrive" "Becalmed" "You break free">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT517 "You while away several hours chatting to the priest. He is a simple man of peasant stock, rather superstitious but easy to get on with. He tells you all sorts of fables he has heard - some of them containing a grain of truth, no doubt.||Among the stories he tells you are accounts of Starspike Island, which he claims has a mountain so high that no one can breathe at its summit, of the Island of Fire, which he believes to be an active volcano, and the Sleeping Isle, where a spell puts all who arrive there into deep slumber.||It is time you were on your way. \"Do you need a blessing?\" asks the priest.">
 
 <ROOM STORY517
 	(IN ROOMS)
 	(DESC "517")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT517)
+	(CONTINUE STORY498)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT518 "Days pass and the supplies are running low when finally you see another vessel sailing towards you. She is an Akatsurese slave ship bound for the Black Pagoda. Her master is reluctant to approach because of the plague, but at last you prevail on him to put aboard a few of his slaves who are too frail or intractable to be worth transporting further.||As the Akatsurese ship sails off, your motley handful of new crewmen raise three cheers. \"You've saved us from a pretty dire fate, skipper,\" says a fellow who appoints himself your first mate.||\"We'll do our best to serve you faithfully.\"">
 
 <ROOM STORY518
 	(IN ROOMS)
 	(DESC "518")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT518)
+	(EVENTS STORY518-EVENTS)
+	(CONTINUE STORY337)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY518-EVENTS ()
+	<STORY-RESET-CREW ,CONDITION-POOR ,CURRENT-SHIP>>
+
+<CONSTANT TEXT519 "The Akatsurese captain is grateful for everything you've told him. \"Now I can get a good deal on my cargo,\" he says.||He presents you with a golden katana (COMBAT +1) and tells you that you will be welcome in the city of Chambara.||Returning to your own ship, you sail on.">
 
 <ROOM STORY519
 	(IN ROOMS)
 	(DESC "519")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT519)
+	(CONTINUE STORY228)
+	(ITEMS <PLTABLE GOLDEN-KATANA>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT520 "The men say nothing, only look at you reproachfully as you get into the cutter and row away from the becalmed ship.||\"If looks were curses,\" the first mate says in your ear, \"we'd fry in hell tonight.\"||After days at sea the others have succumbed to thirst and fever. You are left to bend doggedly over the oars, determined to struggle for life until the gods see fit to snuff out your wretched life.||At last you see a stretch of shoreline. You shake the mate's arm, trying to rouse him, but he is stiff and cold. The others too - all are dead. You alone survive to stagger ashore.">
 
 <ROOM STORY520
 	(IN ROOMS)
 	(DESC "520")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT520)
+	(EVENTS STORY520-EVENTS)
+	(CONTINUE STORY313)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY520-EVENTS ()
+	<STORY-LOSE-SHIP>>
 
 <ROOM STORY521
 	(IN ROOMS)
