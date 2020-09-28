@@ -3514,6 +3514,11 @@
 	(QUANTITY 1)
 	(FLAGS TAKEBIT)>
 
+<OBJECT BOTTLE-OF-WINE
+	(DESC "bottle of wine")
+	(QUANTITY 1)
+	(FLAGS TAKEBIT)>
+
 <OBJECT CANDLE
 	(DESC "candle")
 	(QUANTITY 1)
@@ -6259,6 +6264,7 @@
 <ROUTINE RESET-OBJECTS ()
 	<PUTP ,MONEY-BAG ,P?MONEY 500>
 	<PUTP ,BOARS-TUSK ,P?QUANTITY 1>
+	<PUTP ,BOTTLE-OF-WINE ,P?QUANTITY 1>
 	<PUTP ,CANDLE ,P?QUANTITY 1>
 	<PUTP ,CORAL-RED-TRESSES ,P?QUANTITY 1>
 	<PUTP ,FAERY-MEAD ,P?QUANTITY 1>
@@ -6307,6 +6313,7 @@
 	<RESET-ODDS 2 0 ,STORY403>
 	<RESET-ODDS 2 0 ,STORY418>
 	<RESET-ODDS 1 0 ,STORY465>
+	<RESET-ODDS 1 0 ,STORY529>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUT <GET <GETP ,STORY391 ,P?REQUIREMENTS> 1> 2 14>
 	<PUT <GET <GETP ,STORY510 ,P?REQUIREMENTS> 1> 3 0>
@@ -6352,7 +6359,8 @@
 	<PUTP ,STORY457 ,P?DOOM T>
 	<PUTP ,STORY474 ,P?DOOM T>
 	<PUTP ,STORY486 ,P?DOOM T>
-	<PUTP ,STORY501 ,P?DOOM T>>
+	<PUTP ,STORY501 ,P?DOOM T>
+	<PUTP ,STORY523 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -14291,224 +14299,161 @@ back with reinforcements soon.\"||You agree.">
 <ROUTINE STORY520-EVENTS ()
 	<STORY-LOSE-SHIP>>
 
+<CONSTANT TEXT521 "The skeletons present you with tribute in the form of antique coins and jewellery from the lockers of sunken wrecks. The total value of this haul is 750 Shards.||\"Till death do us join,\" calls out the skeletal captain as he sails away.">
+
 <ROOM STORY521
 	(IN ROOMS)
 	(DESC "521")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT521)
+	(EVENTS STORY521-EVENTS)
+	(CONTINUE STORY321)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY521-EVENTS ()
+	<GAIN-MONEY 750>>
+
+<CONSTANT TEXT522 "You cannot break free of the Gorgons' curse. You are doomed to remain stock-still, a living statue, until worn down by time and wind and rain.">
 
 <ROOM STORY522
 	(IN ROOMS)
 	(DESC "522")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT522)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT523 "You cast grappling hooks to hold your vessel alongside the slavers' ship while ladders are flung out to allow your crew to go board. The Uttakin warriors stand ready to receive you; their smiles give a sensation of grim foreboding.">
 
 <ROOM STORY523
 	(IN ROOMS)
 	(DESC "523")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT523)
+	(EVENTS STORY523-EVENTS)
+	(CONTINUE STORY559)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY523-EVENTS ("AUX" ROLL (DICE 2) (MODIFIER -2) (CONDITION 0))
+	<COND (<CHECK-PROFESSION ,PROFESSION-WARRIOR> <SET DICE 3>)>
+	<COND (,CURRENT-SHIP
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<COND (<EQUAL? .CONDITION ,CONDITION-POOR>
+			<SET MODIFIER -2>
+		)(<EQUAL? .CONDITION ,CONDITION-AVERAGE>
+			<SET MODIFIER 0>
+		)(<EQUAL? .CONDITION ,CONDITION-GOOD>
+			<SET MODIFIER 2>
+		)(ELSE
+			<SET MODIFIER 3>
+		)>
+	)>
+	<PREVENT-DOOM ,STORY523>
+	<SET ROLL <RANDOM-EVENT .DICE .MODIFIER T>>
+	<COND (<L=? .ROLL 4>
+		<EMPHASIZE "You are killed!">
+		<STORY-JUMP ,STORY123>
+	)(<L=? .ROLL 15>
+		<EMPHASIZE "Enslaved!">
+		<LOSE-STAMINA <ROLL-DICE 2> ,DIED-FROM-INJURIES ,STORY523>
+		<COND (<IS-ALIVE> <STORY-JUMP ,STORY613>)>
+	)(<L=? .ROLL 16>
+		<EMPHASIZE "The Uttakin withdraw!">
+		<STORY-JUMP ,STORY300>
+	)(ELSE
+		<EMPHASIZE "Outright victory!">
+	)>>
+
+<CONSTANT TEXT524 "You are woken by a sound in the night. Your heart is pounding and you are soaked in sweat. You must have been having a nightmare. Either that or you know what is to come.">
 
 <ROOM STORY524
 	(IN ROOMS)
 	(DESC "524")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT524)
+	(CONTINUE STORY121)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT525 "The spectres mistake you for one of their own kind. They converse with you on such subjects as the vapours of the moon, the quality of the afterlife, and the true nature of eternity. These are secrets that no mortal ever heard, and you will never be the same again.">
 
 <ROOM STORY525
 	(IN ROOMS)
 	(DESC "525")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT525)
+	(EVENTS STORY525-EVENTS)
+	(CONTINUE STORY633)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY525-EVENTS ()
+	<GAIN-RANK 1>
+	<UPGRADE-STAMINA <ROLL-DICE 1>>>
+
+<CONSTANT TEXT526 "You run into old Gaspar Savaloy, who was once your helmsman. He has filled out to his former rotund figure since the time you rescued him from virtual slavery in the mines on Copper Island. His clothes are quite fine too -- as befits a man who is now one of the wealthiest merchants in these parts.||\"Care to speculate, skipper?\" he asks you. \"I've got a hot tip that's sure to show a profit.\"">
+<CONSTANT CHOICES526 <LTABLE "Make an investment" "Check on an earlier investment" "Bid him good-day">>
 
 <ROOM STORY526
 	(IN ROOMS)
 	(DESC "526")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT526)
+	(CHOICES CHOICES526)
+	(DESTINATIONS <PLTABLE STORY652 STORY359 STORY687>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT527 "\"Er, something for your cellar. Master,\" you say lamely, handing over the bottle of wine.||\"Splendid,\" says the Master, somewhat mollified. \"And rest assured that I've been keeping abreast of your work ... er, whatever your name is ... and I think you can expect good marks at the end of term. Mantel will show you out.\"">
 
 <ROOM STORY527
 	(IN ROOMS)
 	(DESC "527")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT527)
+	(EVENTS STORY527-EVENTS)
+	(CONTINUE STORY607)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY527-EVENTS ()
+	<GIVE-ITEM ,BOTTLE-OF-WINE T>>
+
+<CONSTANT TEXT528 "You wait until midnight before setting off on foot. You are alone. Your men didn't sign up to fight as marines in a nocturnal raid, and in any case it will be easier to sneak into the pirate camp on your own.">
 
 <ROOM STORY528
 	(IN ROOMS)
 	(DESC "528")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT528)
+	(CONTINUE STORY362)
+	(CODEWORDS <PLTABLE CODEWORD-CROCUS>)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY529
 	(IN ROOMS)
 	(DESC "529")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(EVENTS STORY529-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY565 STORY032>>)
+	(REQUIREMENTS <LTABLE <LTABLE 1 0 <PLTABLE 6 100> <LTABLE "The pirates overtake you" "You outrun them">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY529-EVENTS ("AUX" (RANK 1) (MODIFIER 0) CONDITION)
+	<SET MODIFIER <GET-RANK ,CURRENT-CHARACTER>>
+	<COND (,CURRENT-SHIP
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<COND (<EQUAL? .CONDITION ,CONDITION-AVERAGE>
+			<SET MODIFIER <+ .MODIFIER 1>>
+		)(<EQUAL? .CONDITION ,CONDITION-GOOD>
+			<SET MODIFIER <+ .MODIFIER 2>>
+		)(<EQUAL? .CONDITION ,CONDITION-EXCELLENT>
+			<SET MODIFIER <+ .MODIFIER 3>>
+		)>
+	)>
+	<RESET-ODDS 1 .MODIFIER ,STORY529>>
+
+<CONSTANT TEXT530 "You find a ship drifting on the open sea. Her sails are furled, fluttering gently in the breeze.||\"I can't see anyone aboard, captain,\" hollers the lookout.">
+<CONSTANT CHOICES530 <LTABLE "Go alongside" "Sail past">>
 
 <ROOM STORY530
 	(IN ROOMS)
 	(DESC "530")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT530)
+	(CHOICES CHOICES530)
+	(DESTINATIONS <PLTABLE STORY548 STORY032>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY531
