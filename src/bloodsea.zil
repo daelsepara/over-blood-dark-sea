@@ -3317,6 +3317,12 @@
 	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
+<OBJECT DAGGER1
+	(DESC "Dagger")
+	(COMBAT 1)
+	(QUANTITY 1)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
 <OBJECT ENCHANTED-SPEAR
 	(DESC "enchanted spear")
 	(COMBAT 2)
@@ -6233,6 +6239,8 @@
 	<PUTP ,BATTLE-AXE1 ,P?QUANTITY 1>
 	<PUTP ,BATTLE-AXE2 ,P?QUANTITY 1>
 	<PUTP ,BATTLE-AXE3 ,P?QUANTITY 1>
+	<PUTP ,DAGGER ,P?QUANTITY 1>
+	<PUTP ,DAGGER1 ,P?QUANTITY 1>
 	<PUTP ,ENCHANTED-SPEAR ,P?QUANTITY 1>
 	<PUTP ,ENCHANTED-SWORD ,P?QUANTITY 1>
 	<PUTP ,GOLDEN-KATANA ,P?QUANTITY 1>
@@ -14456,224 +14464,131 @@ back with reinforcements soon.\"||You agree.">
 	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT531 "Your short and inglorious career as a pirate is cut short when you are left behind after a disastrous attack on an Uttakin merchantman. You are hung from the yardarm with minimal fuss and the sailors do not even bother to watch you \"kicking Nagil's jig\" as the expression goes.">
+
 <ROOM STORY531
 	(IN ROOMS)
 	(DESC "531")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT531)
+	(CONTINUE STORY123)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT532 "You lay Lauria out with a right cross. She'll wake up with a bad headache, but that was on the cards anyway after the amount of cider she drank. You take the opportunity to steal 250 Shards and a dagger (COMBAT +1) before sneaking off into the night.">
 
 <ROOM STORY532
 	(IN ROOMS)
 	(DESC "532")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT532)
+	(EVENTS STORY532-EVENTS)
+	(CONTINUE STORY675)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY532-EVENTS ()
+	<GAIN-MONEY 250>
+	<TAKE-ITEM ,DAGGER1>>
+
+<CONSTANT TEXT533 "Wavering like will-o'-the-wisps above a light haze, a ship's lights gradually appear out of the night. A pallid mariner in a ragged, ancient-looking coat calls to you from the rail, saying that the ship is under a curse. Behind him stands a throng of sad-faced seamen.||\"We cannot put in to any port,\" the captain explains in a hollow voice, \"but are doomed to sail the high seas for evermore.\"">
+<CONSTANT CHOICES533 <LTABLE "Lift the curse">>
 
 <ROOM STORY533
 	(IN ROOMS)
 	(DESC "533")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT533)
+	(CHOICES CHOICES533)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY410 STORY137>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-MAGIC 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT534 "It takes several days to clean off all the reeds that were clogging the rudder.">
+<CONSTANT CHOICES534 <LTABLE "See where the current has taken you">>
 
 <ROOM STORY534
 	(IN ROOMS)
 	(DESC "534")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT534)
+	(CHOICES CHOICES534)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY301 STORY205 STORY042 STORY281 STORY402 STORY189>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE 1 0 <PLTABLE 1 2 3 4 5 6> NONE>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT535 "Fair winds and calm seas bring you swiftly to the southern continent. You sail up the Nozama River, which is so wide at this point that the far bank is barely visible as a thin line of muddy green under a sun-washed sky.||The captain points to a shanty town on the near bank. Behind it, the jungle broods under a haze of steam. \"Smogmaw,\" he says.">
 
 <ROOM STORY535
 	(IN ROOMS)
 	(DESC "535")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT535)
+	(EVENTS STORY-SET-SAIL)
+	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT536 "The accused protests his innocence, but you are convinced he is guilty. As he is tossed overboard he shrieks a curse on everyone aboard. Only later do you find out he was the seventh son of a seventh son, born in Dweomer during an eclipse of the moon.">
+<CONSTANT CHOICES536 <LTABLE "Deflect the curse">>
 
 <ROOM STORY536
 	(IN ROOMS)
 	(DESC "536")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT536)
+	(CHOICES CHOICES536)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY188 STORY641>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-MAGIC 14>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT537 "You reach a clearing where a vast blue plane tree stands, its branches twisted chaotically, some stretching towards the sky, others resting like tired serpents on the ground. There is a feeling of being watched by hundreds of invisible eyes.">
+<CONSTANT CHOICES537 <LTABLE HAVE-A IF-NOT>>
 
 <ROOM STORY537
 	(IN ROOMS)
 	(DESC "537")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT537)
+	(CHOICES CHOICES537)
+	(DESTINATIONS <PLTABLE STORY500 STORY482>)
+	(REQUIREMENTS <PLTABLE PIRATE-CAPTAINS-HEAD NONE>)
+	(TYPES ONE-ITEM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT538 "You encounter a ship bound from Danger, where the harbour is set in cliffs a thousand feet above the sea and vessels must be winched up. The captain hails you and says he has a Cargo Unit of minerals in his hold that he would be willing to exchange for one Cargo Unit of any other commodity.">
 
 <ROOM STORY538
 	(IN ROOMS)
 	(DESC "538")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT538)
+	(EVENTS STORY538-EVENTS)
+	(CONTINUE STORY003)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY538-EVENTS ("AUX" COUNT)
+	<SET COUNT <COUNT-CONTAINER ,CARGO>>
+	<COND (<G? .COUNT 0>
+		<STORY-GAIN-CARGO ,CARGO-MINERALS 1>
+		<STORY-LOSE-CARGO .COUNT>
+	)>>
+
+<CONSTANT TEXT539 "The skeletons are all around you. They make a noise like the rattling of hollow sticks as they clasp your limbs and try to bear you to the cabin floor.">
+<CONSTANT CHOICES539 <LTABLE "Drive them off">>
 
 <ROOM STORY539
 	(IN ROOMS)
 	(DESC "539")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT539)
+	(CHOICES CHOICES539)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY557 STORY484>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-COMBAT 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT540 "On the way up the cliffpath you pass a few seagulls that stand dead still, no doubt under the same spell that afflicts the villagers. Ahead lies a great bronze door set in the rocks. You have a feeling that is where you'll find the source of the trouble.">
+<CONSTANT CHOICES540 <LTABLE "Knock boldly on the door" "Look for a way to sneak in">>
 
 <ROOM STORY540
 	(IN ROOMS)
 	(DESC "540")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT540)
+	(CHOICES CHOICES540)
+	(DESTINATIONS <PLTABLE STORY631 STORY649>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY541
