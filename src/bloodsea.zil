@@ -3243,6 +3243,7 @@
 <OBJECT CODEWORD-COVER (DESC "Cover")>
 <OBJECT CODEWORD-COVET (DESC "Covet")>
 <OBJECT CODEWORD-CROCUS (DESC "Crocus")>
+<OBJECT CODEWORD-CRUEL (DESC "Cruel")>
 <OBJECT CODEWORD-CULL (DESC "Cull")>
 <OBJECT CODEWORD-CUSHAT (DESC "Cushat")>
 <OBJECT CODEWORD-CUTLASS (DESC "Cutlass")>
@@ -6322,6 +6323,8 @@
 	<RESET-ODDS 2 0 ,STORY418>
 	<RESET-ODDS 1 0 ,STORY465>
 	<RESET-ODDS 1 0 ,STORY529>
+	<RESET-ODDS 2 0 ,STORY541>
+	<RESET-ODDS 1 0 ,STORY544>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUT <GET <GETP ,STORY391 ,P?REQUIREMENTS> 1> 2 14>
 	<PUT <GET <GETP ,STORY510 ,P?REQUIREMENTS> 1> 3 0>
@@ -14594,222 +14597,169 @@ back with reinforcements soon.\"||You agree.">
 <ROOM STORY541
 	(IN ROOMS)
 	(DESC "541")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(EVENTS STORY541-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY523 STORY577 STORY595>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <PLTABLE 6 10 100> <LTABLE "Boarding action" "Enemy ship crippled" "Enemy ship sinks">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY541-EVENTS ("AUX" (MODIFIER 0) (CONDITION 0))
+	<SET MODIFIER <GET-RANK ,CURRENT-CHARACTER>>
+	<COND (,CURRENT-SHIP
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<COND (<EQUAL? .CONDITION ,CONDITION-AVERAGE>
+			<INC .MODIFIER>
+		)(<EQUAL? .CONDITION ,CONDITION-GOOD>
+			<SET MODIFIER <+ .MODIFIER 2>>
+		)(<EQUAL? .CONDITION ,CONDITION-EXCELLENT>
+			<SET MODIFIER <+ .MODIFIER 3>>
+		)>
+	)>
+	<RESET-ODDS 2 .MODIFIER ,STORY541>>
+
+<CONSTANT TEXT542 "You discover that 'Walks in the Forest of Larun', by Bosquay d'Arborealle, is missing from the shelves. When you point this out to the librarian he looks in his files and says, \"Ah yes, that book is out on loan to the Master of the College. It's overdue, actually.\"||\"You should tell him to return it.\"||He gives you an extraordinary look. \"You tell him!\"">
 
 <ROOM STORY542
 	(IN ROOMS)
 	(DESC "542")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT542)
+	(CONTINUE STORY368)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT543 "You step forward into the ghost-light. The spectres fall silent and turn like drifting wisps of smoke to face you. \"What's this?\" you cry in outrage. \"If tombs and charnel-houses cannot hold the dead, burials should be made in ravens' guts instead!\"||\"Will you mock us, mortal?\" creaks a dusty voice.||The spectres reach out with white hands, thinking to take your soul, but you confound them by speaking one of the names of Harkun the Creator-God. The spectres disband into tatters of fading ectoplasm.||They departed so suddenly that they left something on the floor of the cavern: a pattern of sparkling lines made up of tiny ice crystals. You stoop, discovering on closer inspection that the lines mark out the steps of their dance. Intriguing. You practise it yourself -- a stately minuet which can be easily executed with both dignity and grace.">
 
 <ROOM STORY543
 	(IN ROOMS)
 	(DESC "543")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT543)
+	(CONTINUE STORY633)
+	(CODEWORDS <PLTABLE CODEWORD-CRUEL>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT544 "The sky turns the colour of burning sulphur and begins to spit lightning like gobbets of hot demons' blood.">
+<CONSTANT CHOICES544 <LTABLE "You are at the mercy of the storm.">>
 
 <ROOM STORY544
 	(IN ROOMS)
 	(DESC "544")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT544)
+	(EVENTS STORY544-EVENTS)
+	(CHOICES CHOICES544)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY634 STORY616 STORY013>>)
+	(REQUIREMENTS <LTABLE <LTABLE 1 0 <PLTABLE 4 6 19> <LTABLE "Your ship sinks" "The mast splits" "You weather the storm">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY544-EVENTS ("AUX" (MODIFIER 0))
+	<COND (,CURRENT-SHIP
+		<COND (<EQUAL? <GETP ,CURRENT-SHIP ,P?CONDITION> ,CONDITION-EXCELLENT>
+			<SET MODIFIER 1>
+		)>
+	)(ELSE
+		<SET MODIFIER -1>
+	)>
+	<RESET-ODDS 1 .MODIFIER ,STORY544>>
+
+<CONSTANT TEXT545 "You give the order to trim sail, sculling silently closer to the Reavers' stronghold under cover of darkness. The lookout points to lights twinkling at the back of a wide bay. \"There, cap'n!\" he says.||\"How do you want to play it?\" asks the first mate. \"A frontal assault, or go in sneaky-like?\"">
+<CONSTANT CHOICES545 <LTABLE "Sail straight into the bay" "Drop anchor out beyond the headland" "Make for open ocean">>
 
 <ROOM STORY545
 	(IN ROOMS)
 	(DESC "545")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT545)
+	(CHOICES CHOICES545)
+	(DESTINATIONS <PLTABLE STORY510 STORY528 STORY164>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT546 "You manage to live quite well off the land, even catching a rabbit which makes quite a fine stew with some mushrooms and berries.">
+<CONSTANT CHOICES546 <LTABLE HAVE-CODEWORD "Make yourself a boat" "Search for a settlement on the island">>
 
 <ROOM STORY546
 	(IN ROOMS)
 	(DESC "546")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT546)
+	(EVENTS STORY546-EVENTS)
+	(CHOICES CHOICES546)
+	(DESTINATIONS <PLTABLE STORY438 STORY637 STORY655>)
+	(REQUIREMENTS <PLTABLE CODEWORD-COLOUR NONE NONE>)
+	(TYPES <PLTABLE R-CODEWORD R-NONE R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY546-EVENTS ()
+	<COND (<AND ,RUN-ONCE <L? ,STAMINA ,MAX-STAMINA>>
+		<GAIN-STAMINA 2>
+	)>>
+
+<CONSTANT TEXT547 "The pirates pull alongside and cast grappling hooks to seize your vessel. Within moments they are swarming aboard. You offer them your goods, but plead for the freedom of your crew.">
 
 <ROOM STORY547
 	(IN ROOMS)
 	(DESC "547")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT547)
+	(CHOICES CHOICES-CHARISMA)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY416 STORY435>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-CHARISMA 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT548 "You lead a small boarding party over to the deserted ship. As you go aboard, a black cat strolls out from behind a hatch and watches you warily.||Suddenly your bosun pounces forward and seizes the animal. \"Quick, we've got to throw it overboard!\" he says.">
+<CONSTANT CHOICES548 <LTABLE "Let him jettison the cat" "Tell him to leave it alone">>
 
 <ROOM STORY548
 	(IN ROOMS)
 	(DESC "548")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT548)
+	(CHOICES CHOICES548)
+	(DESTINATIONS <PLTABLE STORY566 STORY584>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT549 "You return to the ship and set sail without delay.">
 
 <ROOM STORY549
 	(IN ROOMS)
 	(DESC "549")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT549)
+	(EVENTS STORY549-EVENTS)
+	(CONTINUE STORY164)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY549-EVENTS ()
+	<STORY-SET-SAIL ,CURRENT-SHIP>
+	<COND (<CHECK-CODEWORD ,CODEWORD-CROCUS> <DELETE-CODEWORD ,CODEWORD-CROCUS>)>>
+
+<CONSTANT TEXT550 "The knife sinks deep into your shoulder.">
+<CONSTANT TEXT550-POISONED "You realize at once that the knife was coated with poison, and even a scratch will kill you.">
 
 <ROOM STORY550
 	(IN ROOMS)
 	(DESC "550")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT550)
+	(EVENTS STORY550-EVENTS)
+	(CONTINUE STORY532)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY550-EVENTS ()
+	<LOSE-STAMINA <ROLL-DICE 2> ,DIED-FROM-INJURIES ,STORY550>
+	<COND (<IS-ALIVE>
+		<CONTINUE-TEXT ,TEXT550-POISONED>
+		<COND (<CHECK-BLESSING ,BLESSING-IMMUNITY-POISON-DISEASE>
+			<CRLF>
+			<TELL "Use the ">
+			<PRINT-ITEM ,BLESSING-IMMUNITY-POISON-DISEASE>
+			<TELL "?">
+			<COND (<YES?>
+				<DELETE-BLESSING ,BLESSING-IMMUNITY-POISON-DISEASE>
+			)(ELSE
+				<STORY-JUMP ,STORY123>
+			)>
+		)(ELSE
+			<STORY-JUMP ,STORY123>
+		)>
+	)>>
 
 <ROOM STORY551
 	(IN ROOMS)
