@@ -3242,11 +3242,13 @@
 <OBJECT CODEWORD-COSY (DESC "Cosy")>
 <OBJECT CODEWORD-COVER (DESC "Cover")>
 <OBJECT CODEWORD-COVET (DESC "Covet")>
+<OBJECT CODEWORD-CRAG (DESC "Crag")>
 <OBJECT CODEWORD-CROCUS (DESC "Crocus")>
 <OBJECT CODEWORD-CRUEL (DESC "Cruel")>
 <OBJECT CODEWORD-CULL (DESC "Cull")>
 <OBJECT CODEWORD-CUSHAT (DESC "Cushat")>
 <OBJECT CODEWORD-CUTLASS (DESC "Cutlass")>
+<OBJECT CODEWORD-CYCLOPS (DESC "Cyclops")>
 <OBJECT CODEWORD-CYNOSURE (DESC "Cynosure")>
 
 ; "codewords from other books. Included here only for completeness"
@@ -14761,224 +14763,125 @@ back with reinforcements soon.\"||You agree.">
 		)>
 	)>>
 
+<CONSTANT TEXT551 "A trick of the light throws red shadows against the western clouds. Squinting into the blaze of dying sunlight, you imagine a scene of battle. An owl flies above phalanxes of troops, guiding them to victory against demons with round shields who seem to emerge out of a great blood-washed lake.||\"Daydreaming, skipper?\" asks the first mate.||Startled out of your reverie, the spell is broken. Now you see only a line of pink clouds under the gathering curtain of night.">
+
 <ROOM STORY551
 	(IN ROOMS)
 	(DESC "551")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT551)
+	(CONTINUE STORY059)
+	(CODEWORDS <PLTABLE CODEWORD-CYCLOPS>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT552 "A floating mat of interwoven reeds bearing coloured tents can be seen on the horizon: It is one of the caravans of the sea gypsies. They cross to you in coracles.||\"You'll never get those reeds off your hull,\" they tell you. \"Grow like wildfire, they do. We'll get you free of them for a hundred Shards; how about it?\"||\"They might be our best bet,\" says the bosun.">
+<CONSTANT CHOICES552 <LTABLE "Pay them" "Try bartering" "Tell them to go away">>
 
 <ROOM STORY552
 	(IN ROOMS)
 	(DESC "552")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT552)
+	(CHOICES CHOICES552)
+	(DESTINATIONS <PLTABLE STORY050 STORY715 STORY570>)
+	(REQUIREMENTS <PLTABLE 100 NONE NONE>)
+	(TYPES <PLTABLE R-MONEY R-NONE R-NONE>)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY553
 	(IN ROOMS)
 	(DESC "553")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY553-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY553-BACKGROUND ()
+	<STORY-SET-DOCK ,DOCK-COPPER ,CURRENT-SHIP F>
+	<RETURN ,STORY099>>
+
+<CONSTANT TEXT554 "The crew despise you for taking no action. They start to mutter about appointing a new captain and putting you ashore on a deserted island.">
 
 <ROOM STORY554
 	(IN ROOMS)
 	(DESC "554")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT554)
+	(EVENTS STORY554-EVENTS)
+	(CHOICES CHOICES-CHARISMA)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY188 STORY599>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-CHARISMA 13>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY554-EVENTS ()
+	<COND (,RUN-ONCE <LOSE-ABILITY ,ABILITY-CHARISMA 1>)>>
+
+<CONSTANT TEXT555 "The hand suddenly goes rigid, its fingers pointing out a narrow toadstool-lined path you had not noticed before.">
+<CONSTANT CHOICES555 <LTABLE "Follow the path" "Turn back">>
 
 <ROOM STORY555
 	(IN ROOMS)
 	(DESC "555")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT555)
+	(CHOICES CHOICES555)
+	(DESTINATIONS <PLTABLE STORY537 STORY388>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT556 "One of the crew is revealed as a woman who disguised herself in order to sign aboard. Her deception only comes to light because she is about to give birth. \"I thought he -- er, she -- was getting rather tubby,\" says the ship's surgeon.||\"Can you deliver the child?\" you ask him.||\"You're joking. I can barely set a splint.\"||There is nothing for it. You must set a course for the Island of Fire, a volcanic isle which is the nearest place where you might find a competent midwife. Thankfully you reach it before the woman goes into labour. The islanders give you a friendly welcome and their chief's wives take the woman to their hut.">
 
 <ROOM STORY556
 	(IN ROOMS)
 	(DESC "556")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT556)
+	(CONTINUE STORY461)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT557 "The skeletons retreat in disorder to their seaweed-festooned hulk and hoist a ragged web of canvas. Your men watch in silence as they sail away.||You notice that your hands are trembling now that shock has had time to set in. You steady them on the rail and bark orders for the crew to stop gawping and get back to work. They speedily comply, only too happy to forget their encounter with the skeletal pirates.">
 
 <ROOM STORY557
 	(IN ROOMS)
 	(DESC "557")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT557)
+	(CONTINUE STORY321)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT558 "These are choppy seas and the strong current makes swimming difficult. You also have the problem of keeping track of the surgeon over the heavy swell.">
+<CONSTANT CHOICES558 <LTABLE "Rescue him">>
 
 <ROOM STORY558
 	(IN ROOMS)
 	(DESC "558")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT558)
+	(CHOICES CHOICES558)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY427 STORY022>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-SCOUTING 14>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT559 "The enemy ship's hold is full of slaves, many of whom are wealthy men. You are rewarded with 950 Shards for freeing them.||\"What shall we do with the surviving Uttakin, cap'n?\" asks the master at arms.||\"Leave them to the mercy of their former captives,\" you tell him. \"We've bigger fish to fry elsewhere.\"">
+<CONSTANT TEXT559-SCRAPE "You gain in rank after surviving such a tough scrape.">
 
 <ROOM STORY559
 	(IN ROOMS)
 	(DESC "559")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT559)
+	(EVENTS STORY559-EVENTS)
+	(CONTINUE STORY300)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY559-EVENTS ()
+	<GAIN-MONEY 950>
+	<COND (<G? <RANDOM-EVENT 2 0 T> <GETP ,CURRENT-CHARACTER ,P?RANK>>
+		<CONTINUE-TEXT ,TEXT559-SCRAPE>
+		<GAIN-RANK 1>
+		<UPGRADE-STAMINA <ROLL-DICE 1>>
+	)>>
+
+<CONSTANT TEXT560 "The Master waves you to a chair and thrusts a glass of sherry into your hand. He then drones on at great length about all manner of subjects.||You wake up suddenly to hear him describing the Forest of Larun: \"...which may have been the wizard's tomb found by Silvanus Ent. Doctor Ent's studies suggested the demonic door of the tomb would respond to the password 'Rebirth'. Who can say why? Let me tell you my own theory...\"||You doze off again. When you wake the next time, you are being carried back to your room by two college servants.||\"You're lucky, sir,\" says one chirpily.||\"How's that?\" you ask, yawning.||\"He literally killed the last one with boredom. Stone dead, like!\"">
 
 <ROOM STORY560
 	(IN ROOMS)
 	(DESC "560")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT560)
+	(CONTINUE STORY607)
+	(CODEWORDS <PLTABLE CODEWORD-CRAG>)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY561
