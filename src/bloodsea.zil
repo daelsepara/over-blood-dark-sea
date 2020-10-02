@@ -6373,7 +6373,8 @@
 	<PUTP ,STORY474 ,P?DOOM T>
 	<PUTP ,STORY486 ,P?DOOM T>
 	<PUTP ,STORY501 ,P?DOOM T>
-	<PUTP ,STORY523 ,P?DOOM T>>
+	<PUTP ,STORY523 ,P?DOOM T>
+	<PUTP ,STORY565 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -14884,224 +14885,168 @@ back with reinforcements soon.\"||You agree.">
 	(CODEWORDS <PLTABLE CODEWORD-CRAG>)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT561 "You sneak back up the tunnel.">
+
 <ROOM STORY561
 	(IN ROOMS)
 	(DESC "561")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT561)
+	(CHOICES CHOICES-THIEVERY)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY633 STORY669>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-THIEVERY 12>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT562 "The sky is the colour of burning sulphur. From behind the clouds comes the growl of thunder. The sailors mutter in fear. \"It is the wrath of Elnir,\" says the mate. \"He summons us to our doom!\"">
+<CONSTANT CHOICES562 <LTABLE "The storm hits with undiluted fury">>
 
 <ROOM STORY562
 	(IN ROOMS)
 	(DESC "562")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT562)
+	(EVENTS STORY562-EVENTS)
+	(CHOICES CHOICES562)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY634 STORY616 STORY311>>)
+	(REQUIREMENTS <LTABLE <LTABLE 1 0 <PLTABLE 4 6 19> <LTABLE "Your ship sinks" "The mast splits" "You weather the storm">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY562-EVENTS ()
+	<STORM-AT-SEA ,STORY562 ,STORY013>>
+
+<CONSTANT TEXT563 "Choppy seas throw up fountains of white spume from the treacherous offshore rocks. Somewhere amid the hundreds of islands is the place where the Reavers keep their spoils - but it would take a master mariner to find it.">
 
 <ROOM STORY563
 	(IN ROOMS)
 	(DESC "563")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT563)
+	(CHOICES CHOICES-SCOUTING)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY653 STORY671>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-SCOUTING 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT564 "There are four vessels docked here at Braelak. The silk-robed captain of an Akatsurese galley is prepared to take you to Chambara for 20 Shards. A merchant whose vessel is bound for Ringhorn will take you along for 10 Shards. There is an explorer who wants 15 Shards to take you to Smogmaw. Or you can arrange passage to Aku aboard an Uttakin warship for 15 Shards.">
+<CONSTANT CHOICES564 <LTABLE "Pay for passage to Chambara" "Pay for passage to Ringhorn" "Pay for passage to Aku" "Pay for passage to Smogmaw" "Take the road to Dweomer">>
 
 <ROOM STORY564
 	(IN ROOMS)
 	(DESC "564")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT564)
+	(CHOICES CHOICES564)
+	(DESTINATIONS <PLTABLE STORY600 STORY618 STORY636 STORY535 STORY175>)
+	(REQUIREMENTS <PLTABLE 20 10 15 15 NONE>)
+	(TYPES <PLTABLE R-MONEY R-MONEY R-MONEY R-MONEY R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT565 "The ship slams into you and the pirates come swarming across the rail like army ants. Your crewmen stand ready to sell their lives dearly.">
 
 <ROOM STORY565
 	(IN ROOMS)
 	(DESC "565")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT565)
+	(EVENTS STORY565-EVENTS)
+	(CONTINUE STORY583)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY565-EVENTS ("AUX" ROLL (DICE 2) (MODIFIER -2) (CONDITION 0))
+	<COND (<CHECK-PROFESSION ,PROFESSION-WARRIOR> <SET DICE 3>)>
+	<COND (,CURRENT-SHIP
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<COND (<EQUAL? .CONDITION ,CONDITION-POOR>
+			<SET MODIFIER -2>
+		)(<EQUAL? .CONDITION ,CONDITION-AVERAGE>
+			<SET MODIFIER 0>
+		)(<EQUAL? .CONDITION ,CONDITION-GOOD>
+			<SET MODIFIER 2>
+		)(ELSE
+			<SET MODIFIER 3>
+		)>
+	)>
+	<SET MODIFIER <+ .MODIFIER <GET-RANK ,CURRENT-CHARACTER>>>
+	<PREVENT-DOOM ,STORY565>
+	<SET ROLL <RANDOM-EVENT .DICE .MODIFIER T>>
+	<COND (<L=? .ROLL 4>
+		<EMPHASIZE "Calamity! You are killed!">
+		<STORY-JUMP ,STORY123>
+	)(<L=? .ROLL 9>
+		<EMPHASIZE "Crushing defeat!">
+		<LOSE-STAMINA <ROLL-DICE 2> ,DIED-FROM-INJURIES ,STORY565>
+		<COND (<IS-ALIVE> <STORY-JUMP ,STORY435>)>
+	)(<L=? .ROLL 12>
+		<EMPHASIZE "Forced to give in!">
+		<LOSE-STAMINA <ROLL-DICE 1> ,DIED-FROM-INJURIES ,STORY565>
+		<COND (<IS-ALIVE> <STORY-JUMP ,STORY416>)>
+	)(<L=? .ROLL 16>
+		<EMPHASIZE "The pirates withdraw!">
+		<STORY-JUMP ,STORY032>
+	)(ELSE
+		<EMPHASIZE "Outright victory!">
+	)>>
+
+<CONSTANT TEXT566 "The cat was the vessel's sole living crew member. Now that you've got rid of it, you can legally help yourself to the cargo. This comprises 2 Cargo Units.">
 
 <ROOM STORY566
 	(IN ROOMS)
 	(DESC "566")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT566)
+	(EVENTS STORY566-EVENTS)
+	(CONTINUE STORY620)
 	(FLAGS LIGHTBIT)>
 
+<ROUTINE STORY566-EVENTS ("AUX" CARGO-TYPES)
+	<SET CARGO-TYPES <LTABLE CARGO-MINERALS CARGO-SPICES CARGO-METALS CARGO-TEXTILES CARGO-FURS CARGO-TIMBER>>
+	<STORY-GAIN-CARGO <GET .CARGO-TYPES <ROLL-DICE 1>> 2>>
+
+<CONSTANT TEXT567 "Your old friend Verin Crookback agrees to help you. He takes you to where your ship is lying at anchor. Your men have been pressed into service in the fields to gather produce for the Reavers' table, but with Verin's help you round up most of them and set sail under cover of darkness.">
+
+; "TO-DO: Implement recovery of ship"
 <ROOM STORY567
 	(IN ROOMS)
 	(DESC "567")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT567)
+	(EVENTS STORY567-EVENTS)
+	(CONTINUE STORY164)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY567-EVENTS ()
+	<DELETE-CODEWORD ,CODEWORD-COLOUR>>
+
+<CONSTANT TEXT568 "Talanexor recoils in alarm. He had expected his reputation as a swift dispenser of fiery death to leave you cowed. He flicks his fingers and a globe of cold blue flames erupts from the ground at his feet.||You turn aside, dazzled, and when you look again he has gone.">
 
 <ROOM STORY568
 	(IN ROOMS)
 	(DESC "568")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT568)
+	(CONTINUE STORY675)
+	(CODEWORDS <PLTABLE CODEWORD-CHEESE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT569 "A narrow-hulled ship with triangular sails pulls alongside. At the rail are turbanned men from Mithdrak, a port of fabulous renown to the far west.||The merchants offer to trade cargo with you. They have 2 Cargo Units of textiles, which they are willing to exchange on a one-for-one basis for Units of furs, timber or grain.">
 
 <ROOM STORY569
 	(IN ROOMS)
 	(DESC "569")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT569)
+	(EVENTS STORY569-EVENTS)
+	(CONTINUE STORY264)
 	(FLAGS LIGHTBIT)>
+
+; "TO-DO: Implement Cargo Trading"
+<ROUTINE STORY569-EVENTS ()
+	<RETURN>>
+
+<CONSTANT TEXT570 "You cannot make any headway. Your ship is trapped in the Sea of Reeds; each day your supplies of food and water get lower and lower.">
 
 <ROOM STORY570
 	(IN ROOMS)
 	(DESC "570")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT570)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY123 STORY552 STORY205>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE 1 0 <PLTABLE 2 4 6> <LTABLE "You die of thirst" "Help arrives" "The current carries you clear">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY571
