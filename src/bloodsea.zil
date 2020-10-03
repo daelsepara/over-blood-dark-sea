@@ -4008,6 +4008,12 @@
 	(DEFENSE 14)
 	(STAMINA 5)>
 
+<OBJECT MONSTER-MAN
+	(DESC "Man")
+	(COMBAT 4)
+	(DEFENSE 5)
+	(STAMINA 5)>
+
 <OBJECT MONSTER-MUTINEER
 	(DESC "Mutineer")
 	(COMBAT 6)
@@ -6374,7 +6380,8 @@
 	<PUTP ,STORY486 ,P?DOOM T>
 	<PUTP ,STORY501 ,P?DOOM T>
 	<PUTP ,STORY523 ,P?DOOM T>
-	<PUTP ,STORY565 ,P?DOOM T>>
+	<PUTP ,STORY565 ,P?DOOM T>
+	<PUTP ,STORY579 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -15049,225 +15056,130 @@ back with reinforcements soon.\"||You agree.">
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT571 "Dweomer is the famous City of Wizards. Lining its narrow, perpetually drizzle-soaked streets are the sorcerous colleges: great gothic edifices with portals that are as big as those of any castle. Gargoyles stare down the rooftops, crouching below the overcast sky. It is said that some of those gargoyles are failed students.">
+<CONSTANT CHOICES571 <LTABLE "Apply to join a college" "Explore the town" "Traverse the avenue to the docks" "Visit your college" "Trade magical items">>
+
 <ROOM STORY571
 	(IN ROOMS)
 	(DESC "571")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT571)
+	(CHOICES CHOICES571)
+	(DESTINATIONS <PLTABLE STORY625 STORY508 STORY175 STORY607 STORY589>)
+	(REQUIREMENTS <PLTABLE NONE NONE NONE <PLTABLE STORY607 1> NONE>)
+	(TYPES <PLTABLE R-NONE R-NONE R-NONE R-VISITS R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT572 "The castaway is a merchant from Metriciens whose crew mutinied and set him ashore on the reef to die.||\"May the gods harry them until the end of their days!\" he says with strong feeling.||He gives you some advice on the best investments.">
 
 <ROOM STORY572
 	(IN ROOMS)
 	(DESC "572")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT572)
+	(CONTINUE STORY245)
+	(CODEWORDS <PLTABLE CODEWORD-CATALYST>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT573 "The Bluewood is the forest that lies south of Dweomer. The magical soil of the island has imbued the vegetation there with a strange actinic glow.||It's said that a ship whose mast is cut from a Bluewood tree will always find its way back to Braelak Isle. But the book goes on to warn of the many dangers lurking in the forest's depths, not the least of which is the Wind Spirit that can steal a man's soul.">
 
 <ROOM STORY573
 	(IN ROOMS)
 	(DESC "573")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT573)
+	(CONTINUE STORY368)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT574 "The dead man's ghost can be seen pacing the deck at night. The crew go about wide-eyed with fright.||If you cannot exorcize the ghost there will be no option but to abandon ship.">
+<CONSTANT CHOICES574 <LTABLE "Perform exorcism">>
 
 <ROOM STORY574
 	(IN ROOMS)
 	(DESC "574")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT574)
+	(CHOICES CHOICES574)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY041 STORY628>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-SANCTITY 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT575 "This is no time to mince words. You utter one of the true names of the Creator -- a name of such sacred force that it remorselessly divides death from life and allows no middle ground.">
+<CONSTANT CHOICES575 <LTABLE "See if you get it right">>
 
 <ROOM STORY575
 	(IN ROOMS)
 	(DESC "575")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT575)
+	(CHOICES CHOICES575)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY593 STORY484>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-SANCTITY 19>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY576
 	(IN ROOMS)
 	(DESC "576")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY576-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY576-BACKGROUND ()
+	<COND (<CHECK-VISITS-MORE ,STORY576 1> <RETURN ,STORY599>)>
+	<RETURN ,STORY229>>
+
+<CONSTANT TEXT577 "Your prow drives into the Uttakin ship on its port side. The impact smashes its paddles, leaving the slavers unable to pursue as you sail away.">
 
 <ROOM STORY577
 	(IN ROOMS)
 	(DESC "577")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT577)
+	(CONTINUE STORY300)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT578 "You start to stammer out your reasons for coming to see him. To your dismay, the Master has risen from his chair and is staring at you very oddly. You have never seen anyone's eyes literally glow with rage before.||What will you give as your reason for disturbing him?">
+<CONSTANT CHOICES578 <LTABLE "Ask about the Forest of Larun" "Ask about desert islands" "Ask about pirates" "Offer a bottle of wine">>
 
 <ROOM STORY578
 	(IN ROOMS)
 	(DESC "578")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT578)
+	(CHOICES CHOICES578)
+	(DESTINATIONS <PLTABLE STORY632 STORY596 STORY614 STORY527>)
+	(REQUIREMENTS <PLTABLE NONE NONE NONE BOTTLE-OF-WINE>)
+	(TYPES <PLTABLE R-NONE R-NONE R-NONE R-ITEM>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT579 "You manage to best them in a short struggle, taking full advantage of the cramped space that prevents them from surrounding you. Soon only one of the men is still conscious. Fight him in the usual way.">
 
 <ROOM STORY579
 	(IN ROOMS)
 	(DESC "579")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT579)
+	(EVENTS STORY579-EVENTS)
+	(CONTINUE STORY615)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY579-EVENTS ()
+	<CRLF>
+	<TELL "Flee back to the surface?">
+	<COND (<YES?>
+		<PREVENT-DOOM ,STORY579>
+		<STORY-JUMP ,STORY025>
+	)(ELSE
+		<PUTP ,STORY579 ,P?DOOM T>
+		<COMBAT-MONSTER ,MONSTER-MAN 4 5 5>
+		<CHECK-COMBAT ,MONSTER-MAN ,STORY579>
+	)>>
 
 <ROOM STORY580
 	(IN ROOMS)
 	(DESC "580")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY580-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY580-BACKGROUND ()
+	<COND (<CHECK-BLESSING ,BLESSING-SAFETY-FROM-STORMS>
+		<DELETE-BLESSING ,BLESSING-SAFETY-FROM-STORMS>
+	)>>
 
 <ROOM STORY581
 	(IN ROOMS)
