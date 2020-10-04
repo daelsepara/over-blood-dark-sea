@@ -3255,6 +3255,7 @@
 ; ---------------------------------------------------------------------------------------------
 
 <OBJECT CODEWORD-AID (DESC "Aid")>
+<OBJECT CODEWORD-AMCHA (DESC "Amcha")>
 <OBJECT CODEWORD-ANGER (DESC "Anger")>
 <OBJECT CODEWORD-BALUSTER (DESC "Baluster")>
 <OBJECT CODEWORD-DANGLE (DESC "Dangle")>
@@ -3487,6 +3488,12 @@
 	(QUANTITY 1)
 	(FLAGS TAKEBIT WEARBIT)>
 
+<OBJECT WIZARDS-CAPE
+	(DESC "wizard's cape")
+	(DEFENSE 1)
+	(QUANTITY 1)
+	(FLAGS TAKEBIT WEARBIT)>
+
 ; Wands
 ; ---------------------------------------------------------------------------------------------
 
@@ -3521,6 +3528,10 @@
 <OBJECT BOARS-TUSK
 	(DESC "boar's tusk")
 	(QUANTITY 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT BLACK-CAT
+	(DESC "black cat")
 	(FLAGS TAKEBIT)>
 
 <OBJECT BOTTLE-OF-WINE
@@ -3658,6 +3669,11 @@
 <OBJECT MONEY-BAG
 	(DESC "Money")
 	(MONEY 500)
+	(FLAGS TAKEBIT)>
+
+<OBJECT PARCHMENT
+	(DESC "parchment")
+	(QUANTITY 1)
 	(FLAGS TAKEBIT)>
 
 <OBJECT PARROT
@@ -3989,6 +4005,12 @@
 	(COMBAT 8)
 	(DEFENSE 10)
 	(STAMINA 8)>
+
+<OBJECT MONSTER-FURY
+	(DESC "Fury")
+	(COMBAT 12)
+	(DEFENSE 19)
+	(STAMINA 25)>
 
 <OBJECT MONSTER-FLYING-SHARK
 	(DESC "Flying shark")
@@ -6194,6 +6216,18 @@
 <ROUTINE FLOTILLA-SELLING-OTHER ()
 	<MERCHANT <PLTABLE ROPE LANTERN CANDLE WATER-FLASK CORAL-RED-TRESSES GOLDEN-KATANA SMOULDER-FISH CROSS-STAFF VIOLIN PARROT FISHING-HOOK BOARS-TUSK GREEN-GEM> <PLTABLE 20 60 5 20 500 3000 90 500 50 90 2 75 100> ,PLAYER T>>
 
+; "Pogue selling"
+; ---------------------------------------------------------------------------------------------
+
+<ROOM POGUE-BUY-ITEMS
+	(DESC "589 Pogue - Selling")
+	(EVENTS POGUE-BUYING-ITEMS)
+	(CONTINUE STORY589)
+	(FLAGS LIGHTBIT)>
+
+<ROUTINE POGUE-BUYING-ITEMS ()
+	<MERCHANT <PLTABLE AMBER-WAND EBONY-WAND COBALT-WAND GOLDEN-KATANA WIZARDS-CAPE PARROT-FUNGUS BLACK-CAT PARCHMENT CANDLE> <PLTABLE 500 1000 2000 9000 150 250 20 1 2>>>
+
 ; "Instructions"
 ; ---------------------------------------------------------------------------------------------
 
@@ -6276,7 +6310,8 @@
 	<PUTP ,LEATHER-ARMOUR ,P?QUANTITY 1>
 	<PUTP ,PLATE-ARMOUR ,P?QUANTITY 1>
 	<PUTP ,RING-MAIL ,P?QUANTITY 1>
-	<PUTP ,SPLINT-ARMOUR ,P?QUANTITY 1>>
+	<PUTP ,SPLINT-ARMOUR ,P?QUANTITY 1>
+	<PUTP ,WIZARDS-CAPE ,P?QUANTITY 1>>
 
 <ROUTINE RESET-OBJECTS ()
 	<PUTP ,MONEY-BAG ,P?MONEY 500>
@@ -6291,6 +6326,7 @@
 	<PUTP ,HYDRA-TOOTH ,P?QUANTITY 1>
 	<PUTP ,INK-SAC ,P?QUANTITY 1>
 	<PUTP ,LANTERN ,P?QUANTITY 1>
+	<PUTP ,PARCHMENT ,P?QUANTITY 1>
 	<PUTP ,PARROT ,P?QUANTITY 1>
 	<PUTP ,PARROT-FUNGUS ,P?QUANTITY 1>
 	<PUTP ,SEA-GREEN-LENS ,P?QUANTITY 1>
@@ -6381,7 +6417,8 @@
 	<PUTP ,STORY501 ,P?DOOM T>
 	<PUTP ,STORY523 ,P?DOOM T>
 	<PUTP ,STORY565 ,P?DOOM T>
-	<PUTP ,STORY579 ,P?DOOM T>>
+	<PUTP ,STORY579 ,P?DOOM T>
+	<PUTP ,STORY588 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -15170,236 +15207,191 @@ back with reinforcements soon.\"||You agree.">
 		<CHECK-COMBAT ,MONSTER-MAN ,STORY579>
 	)>>
 
+<CONSTANT CHOICES580 <LTABLE "The storm hits with unabated fury, ripping huge waves out of the sea and flinging them across the deck.">>
+
 <ROOM STORY580
 	(IN ROOMS)
 	(DESC "580")
-	(BACKGROUND STORY580-BACKGROUND)
+	(EVENTS STORY580-EVENTS)
+	(CHOICES CHOICES580)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY634 STORY616 STORY013>>)
+	(REQUIREMENTS <LTABLE <LTABLE 1 0 <PLTABLE 4 6 100> <LTABLE "Your ship sinks" "The mast splits" "You weather the storm">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
-<ROUTINE STORY580-BACKGROUND ()
-	<COND (<CHECK-BLESSING ,BLESSING-SAFETY-FROM-STORMS>
-		<DELETE-BLESSING ,BLESSING-SAFETY-FROM-STORMS>
-	)>>
+<ROUTINE STORY580-EVENTS ()
+	<STORM-AT-SEA ,STORY580 ,STORY032>>
+
+<CONSTANT TEXT581 "The ship is swept far out to sea. Men and goods are washed overboard by huge waves that snap your hawsers like twine.">
+<CONSTANT TEXT581-CONTINUED "At last the storm blows itself out. You are left drifting in
+unknown waters.">
 
 <ROOM STORY581
 	(IN ROOMS)
 	(DESC "581")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-OCEAN)
+	(STORY TEXT581)
+	(EVENTS STORY581-EVENTS)
+	(CONTINUE STORY118)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY581-EVENTS ("AUX" (CAPACITY 0) (CONDITION 0))
+	<COND (,CURRENT-SHIP
+		<SET CAPACITY <COUNT-CONTAINER ,CARGO>>
+		<COND (<G? .CAPACITY 0>
+			<DEC .CAPACITY>
+			<COND (<G? .CAPACITY 0>
+				<STORY-LOSE-CARGO .CAPACITY>
+			)(ELSE
+				<RESET-CONTAINER ,CARGO>
+			)>
+		)>
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<DEC .CONDITION>
+		<COND (<L? .CONDITION 0> <SET CONDITION 0>)>
+		<PUTP ,CURRENT-SHIP ,P?CONDITION .CONDITION>
+	)>>
+	
+<CONSTANT TEXT582 "You lie down and close your eyes. What's the harm in having a short snooze until the tide turns and you can set sail? You deserve a rest...||But you and your crew are destined never to awaken. Even resurrection is no use -- you are not dead, only sleeping.">
 
 <ROOM STORY582
 	(IN ROOMS)
 	(DESC "582")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT582)
+	(EVENTS STORY582-EVENTS)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY582-EVENTS ()
+	<SETG RESURRECTION-ARRANGEMENTS NONE>>
+
+<CONSTANT TEXT583 "You help yourself to the pirates' treasure, which amounts to 600 Shards. Their ship\"s hold contains 1 Cargo Unit of metals, which you can add to your own cargo if you have room for it.||Your mate advises taking the pirate captain's head. \"A grisly trophy, perhaps, but often there's a reward if you have proof you've slain such a devil.\"">
 
 <ROOM STORY583
 	(IN ROOMS)
 	(DESC "583")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT583)
+	(EVENTS STORY583-EVENTS)
+	(CONTINUE STORY032)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY583-EVENTS ()
+	<GAIN-MONEY 600>
+	<STORY-GAIN-CARGO ,CARGO-METALS 1>
+	<KEEP-ITEM ,PIRATE-CAPTAINS-HEAD>
+	<COND (<G? <RANDOM-EVENT 2 0 T> <GETP ,CURRENT-CHARACTER ,P?RANK>>
+		<CONTINUE-TEXT "Your courage also earn you another prize.">
+		<GAIN-RANK 1>
+		<UPGRADE-STAMINA <ROLL-DICE 1>>
+	)>>
+
+<CONSTANT TEXT584 "You pick up the black cat. The sailors all slope off with sullen looks.||\"I suppose they think I've ruined their fun?\" you remark to the bosun. \"How could you be so cruel as to even think of hurting this poor animal?\"||\"It wasn't for the sake of cruelty,\" he protests. \"Any living thing aboard means that the ship doesn't count as abandoned, and we can't help ourselves to her cargo.\"">
+<CONSTANT CHOICES584 <LTABLE YOU-ARE-A IF-NOT>>
 
 <ROOM STORY584
 	(IN ROOMS)
 	(DESC "584")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT584)
+	(CHOICES CHOICES584)
+	(DESTINATIONS <PLTABLE STORY602 STORY620>)
+	(REQUIREMENTS <PLTABLE PROFESSION-MAGE NONE>)
+	(TYPES <PLTABLE R-PROFESSION R-NONE>)
+	(ITEMS <PLTABLE BLACK-CAT>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT585 "You know that the guildmaster will want proof that the Reaver King is dead. You slice through his neck and add Amcha's head to your list of possessions. Then you slip out of the citadel and hurry through the streets to the edge of town.">
 
 <ROOM STORY585
 	(IN ROOMS)
 	(DESC "585")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT585)
+	(EVENTS STORY585-EVENTS)
+	(CHOICES CHOICES-CODEWORD)
+	(DESTINATIONS <PLTABLE STORY549 STORY436>)
+	(REQUIREMENTS <PLTABLE CODEWORD-CROCUS NONE>)
+	(TYPES ONE-CODEWORD)
+	(ITEMS <PLTABLE PIRATE-CAPTAINS-HEAD>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY585-EVENTS ()
+	<COND (,RUN-ONCE
+		<DELETE-CODEWORD ,CODEWORD-AMCHA>
+		<GAIN-CODEWORD ,CODEWORD-CUTLASS>
+	)>>
+
+<CONSTANT TEXT586 "The duel is arranged for the next day, to be held in Erebus Meadow. Quite a crowd gathers in the hope of seeing some spectacular sorcery. In the event, however, Talanexor  does not commence with one of his fabled fireballs. Instead, as the challenged party, he poses a conundrum. You must solve it or forfeit the duel!||\"There are thirty colleges in Dweomer,\" he says. \"The other day I attended a sherry party where there were six others besides myself. What was the chance that at least two of us belonged to the same college?\"||What will you 
+answer?">
+<CONSTANT CHOICES586 <LTABLE "Twenty per cent" "Twenty-five per cent" "Fifty per cent">>
 
 <ROOM STORY586
 	(IN ROOMS)
 	(DESC "586")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT586)
+	(CHOICES CHOICES586)
+	(DESTINATIONS <PLTABLE STORY658 STORY694 STORY703>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT587 "The Furies seem to bear you a grudge. Your crewmen are in no hurry to get involved. While they cower below decks, you are left to fight the Furies on your own. The creatures attack you one after the other, cackling as they swing their brass-studded flails.">
 
 <ROOM STORY587
 	(IN ROOMS)
 	(DESC "587")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT587)
+	(EVENTS STORY587-EVENTS)
+	(CONTINUE STORY321)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY587-EVENTS ()
+	<DO (I 1 3)
+		<PUTP ,STORY587 ,P?DOOM T>
+		<COMBAT-MONSTER ,MONSTER-FURY 12 19 25>
+		<COND (<NOT <CHECK-COMBAT ,MONSTER-FURY ,STORY587>>
+			<RETURN>
+		)>
+	>>
+
+<CONSTANT TEXT588 "Your men are pleased to see you reach the ground in one piece. You can be sure they'll sing of your heroic climb in every tavern from Krateros to Dangor.||As the ship's captain who braved Starspike Island, you are sure to pass into legend.">
 
 <ROOM STORY588
 	(IN ROOMS)
 	(DESC "588")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT588)
+	(EVENTS STORY588-EVENTS)
+	(CONTINUE STORY230)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY588-EVENTS ()
+	<UPGRADE-ABILITY ,ABILITY-CHARISMA 1>>
+
+<CONSTANT TEXT589 "After searching up and down the narrow grey streets, you find a small shop with green bottle-glass windows. A peeling gilt sign above the narrow door proudly proclaims: 'Vortense Pogue, purveyor of magical materials.'||Pogue turns out to be a thin man bound inside a tight velvet coat. He helpfully shows you his stock which, as he admits himself, is small but intriguing. (He is not interested in anything you might have to sell.)">
+<CONSTANT CHOICES589 <LTABLE "Buy items" "Steal an item" "Finish your business and go">>
 
 <ROOM STORY589
 	(IN ROOMS)
 	(DESC "589")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT589)
+	(CHOICES CHOICES589)
+	(DESTINATIONS <PLTABLE POGUE-BUY-ITEMS STORY643 STORY571>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT590 "The men applaud your nobility in staying with them no matter what fate has in store.">
 
 <ROOM STORY590
 	(IN ROOMS)
 	(DESC "590")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT590)
+	(EVENTS STORY590-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY700 STORY611 STORY155>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE 1 0 <PLTABLE 2 4 6> <LTABLE "The others all die of thirst" "Fever breaks out" "The wind picks up">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY590-EVENTS ()
+	<COND (,RUN-ONCE <UPGRADE-ABILITY ,ABILITY-CHARISMA 1>)>>
 
 <ROOM STORY591
 	(IN ROOMS)
