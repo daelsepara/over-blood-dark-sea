@@ -6418,7 +6418,7 @@
 	<PUTP ,STORY523 ,P?DOOM T>
 	<PUTP ,STORY565 ,P?DOOM T>
 	<PUTP ,STORY579 ,P?DOOM T>
-	<PUTP ,STORY588 ,P?DOOM T>>
+	<PUTP ,STORY587 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
