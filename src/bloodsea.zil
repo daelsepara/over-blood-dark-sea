@@ -3246,6 +3246,7 @@
 <OBJECT CODEWORD-CROCUS (DESC "Crocus")>
 <OBJECT CODEWORD-CRUEL (DESC "Cruel")>
 <OBJECT CODEWORD-CULL (DESC "Cull")>
+<OBJECT CODEWORD-CURDLE (DESC "Curdle")>
 <OBJECT CODEWORD-CUSHAT (DESC "Cushat")>
 <OBJECT CODEWORD-CUTLASS (DESC "Cutlass")>
 <OBJECT CODEWORD-CYCLOPS (DESC "Cyclops")>
@@ -3446,6 +3447,12 @@
 <OBJECT SWORD3
 	(DESC "sword")
 	(COMBAT 3)
+	(QUANTITY 1)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT SWORD6
+	(DESC "sword")
+	(COMBAT 6)
 	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
@@ -6305,6 +6312,7 @@
 	<PUTP ,SWORD1 ,P?QUANTITY 1>
 	<PUTP ,SWORD2 ,P?QUANTITY 1>
 	<PUTP ,SWORD3 ,P?QUANTITY 1>
+	<PUTP ,SWORD6 ,P?QUANTITY 1>
 	<PUTP ,CHAIN-MAIL ,P?QUANTITY 1>
 	<PUTP ,HEAVY-PLATE ,P?QUANTITY 1>
 	<PUTP ,LEATHER-ARMOUR ,P?QUANTITY 1>
@@ -6418,7 +6426,8 @@
 	<PUTP ,STORY523 ,P?DOOM T>
 	<PUTP ,STORY565 ,P?DOOM T>
 	<PUTP ,STORY579 ,P?DOOM T>
-	<PUTP ,STORY587 ,P?DOOM T>>
+	<PUTP ,STORY587 ,P?DOOM T>
+	<PUTP ,STORY592 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -15393,224 +15402,130 @@ answer?">
 <ROUTINE STORY590-EVENTS ()
 	<COND (,RUN-ONCE <UPGRADE-ABILITY ,ABILITY-CHARISMA 1>)>>
 
+<CONSTANT TEXT591 "The key of stars opens the sealed gates of the Tower of Despair, which the book you are reading locates in the Forest of the Forsaken -- not, as popular myth would have it, on the banks of the Rese River.||The key appears to have passed through many hands across the centuries, but is now believed to be in the possession of the Trau King of the Whistling Heath.">
+
 <ROOM STORY591
 	(IN ROOMS)
 	(DESC "591")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT591)
+	(CONTINUE STORY368)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT592 "The Kraken returns to the depths, inexorably dragging your vessel down with it.||They are lost; you will be lucky if you can save yourself.">
 
 <ROOM STORY592
 	(IN ROOMS)
 	(DESC "592")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT592)
+	(EVENTS STORY592-EVENTS)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY592-EVENTS ()
+	<STORY-SHIPWRECK ,STORY592 ,STORY123 ,STORY-LONE-LEVEL-SANDS>>
+
+<CONSTANT TEXT593 "Upon hearing the name of the first of the gods, the skeletons burst asunder and fall clattering to the deck. Your men flatly refuse to cross to the other vessel, which is now slowly slipping below the waves in any case, but among the heap of bones you find a sword (COMBAT +6) and a suit of splint armour (Defence +4).">
 
 <ROOM STORY593
 	(IN ROOMS)
 	(DESC "593")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT593)
+	(CONTINUE STORY321)
+	(ITEMS <PLTABLE SWORD6 SPLINT-ARMOUR>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT594 "You give a stirring speech that turns them around completely. Soon they are vowing to follow your orders to the ends of the earth.||\"Aye, and beyond!\" declares the bosun. \"As far as hell's harbour gates, if you ask us, skipper!\"">
 
 <ROOM STORY594
 	(IN ROOMS)
 	(DESC "594")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT594)
+	(EVENTS STORY594-EVENTS)
+	(CONTINUE STORY282)
+	(CODEWORDS <PLTABLE CODEWORD-CURDLE>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY594-EVENTS ()
+	<COND (<G? <RANDOM-EVENT 2 0 T> <GET-ABILITY-SCORE ,CURRENT-CHARACTER ,ABILITY-CHARISMA>>
+		<UPGRADE-ABILITY ,ABILITY-CHARISMA 1>
+	)>>
+
+<CONSTANT TEXT595 "Your prow drives into the side of the Uttakin ship, which is unable to turn fast enough to avoid the collision. Water pours in through the broken timbers. With the weight of its metal flanks, the vessel is pulled down into the depths. A few survivors come swimming across calling for mercy. Your crew club the Uttakin unconscious and loot their belongings. There are also a few slaves who managed to slip out of their bonds as the ship went down. They are wealthy merchants from Metriciens who reward you handsomely for bringing about their rescue. All in all, you gain 450 Shards from the encounter.">
 
 <ROOM STORY595
 	(IN ROOMS)
 	(DESC "595")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT595)
+	(EVENTS STORY595-EVENTS)
+	(CONTINUE STORY300)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY595-EVENTS ()
+	<GAIN-MONEY 450>>
+
+<CONSTANT TEXT596 "\"Why not see for yourself? There is no substitute for practical experience!\" cries the Master, hurling a spell at you. There is a moment of nauseating weightlessness, your surroundings drop away, and then you are floundering about in the sea close to a palm-fringed beach.">
 
 <ROOM STORY596
 	(IN ROOMS)
 	(DESC "596")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT596)
+	(CONTINUE STORY505)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT597 "One of the men gets behind you and gives you a 'Ringhom love tap' on the back of the head with his cudgel. You sigh and swoon.||You wake up in the bilges of a ship. Your possessions and money are gone. You will not see your faithful crew again. You have been enslaved by smugglers from Uttaku.">
+<CONSTANT CHOICES597 <LTABLE "Leap overboard" "Stay on the ship">>
 
 <ROOM STORY597
 	(IN ROOMS)
 	(DESC "597")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT597)
+	(EVENTS STORY597-EVENTS)
+	(CHOICES CHOICES597)
+	(DESTINATIONS <PLTABLE STORY158 STORY-COURT-HIDDEN-FACES>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY597-EVENTS ()
+	<COND (,RUN-ONCE
+		<STORY-LOSE-SHIP>
+		<STORY-LOSE-EVERYTHING F>
+	)>>
+
+<CONSTANT TEXT598 "The sky is the colour of burning sulphur. From behind the clouds comes the growl of thunder. The sailors mutter in fear.||\"It is the wrath of Elnir,\" says the mate. \"He summons us to our doom!\"">
+<CONSTANT CHOICES598 <LTABLE "The storm hits with titanic fury, flinging mighty waves across the deck">>
 
 <ROOM STORY598
 	(IN ROOMS)
 	(DESC "598")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT598)
+	(EVENTS STORY598-EVENTS)
+	(CHOICES CHOICES598)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY634 STORY670 STORY009>>)
+	(REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 4 6 19> <LTABLE "Your ship sinks" "The mast splits" "You weather the storm">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY598-EVENTS ()
+	<STORM-AT-SEA ,STORY597 ,STORY050>>
+
+<CONSTANT TEXT599 "Sneering at your feeble excuses, the men set you ashore on a deserted island.||\"How do you expect me to survive?\" you ask them.||\"What business is it of ours if you live or die?\" is their callous reply.">
 
 <ROOM STORY599
 	(IN ROOMS)
-	(DESC "599")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT599)
+	(CONTINUE STORY177)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT600 "The ship steers out of harbour and sets her prow to the east.">
 
 <ROOM STORY600
 	(IN ROOMS)
 	(DESC "600")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT600)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY505 STORY-LORDS-RISING-SUN>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE 1 0 <PLTABLE 1 6> <LTABLE "Shipwreck; you alone reach land" "You reach Chambara safely">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY601
