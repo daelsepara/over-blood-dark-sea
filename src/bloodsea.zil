@@ -7,7 +7,7 @@
 <CONSTANT IFID "28661C3E-1309-484F-92C7-C681B054D742">
 <VERSION XZIP>
 
-<SETG EXTRA-FLAGS (CACHEBIT HOUSEBIT SHACKBIT CURSEBIT DISEASEBIT POISONBIT)>
+<SETG EXTRA-FLAGS (CACHEBIT HOUSEBIT COLLEGEBIT SHACKBIT CURSEBIT DISEASEBIT POISONBIT)>
 
 <INSERT-FILE "minilib">
 
@@ -137,7 +137,7 @@
 <OBJECT SHIPS (DESC "ships") (FLAGS CONTBIT OPENBIT)>
 
 ; "storage and/secret caches"
-<OBJECT PLAYER-STORAGE (DESC "houses/shacks/secret caches") (FLAGS CONTBIT OPENBIT)>
+<OBJECT PLAYER-STORAGE (DESC "houses/shacks/colleges/secret caches") (FLAGS CONTBIT OPENBIT)>
 
 ; "shacks"
 
@@ -149,9 +149,14 @@
 ; "houses"
 
 <OBJECT HOUSE-VERVAYENS
-	(DESC "House at Smogmaw")
+	(DESC "House at Vervayens")
 	(MONEY 0)
 	(FLAGS CONTBIT OPENBIT HOUSEBIT)>
+
+<OBJECT COLLEGE-DWEOMER
+	(DESC "College at Dweomer")
+	(MONEY 0)
+	(FLAGS CONTBIT OPENBIT COLLEGEBIT)>
 
 ; "NON-PERSON OBJECTS Properties"
 ; ---------------------------------------------------------------------------------------------
@@ -172,7 +177,7 @@
 <GLOBAL STARTING-POINT STORY001>
 <GLOBAL CURRENT-LOCATION LOCATION-OCEAN>
 
-<CONSTANT LOCATIONS <LTABLE "the open ocean" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "the Fortress of The Reaver King" "the Island of Fire" "Vervayens" "Starspike Island" "the Unmarked Island" "the Sea of Hydras">>
+<CONSTANT LOCATIONS <LTABLE "the open ocean" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "the Fortress of The Reaver King" "the Island of Fire" "Vervayens" "Starspike Island" "the Unmarked Island" "the Sea of Hydras" "the Sleeping Isle">>
 
 <CONSTANT LOCATION-OCEAN 1>
 <CONSTANT LOCATION-SORCERERS 2>
@@ -187,6 +192,7 @@
 <CONSTANT LOCATION-STARSPIKE 11>
 <CONSTANT LOCATION-UNMARKED 12>
 <CONSTANT LOCATION-HYDRA 13>
+<CONSTANT LOCATION-SLEEPING 14>
 
 ; "Gamebook loop"
 ; ---------------------------------------------------------------------------------------------
@@ -2820,7 +2826,14 @@
 <ROUTINE RESET-TITLES ()
 	<RESET-CONTAINER ,TITLES-AND-HONOURS>>
 
-<ROUTINE RESET-PLAYER-STORAGE ()
+<ROUTINE RESET-PLAYER-STORAGE ("AUX" (ITEM NONE))
+	<SET ITEM <FIRST? ,PLAYER-STORAGE>>
+	<REPEAT ()
+		<COND (<NOT .ITEM> <RETURN>)>
+		<RESET-CONTAINER .ITEM>
+		<PUTP .ITEM ,P?MONEY 0>
+		<SET ITEM <NEXT? .ITEM>>
+	>
 	<RESET-CONTAINER ,PLAYER-STORAGE>>
 
 <ROUTINE RESET-SHIPS ()
@@ -5281,14 +5294,42 @@
 		<UPDATE-STATUS-LINE>
 	>>
 
-; "Shack routines"
+; "Storage routines"
 ; ---------------------------------------------------------------------------------------------
 
-<CONSTANT CACHE-MENU <LTABLE "Leave/Take your possessions.">>
-<CONSTANT TEXT-SHACK "You can leave possessions and money here to save having to carry them around with you. You can also rest here safely, and recover any Stamina points you have lost.">
 <CONSTANT STORAGE-MENU <LTABLE "Leave/Take your possessions." "Leave/Withdraw money.">>
 <CONSTANT STORAGE-MENU-MONEY <LTABLE "Leave some your money here." "Take the money that was kept here.">>
 <CONSTANT STORAGE-MENU-POSSESSIONS <LTABLE "Leave some of your possessions here." "Take the  items that are kept here.">>
+
+<ROUTINE PROCESS-COLLEGE (STORY COLLEGE "AUX" ROLL MONEY)
+	<SET ROLL <RANDOM-EVENT 2 0 T>>
+	<COND (<L=? .ROLL 10>
+		<COND (<G? <COUNT-CONTAINER .COLLEGE> 0>
+			<EMPHASIZE "Your possessions and money are safe.">
+		)(ELSE
+			<EMPHASIZE ,NOTHING-HAPPENS>
+		)>
+	)(ELSE
+		<EMPHASIZE "College fees mean that 10% of money left here has been deducted.">
+		<SET MONEY <GETP .STORY ,P?MONEY>>
+		<COND (<G? .MONEY 0>
+			<SET MONEY <- .MONEY </ .MONEY 10>>>
+		)>
+		<PUTP .STORY ,P?MONEY .MONEY>
+	)>>
+
+<ROUTINE PROCESS-HOUSE (STORY HOUSE "AUX" ROLL)
+	<SET ROLL <RANDOM-EVENT 2 0 T>>
+	<COND (<L=? .ROLL 9>
+		<COND (<G? <COUNT-CONTAINER .HOUSE> 0>
+			<EMPHASIZE "Everything just as you left it.">
+		)(ELSE
+			<EMPHASIZE ,NOTHING-HAPPENS>
+		)>
+	)(ELSE
+		<EMPHASIZE "A fire destroyed your possessions!">
+		<RESET-CONTAINER .HOUSE>
+	)>>
 
 <ROUTINE PROCESS-POSSESSIONS (FROM TO MESSAGE "OPT" (LEAVE F) "AUX" ITEMS KEY CHOICE QUANTITY)
 	<REPEAT ()
@@ -5384,19 +5425,6 @@
 			)>
 		)>
 	>>
-
-<ROUTINE PROCESS-HOUSE (STORY HOUSE "AUX" ROLL)
-	<SET ROLL <RANDOM-EVENT 2 0 T>>
-	<COND (<L=? .ROLL 9>
-		<COND (<G? <COUNT-CONTAINER .HOUSE> 0>
-			<EMPHASIZE "Everything just as you left it.">
-		)(ELSE
-			<EMPHASIZE ,NOTHING-HAPPENS>
-		)>
-	)(ELSE
-		<EMPHASIZE "A fire destroyed your possessions!">
-		<RESET-CONTAINER .HOUSE>
-	)>>
 
 <ROUTINE PROCESS-SHACK (STORY SHACK "OPT" FATAL CODEWORD JUMP "AUX" ROLL)
 	<SET ROLL <RANDOM-EVENT 2 0 T>>
@@ -5529,6 +5557,8 @@
 		<COND (<PROCESS-SHACK .STORY .STORAGE .FATAL .CODEWORD .JUMP> <RETURN>)>
 	)(<FSET? .STORAGE ,HOUSEBIT>
 		<PROCESS-HOUSE .STORY .STORAGE>
+	)(<FSET? .STORAGE ,COLLEGEBIT>
+		<PROCESS-COLLEGE .STORY .STORAGE>
 	)>
 	<PRESS-A-KEY>
 	<REPEAT ()
@@ -6380,6 +6410,8 @@
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUT <GET <GETP ,STORY391 ,P?REQUIREMENTS> 1> 2 14>
 	<PUT <GET <GETP ,STORY510 ,P?REQUIREMENTS> 1> 3 0>
+	<PUT <GET <GETP ,STORY603 ,P?REQUIREMENTS> 1> 3 0>
+	<PUT <GET <GETP ,STORY606 ,P?REQUIREMENTS> 1> 3 0>
 	<PUTP ,STORY006 ,P?DOOM T>
 	<PUTP ,STORY007 ,P?DOOM T>
 	<PUTP ,STORY010 ,P?DOOM T>
@@ -6427,7 +6459,8 @@
 	<PUTP ,STORY565 ,P?DOOM T>
 	<PUTP ,STORY579 ,P?DOOM T>
 	<PUTP ,STORY587 ,P?DOOM T>
-	<PUTP ,STORY592 ,P?DOOM T>>
+	<PUTP ,STORY592 ,P?DOOM T>
+	<PUTP ,STORY604 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -9299,6 +9332,7 @@
 <ROOM STORY177
 	(IN ROOMS)
 	(DESC "177")
+	(LOCATION LOCATION-SLEEPING)
 	(STORY TEXT177)
 	(CHOICES CHOICES177)
 	(DESTINATIONS <PLTABLE STORY088 STORY108 STORY126>)
@@ -15501,7 +15535,7 @@ answer?">
 	(EVENTS STORY598-EVENTS)
 	(CHOICES CHOICES598)
 	(DESTINATIONS <PLTABLE <PLTABLE STORY634 STORY670 STORY009>>)
-	(REQUIREMENTS <LTABLE <LTABLE 1 0 <LTABLE 4 6 19> <LTABLE "Your ship sinks" "The mast splits" "You weather the storm">>>)
+	(REQUIREMENTS <LTABLE <LTABLE 1 0 <PLTABLE 4 6 19> <LTABLE "Your ship sinks" "The mast splits" "You weather the storm">>>)
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
@@ -15528,225 +15562,152 @@ answer?">
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT601 "An icy downpour forces you to shelter in a lonely barn where you are reduced to eating some of the fodder left for the animals. By daybreak you have a fever, and are in no condition to put up a fight when you are discovered by the owner of the barn.||\"The Reavers will give me a reward for capturing you,\" he says.">
+
 <ROOM STORY601
 	(IN ROOMS)
 	(DESC "601")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT601)
+	(CONTINUE STORY472)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT602 "You may not be able to take the ghost ship's cargo, but you may get another kind of reward for saving the cat's life.">
 
 <ROOM STORY602
 	(IN ROOMS)
 	(DESC "602")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT602)
+	(EVENTS STORY602-EVENTS)
+	(CONTINUE STORY032)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY602-EVENTS ()
+	<COND (<G? <RANDOM-EVENT 2 0 T> <GET-ABILITY-SCORE ,CURRENT-CHARACTER ,ABILITY-MAGIC>>
+		<UPGRADE-ABILITY ,ABILITY-MAGIC 1>
+	)>>
+
+<CONSTANT TEXT603 "You have the advantage of surprise. The pirates stand slack-jawed as they see you bounding down the hill, and your men take advantage of the diversion to arm themselves with planks, chains, belaying pins - whatever comes to hand. But the pirates have swords and armour.">
 
 <ROOM STORY603
 	(IN ROOMS)
 	(DESC "603")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT603)
+	(EVENTS STORY603-EVENTS)
+	(CHOICES CHOICES-COMBAT)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY457 STORY123>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-COMBAT 16 0>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY603-EVENTS ("AUX" (MODIFIER 0) ODDS)
+	<COND (,CURRENT-SHIP
+		<COND (<EQUAL? <GETP ,CURRENT-SHIP ,P?CONDITION> ,CONDITION-EXCELLENT>
+			<SET MODIFIER 2>
+		)>
+	)>
+	<SET ODDS <GET <GETP ,STORY603 ,P?REQUIREMENTS> 1>>
+	<PUT .ODDS 3 .MODIFIER>>
+
+<CONSTANT TEXT604 "He tosses a globe of magical fire at your back. It would have been worse if not for the mist, which helped stifle the flames.">
+<CONSTANT TEXT604-CONTINUED "You manage to escape from Talanexor down a narrow alley, but now you have lost sight of Lauria.">
 
 <ROOM STORY604
 	(IN ROOMS)
 	(DESC "604")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT604)
+	(EVENTS STORY604-EVENTS)
+	(CONTINUE STORY571)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY604-EVENTS ()
+	<LOSE-STAMINA <ROLL-DICE 3> ,DIED-FROM-INJURIES ,STORY604>
+	<CONTINUE-TEXT ,TEXT604-CONTINUED>>
+
+<CONSTANT TEXT605 "The Furies raise their brass-studded whips and give you a lashing just to instil moral rectitude. Then, as the sun emerges again, they fly off cackling with laughter. Where their feet touched the deck there are bloody prints that no amount of scrubbing will clean away.">
 
 <ROOM STORY605
 	(IN ROOMS)
 	(DESC "605")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT605)
+	(EVENTS STORY605-EVENTS)
+	(CONTINUE STORY321)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY605-EVENTS ()
+	<LOSE-STAMINA <ROLL-DICE 2> ,DIED-FROM-INJURIES ,STORY605>>
+
+<CONSTANT TEXT606 "Anyone who has climbed a mountain knows that it is easier to go up than to come down. Your heart is in your mouth as you make the perilous descent.">
+<CONSTANT CHOICES606 <LTABLE "Climb down safely">>
 
 <ROOM STORY606
 	(IN ROOMS)
 	(DESC "606")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT606)
+	(EVENTS STORY606-EVENTS)
+	(CHOICES CHOICES606)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY588 STORY123>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-SCOUTING 15 0>>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY606-EVENTS ("AUX" (MODIFIER 0) ODDS)
+	<COND (<CHECK-ITEM ,ROPE>
+		<SET MODIFIER 1>
+	)(<CHECK-ITEM ,CLIMBING-GEAR>
+		<SET MODIFIER 2>
+	)>
+	<SET ODDS <GET <GETP ,STORY606 ,P?REQUIREMENTS> 1>>
+	<PUT .ODDS 3 .MODIFIER>>
+
+<CONSTANT TEXT607 "If you like, your college will hold possessions and money here for safe-keeping.||You can also reside in college for as long as you wish, making use of the infirmary if need be.">
+<CONSTANT CHOICES607 <LTABLE "Call on the Master" "Visit the kitchens" "Study" "Research" "Leave">>
 
 <ROOM STORY607
 	(IN ROOMS)
 	(DESC "607")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT607)
+	(EVENTS STORY607-EVENTS)
+	(CHOICES CHOICES607)
+	(DESTINATIONS <PLTABLE STORY207 STORY187 STORY696 STORY368 STORY571>)
+	(TYPES FIVE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY607-EVENTS ()
+	<VISIT-STORAGE ,STORY607 ,COLLEGE-DWEOMER>>
+
+<CONSTANT TEXT608 "\"Were you set ashore by your fellow crewmen?\" you ask the poor wretch, for this is a common punishment at sea.||\"No,\" he says. \"We had the misfortune to encounter a shoal of mermaids. Hearing their sad sweet song, all the others flung themselves into the sea and were drowned. Later the ship hit that reef and sank, and there I waited till you found me.\"||\"Why didn't the mermaids' song affect you?\"||He gives a wry smile. \"I'm tone deaf.\"">
 
 <ROOM STORY608
 	(IN ROOMS)
 	(DESC "608")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT608)
+	(CONTINUE STORY245)
+	(CODEWORDS <PLTABLE CODEWORD-CYNOSURE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT609 "Estragon is the court wizard of Baroness Ravayne of Golnir. He was formerly the Warden of Choronzon College here in Dweomer, but left under something of a cloud.||\"That would have been his experiment in storm magic,\" elucidates the librarian. \"I remember it rained for thirteen months and a day.\"||\"Heavy rain, presumably?\"||He nods. \"The High Street was accessible only by punt, and the Warden of Cromlech College drowned after falling asleep in his wine cellar.\"||\"And what does Estragon do these days?\" you ask.||\"Continues his experiments, I hear. Adventurers who help him out with various quests are richly rewarded.\"">
 
 <ROOM STORY609
 	(IN ROOMS)
 	(DESC "609")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT609)
+	(CONTINUE STORY368)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT610 "Along with some of your officers, you manage to lower the cutter and row off. The Kraken sinks down into the depths carrying the shattered remnants of your ship with it. It is with bitter heart that you abandon the men crying for help in the water, but there is not enough room in the cutter for all of them.||After several days you drift in to the shelter of a quiet bay. Your officers rest in the shade of a row of coconut palms, but to your dismay it is impossible to wake them later. Only then do you realize you must have landed on the fateful Sleeping Isle.||The cutter is too much for you to handle alone. You break it up for firewood and to build yourself a shelter. You may be on this island for some time.">
 
 <ROOM STORY610
 	(IN ROOMS)
 	(DESC "610")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-SLEEPING)
+	(STORY TEXT610)
+	(EVENTS STORY610-EVENTS)
+	(CONTINUE STORY177)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY610-EVENTS ()
+	<STORY-LOSE-SHIP>>
 
 <ROOM STORY611
 	(IN ROOMS)
