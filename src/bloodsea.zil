@@ -3246,6 +3246,7 @@
 <OBJECT CODEWORD-CHEESE (DESC "Cheese")>
 <OBJECT CODEWORD-CHEOPS (DESC "Cheops")>
 <OBJECT CODEWORD-CHILL (DESC "Chill")>
+<OBJECT CODEWORD-CITHARA (DESC "Cithara")>
 <OBJECT CODEWORD-CITRUS (DESC "Citrus")>
 <OBJECT CODEWORD-CIVIL (DESC "Civil")>
 <OBJECT CODEWORD-CHURCH (DESC "Church")>
@@ -3596,7 +3597,12 @@
 	(SCOUTING 2)
 	(FLAGS TAKEBIT)>
 
-<OBJECT DECKED-MARKED-CARDS
+<OBJECT CUDGEL
+	(DESC "cudgel")
+	(QUANTITY 1)
+	(FLAGS TAKEBIT)>
+
+<OBJECT DECK-MARKED-CARDS
 	(DESC "deck of marked cards")
 	(FLAGS TAKEBIT)>
 
@@ -6357,6 +6363,7 @@
 	<PUTP ,BOTTLE-OF-WINE ,P?QUANTITY 1>
 	<PUTP ,CANDLE ,P?QUANTITY 1>
 	<PUTP ,CORAL-RED-TRESSES ,P?QUANTITY 1>
+	<PUTP ,CUDGEL ,P?QUANTITY 1>
 	<PUTP ,FAERY-MEAD ,P?QUANTITY 1>
 	<PUTP ,FISHING-HOOK ,P?QUANTITY 1>
 	<PUTP ,FOUR-LEAF-CLOVER ,P?QUANTITY 1>
@@ -11808,7 +11815,7 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(STORY TEXT343)
 	(CHOICES CHOICES343)
 	(DESTINATIONS <PLTABLE STORY015 STORY034>)
-	(REQUIREMENTS <PLTABLE DECKED-MARKED-CARDS NONE>)
+	(REQUIREMENTS <PLTABLE DECK-MARKED-CARDS NONE>)
 	(TYPES ONE-ITEM)
 	(FLAGS LIGHTBIT)>
 
@@ -15338,7 +15345,7 @@ unknown waters.">
 	(CHOICES CHOICES584)
 	(DESTINATIONS <PLTABLE STORY602 STORY620>)
 	(REQUIREMENTS <PLTABLE PROFESSION-MAGE NONE>)
-	(TYPES <PLTABLE R-PROFESSION R-NONE>)
+	(TYPES ONE-PROFESSION)
 	(ITEMS <PLTABLE BLACK-CAT>)
 	(FLAGS LIGHTBIT)>
 
@@ -15709,224 +15716,140 @@ answer?">
 <ROUTINE STORY610-EVENTS ()
 	<STORY-LOSE-SHIP>>
 
+<CONSTANT TEXT611 "One of the men falls ill. His skin turns yellow and he begins to vomit, and death follows quickly. The plague spreads, the narrow confines of the ship allowing no escape for any of you. You watch the crew die in front of your eyes.">
+
 <ROOM STORY611
 	(IN ROOMS)
 	(DESC "611")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT611)
+	(EVENTS STORY611-EVENTS)
+	(CONTINUE STORY123)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY611-EVENTS ()
+	<COND (<CHECK-BLESSING ,BLESSING-IMMUNITY-POISON-DISEASE>
+		<DELETE-BLESSING ,BLESSING-IMMUNITY-POISON-DISEASE>
+		<STORY-JUMP ,STORY700>
+	)(ELSE
+		<CONTINUE-TEXT "You soon succumb yourself">
+	)>>
+
+<CONSTANT TEXT612 "Over the past few days you have had cause to reduce rations and enforce some stern discipline. Now the men are getting unruly. You must address them and hope to sway them with the force of your personality.">
 
 <ROOM STORY612
 	(IN ROOMS)
 	(DESC "612")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT612)
+	(CHOICES CHOICES-CHARISMA)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY594 STORY576>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-CHARISMA 13>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT613 "You are stripped of your money and possessions. The Uttakin scuppers your ship. Along with the surviving members of your crew, you are locked in shackles.||The Uttakin captain looks down on you with an inscrutable stare.||\"Forget your former life,\" he advises you. \"Now and for evermore you are a slave.\"">
 
 <ROOM STORY613
 	(IN ROOMS)
 	(DESC "613")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT613)
+	(EVENTS STORY613-EVENTS)
+	(CONTINUE STORY-COURT-HIDDEN-FACES)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY613-EVENTS ()
+	<STORY-LOSE-EVERYTHING F>
+	<STORY-LOSE-SHIP>>
+
+<CONSTANT TEXT614 "\"A good question!\" The Master titters with rather unbalanced laughter. \"Go and take a look. You might gain some useful material for a thesis.\"||He throws a spell and a bolt of blackness surrounds you. Slowly it fades, revealing that you are wallowing in the surf close to a barren stretch of shoreline.">
 
 <ROOM STORY614
 	(IN ROOMS)
 	(DESC "614")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT614)
+	(CONTINUE STORY313)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT615 "Checking the crates, you discover bottles of Harkunan brandy wine. Obviously the men were smugglers, and the note about spectral hauntings was just a ploy to scare the miners away from where they kept their contraband.||You can take a bottle of wine, a deck of marked cards, four cudgels and the 117 Shards the smugglers had on them. Then you return to the surface.">
 
 <ROOM STORY615
 	(IN ROOMS)
 	(DESC "615")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT615)
+	(EVENTS STORY615-EVENTS)
+	(CONTINUE STORY025)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY615-EVENTS ()
+	<PUTP ,MONEY-BAG ,P?MONEY 117>
+	<TAKE-QUANTITIES ,CUDGEL "cudgels" "How many of the cudgels will you take" 4>
+	<SELECT-FROM-LIST <LTABLE BOTTLE-OF-WINE DECK-MARKED-CARDS MONEY-BAG> 3 3>>
+
+<CONSTANT TEXT616 "The ship is swept far out to sea. Men and goods are washed overboard by huge waves that snap your hawsers like twine.||At last the storm blows itself out. You are left drifting in unknown waters.">
 
 <ROOM STORY616
 	(IN ROOMS)
 	(DESC "616")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT616)
+	(EVENTS STORY616-EVENTS)
+	(CONTINUE STORY050)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY616-EVENTS ("AUX" (CAPACITY 0) (CONDITION 0))
+	<COND (,CURRENT-SHIP
+		<SET CAPACITY <COUNT-CONTAINER ,CARGO>>
+		<COND (<G? .CAPACITY 0>
+			<DEC .CAPACITY>
+			<COND (<G? .CAPACITY 0>
+				<STORY-LOSE-CARGO .CAPACITY>
+			)(ELSE
+				<RESET-CONTAINER ,CARGO>
+			)>
+		)>
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<DEC .CONDITION>
+		<COND (<L? .CONDITION 0> <SET CONDITION 0>)>
+		<PUTP ,CURRENT-SHIP ,P?CONDITION .CONDITION>
+	)>>
+
+<CONSTANT TEXT617 "He is Alkeides, a warrior from the distant city-state of Krateros, cursed by the gods to die by his brother's hand.||\"Naturally, when my ship sank I was unable to drown. I have been trying to get to my homeland so that I might entreat the gods to lift the curse, or else put an honourable end to my days. But each storm raises the sea and flings me to and fro.\"||You help out by dropping him at the next port, where he may be able to find a ship to carry him home.">
 
 <ROOM STORY617
 	(IN ROOMS)
 	(DESC "617")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT617)
+	(CONTINUE STORY116)
+	(CODEWORDS <PLTABLE CODEWORD-CITHARA>)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY618
 	(IN ROOMS)
 	(DESC "618")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY099 STORY-CITIES-GOLD-GLORY>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE 1 0 <PLTABLE 1 6> <LTABLE "Storms force you south to Brazen" "You reach Ringhorn without difficulty">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT619 "It is a high-prowed merchant ship from Akatsurai, distinguishable by its triangular sails and the golden sun symbol displayed on the aft deck.||The ship comes alongside and the captain invites you aboard. He chats to you for a while about trade between his country and Golnir.">
+<CONSTANT CHOICES619 <LTABLE YOU-ARE-A "Otherwise you can sail on">>
 
 <ROOM STORY619
 	(IN ROOMS)
 	(DESC "619")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT619)
+	(CHOICES CHOICES619)
+	(DESTINATIONS <PLTABLE STORY519 STORY228>)
+	(REQUIREMENTS <PLTABLE PROFESSION-WARRIOR NONE>)
+	(TYPES ONE-PROFESSION)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT620 "You sail away from the deserted ship. \"I wonder what happened to her crew?\" you wonder.||The mate gives a shudder. \"Eerie things abound in these waters, captain,\" he replies.">
 
 <ROOM STORY620
 	(IN ROOMS)
 	(DESC "620")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT620)
+	(CONTINUE STORY032)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY621
