@@ -2032,6 +2032,8 @@
 				<MOVE <GET ,TEMP-LIST .I> .LOST-CONTAINER>
 			)>
 		>
+	)(ELSE
+		<RESET-CONTAINER .CONTAINER>
 	)>>
 
 <ROUTINE POISONED-WITH (POISON)
@@ -3461,6 +3463,12 @@
 <OBJECT SWORD3
 	(DESC "sword")
 	(COMBAT 3)
+	(QUANTITY 1)
+	(FLAGS TAKEBIT WEAPONBIT)>
+
+<OBJECT SWORD4
+	(DESC "sword")
+	(COMBAT 4)
 	(QUANTITY 1)
 	(FLAGS TAKEBIT WEAPONBIT)>
 
@@ -6348,6 +6356,7 @@
 	<PUTP ,SWORD1 ,P?QUANTITY 1>
 	<PUTP ,SWORD2 ,P?QUANTITY 1>
 	<PUTP ,SWORD3 ,P?QUANTITY 1>
+	<PUTP ,SWORD4 ,P?QUANTITY 1>
 	<PUTP ,SWORD6 ,P?QUANTITY 1>
 	<PUTP ,CHAIN-MAIL ,P?QUANTITY 1>
 	<PUTP ,HEAVY-PLATE ,P?QUANTITY 1>
@@ -15852,224 +15861,140 @@ answer?">
 	(CONTINUE STORY032)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT621 "After a year of piracy you have risen to the rank of captain. You put it to your men that with the spoils you've collected it would be better to turn to honest work. \"Why live like robbers until our luck runs out? We can be princes in Metriciens!\"||They agree and the booty is divided up. Your share comes to 8500 Shards and a sword (COMBAT +4). Decide where you want to make your home.">
+<CONSTANT CHOICES621 <LTABLE "In Wishport" "In Dweomer" "In Smogmaw" "In Yellowport">>
+
 <ROOM STORY621
 	(IN ROOMS)
 	(DESC "621")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT621)
+	(EVENTS STORY621-EVENTS)
+	(CHOICES CHOICES621)
+	(DESTINATIONS <PLTABLE STORY-CITIES-GOLD-GLORY STORY571 STORY044 STORY-WAR-TORN-KINGDOM>)
+	(TYPES FOUR-CHOICES)
+	(ITEMS <PLTABLE SWORD4>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY621-EVENTS ()
+	<COND (,RUN-ONCE <GAIN-MONEY 8500>)>>
+
+<CONSTANT TEXT622 "You bump into somebody in the mist -- a tall gentleman in a velvet cape. \"Excuse me.\" You go to move past him; you don't want Lauria to get away.||He plants a thin hand on your chest. \"A moment of your time. I think we are old acquaintances?\"||You shake your head. \"I don't believe so.\"||\"No? In that case,\" he asks with a twitch of his thin lips, \"why did you make yourself at home in my house?\"||You give him a closer look. \"Who?\"||\"I am Talanexor the Fireweaver, you scoundrel. And your name, I believe, is Lauria.\"||You start to protest. \"I'm not Lauria! She's just gone that way. If we hurry we can catch her.\"||He gives a hollow laugh. \"You must think me a fool. Prepare to take your punishment.\"">
+<CONSTANT CHOICES622 <LTABLE "Fight him" "Challenge him to a duel" "Run off">>
 
 <ROOM STORY622
 	(IN ROOMS)
 	(DESC "622")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT622)
+	(CHOICES CHOICES622)
+	(DESTINATIONS <PLTABLE STORY568 STORY586 STORY604>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT623 "After a drunken argument in the mess, one of the sailors is found with his brains battered out. There seems no doubt about the man responsible -- a bloody rag is found hidden under his bunk and he is known for his explosive temper.">
+<CONSTANT CHOICES623 <LTABLE "Order him thrown overboard" "Let the incident pass">>
 
 <ROOM STORY623
 	(IN ROOMS)
 	(DESC "623")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT623)
+	(CHOICES CHOICES623)
+	(DESTINATIONS <PLTABLE STORY536 STORY554>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT624 "The men lie around the deck waiting to die. Your tongue is sticking to the roof of your mouth now, and your vision is blurred with hunger.||\"Sweet heaven, skipper,\" croaks the bosun, \"must we die too?\"">
+<CONSTANT CHOICES624 <LTABLE "Take the officers and escape in the rowboat" "Stay with your ship to the bitter end">>
 
 <ROOM STORY624
 	(IN ROOMS)
 	(DESC "624")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT624)
+	(CHOICES CHOICES624)
+	(DESTINATIONS <PLTABLE STORY520 STORY590>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT625 "There are many colleges, each distinguished in its own field. Fortuity College has a high reputation in the study of charms and benedictions. Carminry College is for the study of magic as a means of curing illness. Fulgur College specialises in the conjuring of storms. And so on...||Whichever college you decide to apply for, the procedure is the same. First you are subjected to an examination which decides how holy you are. You have to try to drive off a vexatious sprite using only a display of self-righteous indignation, wax pompously on the topic of other people's ethics, curdle milk with a beatific smile, speculate uselessly for hours on what the gods really intended when they made Man, and so forth.">
 
 <ROOM STORY625
 	(IN ROOMS)
 	(DESC "625")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT625)
+	(CHOICES CHOICES-SANCTITY)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY661 STORY679>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-SANCTITY 14>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT626 "There is a ghostly howl that makes your hair stand on end. Unable to remain another moment in this uncanny place, you hurry back downstairs into the open air.">
 
 <ROOM STORY626
 	(IN ROOMS)
 	(DESC "626")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT626)
+	(CONTINUE STORY407)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT627 "You find an extract in the Wondrous Annals of Nic O'Carnolop, Master Mariner.||\"In the great forests of the southern land known as Ankon-Konu abide creatures whose like is not found elsewhere at any part of the world. In the higher branches there are fungi that can float on the warm breezes and ensnare monkeys and birds. With my own eyes I beheld a man slain by the crimson moss which can grow in great swathes overnight, suffocating the unwary. In leafy groves as dark as caverns I met with men whose eyes were like great jewels atop their heads. There are insects as hard and bright as glass, large as a man's fist, and monkeys with the morals of a Metriciens street-thug. But strangest of all are the creatures that give Ankon-Konu the name by which mariners commonly know it. These creatures are the plumed flying fish of the jungle, and the name by which the continent is thus called is the Feathered Lands.\"||\"Not all authorities agree,\" says the librarian, looking over your shoulder. \"I have heard other, quite different, accounts of that land.\"">
 
 <ROOM STORY627
 	(IN ROOMS)
 	(DESC "627")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT627)
+	(CONTINUE STORY368)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT628 "It is with heavy heart that you scupper the ship, putting to sea in the rowboats. After several weeks at sea you are reduced to eating worm-ridden biscuits and drinking rainwater. At last, Smogmaw comes in sight. You put in at the quayside and stagger ashore, too weary to notice that the current is carrying your rowboats back out to sea.||You will have to lay off the crew as well because there are no vessels for purchase here in Smogmaw.">
 
 <ROOM STORY628
 	(IN ROOMS)
 	(DESC "628")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT628)
+	(EVENTS STORY628-EVENTS)
+	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY628-EVENTS ()
+	<STORY-LOSE-SHIP>>
+
+<CONSTANT TEXT629 "Some of the items stored on deck were not properly lashed down, and got swept overboard during the night.">
 
 <ROOM STORY629
 	(IN ROOMS)
 	(DESC "629")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT629)
+	(EVENTS STORY629-EVENTS)
+	(CONTINUE STORY190)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY629-EVENTS ("AUX" COUNT LOSS MAX)
+	<SET COUNT <COUNT-CONTAINER ,CARGO>>
+	<COND (<G? .COUNT 1>
+		<DEC .COUNT>
+		<STORY-LOSE-CARGO .COUNT>
+	)(<EQUAL? .COUNT 1>
+		<RESET-CONTAINER ,CARGO>
+	)(ELSE
+		<SET LOSS <ROLL-DICE 1>>
+		<SET COUNT <COUNT-POSSESSIONS>>
+		<SET MAX <- .COUNT .LOSS>>
+		<COND (<G? .MAX 0>
+			<LOSE-STUFF ,PLAYER ,LOST-STUFF "possessions" .MAX ,RESET-POSSESSIONS>
+		)(ELSE
+			<RESET-POSSESSIONS>
+		)>
+	)>>
+
+<CONSTANT TEXT630 "At sunset the water develops a deep shadowy tinge. It is this that gives the Violet Ocean its name. On the horizon, clouds lie in long lines against the blood-drenched sky like the ranks of a distant army.">
 
 <ROOM STORY630
 	(IN ROOMS)
 	(DESC "630")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT630)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY666 STORY355 STORY648>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE 2 0 <PLTABLE 4 6 12> <LTABLE "Pirates" "Storm" "An uneventful voyage">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY631
