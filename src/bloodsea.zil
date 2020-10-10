@@ -177,7 +177,7 @@
 <GLOBAL STARTING-POINT STORY001>
 <GLOBAL CURRENT-LOCATION LOCATION-OCEAN>
 
-<CONSTANT LOCATIONS <LTABLE "the open ocean" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "the Fortress of The Reaver King" "the Island of Fire" "Vervayens" "Starspike Island" "the Unmarked Island" "the Sea of Hydras" "the Sleeping Isle">>
+<CONSTANT LOCATIONS <LTABLE "the open ocean" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "the Fortress of The Reaver King" "the Island of Fire" "Vervayens" "Starspike Island" "the Unmarked Island" "the Sea of Hydras" "the Sleeping Isle" "Dangor">>
 
 <CONSTANT LOCATION-OCEAN 1>
 <CONSTANT LOCATION-SORCERERS 2>
@@ -193,6 +193,7 @@
 <CONSTANT LOCATION-UNMARKED 12>
 <CONSTANT LOCATION-HYDRA 13>
 <CONSTANT LOCATION-SLEEPING 14>
+<CONSTANT LOCATION-DANGOR 15>
 
 ; "Gamebook loop"
 ; ---------------------------------------------------------------------------------------------
@@ -6457,6 +6458,7 @@
 	<RESET-ODDS 2 0 ,STORY541>
 	<RESET-ODDS 1 0 ,STORY544>
 	<RESET-ODDS 1 0 ,STORY637>
+	<RESET-ODDS 2 0 ,STORY647>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUT <GET <GETP ,STORY391 ,P?REQUIREMENTS> 1> 2 14>
 	<PUT <GET <GETP ,STORY510 ,P?REQUIREMENTS> 1> 3 0>
@@ -6627,7 +6629,7 @@
 	<COND (<NOT <ASSIGNED? MAX>> <SET MAX 1>)>
 	<SET COUNT <COUNT-CONTAINER ,BLESSINGS>>
 	<COND (<L=? .COUNT .MAX>
-		<RESET-CARGO>
+		<RESET-BLESSINGS>
 	)(ELSE
 		<LOSE-STUFF ,BLESSINGS ,LOST-STUFF "blessing" <- .COUNT .MAX> ,RESET-BLESSINGS>
 	)>>
@@ -16283,224 +16285,138 @@ answer?">
 		)>
 	)>>
 
+<CONSTANT TEXT641 "The curse is not long in taking effect. \"Yuck!\" says the first mate, spitting out the water he had taken from the barrel on deck. \"It's gone scummy!\"">
+
 <ROOM STORY641
 	(IN ROOMS)
 	(DESC "641")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT641)
+	(CONTINUE STORY124)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT642 "You climb so high that the atmosphere itself just drops away. You are surrounded by thousands of stars shining like diamonds in a midnight blue firmament.||At the summit of the mountain is a gateway of wrought iron fastened with a padlock. You will need a fretwork key or a THIEVERY roll at Difficulty 20 to unlock it.">
+<CONSTANT CHOICES642 <LTABLE "Unlock the gate" TEXT-ROLL-THIEVERY>>
 
 <ROOM STORY642
 	(IN ROOMS)
 	(DESC "642")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT642)
+	(CHOICES CHOICES642)
+	(DESTINATIONS <PLTABLE STORY497 <PLTABLE STORY497 STORY606>>)
+	(REQUIREMENTS <PLTABLE FRETWORK-KEY <PLTABLE ABILITY-THIEVERY 20>>)
+	(TYPES <PLTABLE R-ITEM R-TEST-ABILITY>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT643 "Not wise. Do you think no one ever tried that before? The panel of a large grandfather clock snaps open, a long scaly arm shoots out and grabs your neck, and you are pulled through into a dank indistinct place where you are rapidly stripped of your possessions. That done, the arm flings you down on a cold stone floor before vanishing.">
 
 <ROOM STORY643
 	(IN ROOMS)
 	(DESC "643")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT643)
+	(EVENTS STORY643-EVENTS)
+	(CONTINUE STORY415)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY643-EVENTS ()
+	<RESET-POSSESSIONS>>
+
+<CONSTANT TEXT644 "The casket breaks to under your enchanted touch. You take the celestium wand (MAGIC +5) and then hurry excitedly back outside, eager to test the power of your new acquisition.">
 
 <ROOM STORY644
 	(IN ROOMS)
 	(DESC "644")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT644)
+	(CONTINUE STORY407)
+	(ITEMS <PLTABLE CELESTIUM-WAND>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT645 "If half of what you read about Akatsurai is true, it must be one of the strangest countries of the world.||The knights of Akatsurai (who are known as samurai) are utterly without fear, striving gladly for death if only they can win honour with their last breath. In fact, honour is so highly prized that a samurai threatened with disgrace usually opts to take his own life by slitting open his belly with a dagger.||The samurai are the rulers of Akatsurai, and any samurai can slay any peasant with no better reason than to test the edge of his sword! The chief of all the samurai is called the Shogun, whose court is in Chambara. There is also an Emperor, but according to most accounts he wields little true power.||Also worth noting is a small and secretive sect of wizardly assassins which is active in the remote rural areas. They are known as ninja, a word which literally means Masters of Invisibility.">
 
 <ROOM STORY645
 	(IN ROOMS)
 	(DESC "645")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT645)
+	(CONTINUE STORY368)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT646 "The island turns out to be the back of a sea-going behemoth that has basked in the sun for so long that vegetation has started to grow on it. Woken by the tread of your boots, the creature issues forth an angry waterspout and dives beneath the waves.||Several of your men are lost in the mad scramble back aboard the ship.">
 
 <ROOM STORY646
 	(IN ROOMS)
 	(DESC "646")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT646)
+	(EVENTS STORY646-EVENTS)
+	(CONTINUE STORY283)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY646-EVENTS ()
+	<STORY-RESET-CREW ,CONDITION-POOR ,CURRENT-SHIP>>
+
+<CONSTANT TEXT647 "Hundred-headed hydras arise from the sea on all sides. Hissing venomously, they lash out to seize men from the decks.">
 
 <ROOM STORY647
 	(IN ROOMS)
 	(DESC "647")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT647)
+	(EVENTS STORY647-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY123 STORY700 STORY647-LOSSES STORY448>>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <PLTABLE 3 6 9 100> <LTABLE "Everyone is killed" "You alone survive" "Many losses" "The hydras are driven off">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY647-EVENTS ("AUX" (MODIFIER -2) (CONDITION 0))
+	<COND (,CURRENT-SHIP
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<COND (<EQUAL? .CONDITION ,CONDITION-GOOD>
+			<SET MODIFIER 1>
+		)(<EQUAL? .CONDITION ,CONDITION-EXCELLENT>
+			<SET MODIFIER 2>
+		)>
+	)>
+	<RESET-ODDS 2 .MODIFIER ,STORY647>>
+
+<ROOM STORY647-LOSSES
+	(DESC "647")
+	(BACKGROUND STORY647-BACKGROUND)
+	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY647-BACKGROUND ()
+	<STORY-RESET-CREW ,CONDITION-POOR ,CURRENT-SHIP>
+	<RETURN ,STORY180>>
+
+<CONSTANT TEXT648 "You are far out at sea with no land in sight.||\"The Feathered Lands lie south of here,\" the helmsman mutters, \"but will we ever see them? Not this side of the grave, I'll wager!\" You distract him from such gloomy thoughts by ordering a new course.">
+<CONSTANT CHOICES648 <LTABLE "Steer north towards Golnir" "Steer south to Ankon-Konu" "Steer east" "Steer west">>
 
 <ROOM STORY648
 	(IN ROOMS)
 	(DESC "648")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT648)
+	(CHOICES CHOICES648)
+	(DESTINATIONS <PLTABLE STORY504 STORY189 STORY042 STORY244>)
+	(TYPES FOUR-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT649 "On the clifftop above the door you discover a sinkhole with a faint glow of lamplight shining up from below. Lowering yourself down, you soon reach a cavern where two tall women with serpentine tresses are pacing to and fro like hungry cats.||\"Sister, there is a fresh mortal in our land,\" says one.||The other nods, causing the snakes of her head to hiss softly. \"Yes, I feel it two. Tomorrow we shall hunt.\"">
+<CONSTANT CHOICES649 <LTABLE "Leave while you can" "Creep in when they're asleep">>
 
 <ROOM STORY649
 	(IN ROOMS)
 	(DESC "649")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT649)
+	(CHOICES CHOICES649)
+	(DESTINATIONS <PLTABLE STORY342 STORY432>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT650 "Dangor is a city east of the Gashmuru Gulf. It stands atop cliffs hundreds of metres high, and you are particularly intrigued by the account of one Horbel Humbing, Master Mariner, of the HMS Sokar. \"We arrived at the base of the cliffs and there laid at anchor three days, while a mountaineer carried our documents to the port authorities above. These documents being found to e in order, grapples were lowered and secured and the whole vessel was winched up to the docks a thousand feet above.\"">
 
 <ROOM STORY650
 	(IN ROOMS)
 	(DESC "650")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-DANGOR)
+	(STORY TEXT650)
+	(CONTINUE STORY368)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY651
