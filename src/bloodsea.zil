@@ -12155,7 +12155,6 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(CONTINUE STORY652)
 	(FLAGS LIGHTBIT)>
 
-; "TO-DO: Make sure STORY652 has INVESTMENTS property"
 <ROUTINE STORY359-EVENTS ()
 	<CHECK-INVESTMENTS ,STORY652>>
 
@@ -15794,6 +15793,7 @@ answer?">
 <ROOM STORY607
 	(IN ROOMS)
 	(DESC "607")
+	(VISITS 0)
 	(STORY TEXT607)
 	(EVENTS STORY607-EVENTS)
 	(CHOICES CHOICES607)
@@ -16423,220 +16423,125 @@ answer?">
 	(IN ROOMS)
 	(DESC "651")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY651-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY651-BACKGROUND ()
+	<COND (<CHECK-VISITS-MORE ,STORY651 1> <RETURN ,STORY358>)>
+	<RETURN ,STORY686>>
+
+<CONSTANT TEXT652 "Gaspar will invest money for you in various enterprises. The investment must be in multiples of 100 Shards.">
 
 <ROOM STORY652
 	(IN ROOMS)
 	(DESC "652")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
+	(STORY TEXT652)
+	(EVENTS STORY652-EVENTS)
+	(CONTINUE STORY687)
 	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY652-EVENTS ()
+	<GUILD-ACTIVITY ,STORY652 T>>
+
+<CONSTANT TEXT653 "You manage to avoid smashing your ship open on the reefs, but you are no closer to locating the secret bay where the Reavers store their booty. You decide to put in at a fishing village and see if you can get anything out of the locals.">
+<CONSTANT CHOICES653 <LTABLE "Show them a silver medallion" "Gain their confidence">>
 
 <ROOM STORY653
 	(IN ROOMS)
 	(DESC "653")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT652)
+	(CHOICES CHOICES653)
+	(DESTINATIONS <PLTABLE STORY688 <PLTABLE STORY688 STORY701>>)
+	(REQUIREMENTS <PLTABLE SILVER-MEDALLION <PLTABLE ABILITY-CHARISMA 12>>)
+	(TYPES <PLTABLE R-ITEM R-TEST-ABILITY>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT654 "A pirate galley comes bucking across the waves, gaining steadily in the mild breeze.||\"If the wind doesn't pick up, we're done for!\" shouts the helmsman.">
+<CONSTANT CHOICES654 <LTABLE "Make a run for it" "Parley" "Fight it out">>
 
 <ROOM STORY654
 	(IN ROOMS)
 	(DESC "654")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT654)
+	(CHOICES CHOICES654)
+	(DESTINATIONS <PLTABLE STORY672 STORY689 STORY361>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT655 "At the back of a wide bay you find a town which rises with steep streets to a grim citadel. The blood-coloured flag of the Reavers flies from the battlements. In the harbour, a dozen pirate ships ride at anchor.">
+<CONSTANT CHOICES655 <LTABLE "Walk openly into the town" "Sneak in at night" "Make a getaway">>
 
 <ROOM STORY655
 	(IN ROOMS)
 	(DESC "655")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT655)
+	(CHOICES CHOICES655)
+	(DESTINATIONS <PLTABLE STORY114 STORY362 STORY380>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT656 "The Reavers hold a banquet in the great hall of their stronghold.
+The finest wines are served -- wines of southern Sokara that were intended for the cellars of the merchant princes of Metriciens. The meat is flavoured with the exotic spices of distant lands, and there are sweetmeats from Chrysoprais and nuts from Ankon-Konu. These Reavers dine like kings!">
 
 <ROOM STORY656
 	(IN ROOMS)
 	(DESC "656")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT656)
+	(CHOICES CHOICES-CODEWORD)
+	(DESTINATIONS <PLTABLE STORY674 STORY691>)
+	(REQUIREMENTS <PLTABLE CODEWORD-AMCHA NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT657 "Passing the latticed windows of a tavern, you happen to glance inside where you see a tall young woman having dinner with an older man who has a scholarly look about him. You walk on a few steps and then stop as if struck by a thunderbolt. The woman is Lauria, the thief who twice played you for a fool. You swore you'd get even with her one day!">
+<CONSTANT CHOICES657 <LTABLE "Go inside and confront her" "Wait for her to leave" "Swallow your pride and forget it">>
 
 <ROOM STORY657
 	(IN ROOMS)
 	(DESC "657")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT657)
+	(CHOICES CHOICES657)
+	(DESTINATIONS <PLTABLE STORY692 STORY702 STORY571>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT658 "It is rather disheartening the way all the onlookers sigh and shake their heads the moment you give your answer.||‘Talanexor always gets them with that one!’ you overhear an old professor saying.||Having been judged loser in the dispute you have brought shame on your college if you belong to one, and are forthwith expelled.">
 
 <ROOM STORY658
 	(IN ROOMS)
 	(DESC "658")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT658)
+	(EVENTS STORY658-EVENTS)
+	(CONTINUE STORY571)
 	(FLAGS LIGHTBIT)>
+
+; "TO-DO: Validate college"
+<ROUTINE STORY658-EVENTS ()
+	<REMOVE ,COLLEGE-DWEOMER>
+	<PUTP ,STORY607 ,P?VISITS 0>>
 
 <ROOM STORY659
 	(IN ROOMS)
 	(DESC "659")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY659-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY659-BACKGROUND ()
+	<COND (<CHECK-VISITS-MORE ,STORY659 1> <RETURN ,STORY623>)>
+	<RETURN ,STORY051>>
+
+<CONSTANT TEXT660 "You are in trouble.">
 
 <ROOM STORY660
 	(IN ROOMS)
 	(DESC "660")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT660)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY123 STORY230 STORY695>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE 1 0 <PLTABLE 2 4 6> <LTABLE "You slip and fall" "You are forced to give up" "You make a final effort">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY661
