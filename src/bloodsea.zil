@@ -4086,6 +4086,12 @@
 	(DEFENSE 10)
 	(STAMINA 27)>
 
+<OBJECT MONSTER-GHOST
+	(DESC "Ghost")
+	(COMBAT 8)
+	(DEFENSE 17)
+	(STAMINA 7)>
+
 <OBJECT MONSTER-GORGON
 	(DESC "Gorgon")
 	(COMBAT 4)
@@ -6515,7 +6521,8 @@
 	<PUTP ,STORY604 ,P?DOOM T>
 	<PUTP ,STORY605 ,P?DOOM T>
 	<PUTP ,STORY634 ,P?DOOM T>
-	<PUTP ,STORY638 ,P?DOOM T>>
+	<PUTP ,STORY638 ,P?DOOM T>
+	<PUTP ,STORY662 ,P?DOOM T>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -15414,10 +15421,10 @@ unknown waters.">
 		)>
 		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
 		<DEC .CONDITION>
-		<COND (<L? .CONDITION 0> <SET CONDITION 0>)>
+		<COND (<L? .CONDITION ,CONDITION-POOR> <SET CONDITION ,CONDITION-POOR>)>
 		<PUTP ,CURRENT-SHIP ,P?CONDITION .CONDITION>
 	)>>
-	
+
 <CONSTANT TEXT582 "You lie down and close your eyes. What's the harm in having a short snooze until the tide turns and you can set sail? You deserve a rest...||But you and your crew are destined never to awaken. Even resurrection is no use -- you are not dead, only sleeping.">
 
 <ROOM STORY582
@@ -15928,7 +15935,7 @@ answer?">
 		)>
 		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
 		<DEC .CONDITION>
-		<COND (<L? .CONDITION 0> <SET CONDITION 0>)>
+		<COND (<L? .CONDITION ,CONDITION-POOR> <SET CONDITION ,CONDITION-POOR>)>
 		<PUTP ,CURRENT-SHIP ,P?CONDITION .CONDITION>
 	)>>
 
@@ -16506,7 +16513,7 @@ The finest wines are served -- wines of southern Sokara that were intended for t
 	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
 
-<CONSTANT TEXT658 "It is rather disheartening the way all the onlookers sigh and shake their heads the moment you give your answer.||‘Talanexor always gets them with that one!’ you overhear an old professor saying.||Having been judged loser in the dispute you have brought shame on your college if you belong to one, and are forthwith expelled.">
+<CONSTANT TEXT658 "It is rather disheartening the way all the onlookers sigh and shake their heads the moment you give your answer.||\"Talanexor always gets them with that one!\" you overhear an old professor saying.||Having been judged loser in the dispute you have brought shame on your college if you belong to one, and are forthwith expelled.">
 
 <ROOM STORY658
 	(IN ROOMS)
@@ -16544,225 +16551,137 @@ The finest wines are served -- wines of southern Sokara that were intended for t
 	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT661 "The examiners are thirteen astoundingly old men in dusty black robes. They sit at a long table studying the results of your first exam. Minutes tick by, then you hear a low snoring sound.||The senior mage raps his knuckles on the table, gathers some papers, and peers down at you.||\"We can't admit you to the college,\" he wheezes. \"You're just too insufferably sanctimonious. You need to have an open mind to study wizardry, you know.\"||You start to leave, but then another of the wizards says: \"Wait. We can't have you going straight off to bother another college.\"||He casts a spell of transportation and you are flung magically across a thousand leagues in the blink of an eye, landing in a dungheap outside the town of Smogmaw.">
+
 <ROOM STORY661
 	(IN ROOMS)
 	(DESC "661")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT661)
+	(CONTINUE STORY044)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT662 "A ghost has gathered substance from the magical residue in the air here. It pounces to attack you with claws as sharp as the north wind during a thaw.">
 
 <ROOM STORY662
 	(IN ROOMS)
 	(DESC "662")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT662)
+	(EVENTS STORY662-EVENTS)
+	(CONTINUE STORY626)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY662-EVENTS ()
+	<CRLF>
+	<TELL "Do you wish to flee from the tower?">
+	<COND (<YES?>
+		<EMPHASIZE "The ghost flays the flesh off your back!">
+		<LOSE-STAMINA <ROLL-DICE 1> ,DIED-FROM-INJURIES ,STORY662>
+		<COND (<IS-ALIVE> <STORY-JUMP ,STORY407>)>
+	)(ELSE
+		<COMBAT-MONSTER ,MONSTER-GHOST 8 17 7>
+		<CHECK-COMBAT ,MONSTER-GHOST ,STORY662>
+	)>>
+
+<CONSTANT TEXT663 "The trau are a subterranean race, the remnants of the gods' first abortive attempts to create man. They have a reputation for surliness, disliking to mix with mankind because they are jealous of man's more perfect visage and well-fashioned form. However, the trau are skilled at metal-working and will sometimes sell trinkets of exquisite workmanship for nothing more than a sip of faery mead.">
 
 <ROOM STORY663
 	(IN ROOMS)
 	(DESC "663")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT663)
+	(CONTINUE STORY368)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT664 "Fresh roasted sea-fowl makes a welcome supplement to your customary diet of gruel, ship's biscuit and weevils.">
 
 <ROOM STORY664
 	(IN ROOMS)
 	(DESC "664")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT664)
+	(EVENTS STORY664-EVENTS)
+	(CONTINUE STORY283)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY664-EVENTS ()
+	<GAIN-STAMINA <ROLL-DICE 1>>>
+
+<CONSTANT TEXT665 "A thick white fog billows across the sea during the night. The first mate rouses you from sleep to show you an eerie scene that is unfolding by moonlight. The rays of the moon, illuminating the drifting tendrils of fog, create the appearance of a vast lake from which warriors are slowly arising as if after a deep sleep.||\"It puts me in mind of a legend I heard,\" breathes the mate in a low voice. \"It's said that the High King and his paladins lie beneath the Rimewater, awaiting the one whose destiny it is to awaken them.\"||As he speaks a gust of wind stirs the fog, breaking up the fragile illusion.">
 
 <ROOM STORY665
 	(IN ROOMS)
 	(DESC "665")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT665)
+	(CONTINUE STORY264)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT666 "A pirate galley bears down on you with the swift ferocity of a panther scenting a kill.">
+<CONSTANT CHOICES666 <LTABLE "Make a run for it" "Parley" "Fight it out">>
 
 <ROOM STORY666
 	(IN ROOMS)
 	(DESC "666")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT666)
+	(CHOICES CHOICES666)
+	(DESTINATIONS <PLTABLE STORY684 STORY373 STORY392>)
+	(TYPES THREE-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT667 "Not having been born yesterday, you have the forethought to tear a strip of cloth off your tunic and wind it across your eyes before knocking. As the echoes of your knock die away, there is a creak of vast time-worn hinges and a gust of stale air that tells you the doors have opened in front of you.||\"Another one,\" says a cold hissing voice, not much like a woman's.||\"When will they learn not to beard the Gorgons in their lair?\" crows her sister.">
+<CONSTANT CHOICES667 <LTABLE "Charge to attack them" "Stand motionless">>
 
 <ROOM STORY667
 	(IN ROOMS)
 	(DESC "667")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT667)
+	(CHOICES CHOICES667)
+	(DESTINATIONS <PLTABLE STORY685 STORY356>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT668 "The Shadar were the race that ruled Harkuna in ancient times. The time of their reign is thought of as a golden age, where peace and harmony encouraged a flowering of arts and sciences. They were overthrown by the coming of the Uttakin, but some culture still survives in the form of hoary tradition.">
 
 <ROOM STORY668
 	(IN ROOMS)
 	(DESC "668")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT668)
+	(CONTINUE STORY368)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT669 "The spectres abandon their macabre frolics to fall upon you with terrible whispering cries. Fingers of icy mist seep into your flesh. In a trice your soul has been severed from your body.">
 
 <ROOM STORY669
 	(IN ROOMS)
 	(DESC "669")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT669)
+	(CONTINUE STORY123)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT670 "The ship is swept far out to sea. Men and goods are washed overboard by huge waves that snap your hawsers like twine.||At last the storm blows itself out. You are left drifting in unknown waters.">
 
 <ROOM STORY670
 	(IN ROOMS)
 	(DESC "670")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT670)
+	(EVENTS STORY670-EVENTS)
+	(CONTINUE STORY648)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY670-EVENTS ("AUX" (CAPACITY 0) (CONDITION 0))
+	<COND (,CURRENT-SHIP
+		<SET CAPACITY <COUNT-CONTAINER ,CARGO>>
+		<COND (<G? .CAPACITY 0>
+			<DEC .CAPACITY>
+			<COND (<G? .CAPACITY 0>
+				<STORY-LOSE-CARGO .CAPACITY>
+			)(ELSE
+				<RESET-CONTAINER ,CARGO>
+			)>
+		)>
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<DEC .CONDITION>
+		<COND (<L? .CONDITION ,CONDITION-POOR> <SET CONDITION ,CONDITION-POOR>)>
+		<PUTP ,CURRENT-SHIP ,P?CONDITION .CONDITION>
+	)>>
 
 <ROOM STORY671
 	(IN ROOMS)
