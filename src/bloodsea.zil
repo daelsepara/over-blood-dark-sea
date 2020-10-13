@@ -177,7 +177,7 @@
 <GLOBAL STARTING-POINT STORY001>
 <GLOBAL CURRENT-LOCATION LOCATION-OCEAN>
 
-<CONSTANT LOCATIONS <LTABLE "the open ocean" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "the Fortress of The Reaver King" "the Island of Fire" "Vervayens" "Starspike Island" "the Unmarked Island" "the Sea of Hydras" "the Sleeping Isle" "Dangor">>
+<CONSTANT LOCATIONS <LTABLE "the open ocean" "Braelak, the Sorcerers' Isle" "Smogmaw" "Copper Island" "Dweomer" "Fiddler's Green" "Metriciens" "the Fortress of The Reaver King" "the Island of Fire" "Vervayens" "Starspike Island" "the Unmarked Island" "the Sea of Hydras" "the Sleeping Isle" "Dangor" "Sinistrum College">>
 
 <CONSTANT LOCATION-OCEAN 1>
 <CONSTANT LOCATION-SORCERERS 2>
@@ -194,6 +194,7 @@
 <CONSTANT LOCATION-HYDRA 13>
 <CONSTANT LOCATION-SLEEPING 14>
 <CONSTANT LOCATION-DANGOR 15>
+<CONSTANT LOCATION-SINISTRUM 16>
 
 ; "Gamebook loop"
 ; ---------------------------------------------------------------------------------------------
@@ -4122,6 +4123,12 @@
 	(DEFENSE 6)
 	(STAMINA 3)>
 
+<OBJECT MONSTER-SCHOLAR
+	(DESC "Scholar")
+	(COMBAT 3)
+	(DEFENSE 4)
+	(STAMINA 3)>
+
 <OBJECT MONSTER-SERPENT
 	(DESC "Serpent")
 	(COMBAT 7)
@@ -6465,11 +6472,13 @@
 	<RESET-ODDS 1 0 ,STORY544>
 	<RESET-ODDS 1 0 ,STORY637>
 	<RESET-ODDS 2 0 ,STORY647>
+	<RESET-ODDS 2 0 ,STORY672>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUT <GET <GETP ,STORY391 ,P?REQUIREMENTS> 1> 2 14>
 	<PUT <GET <GETP ,STORY510 ,P?REQUIREMENTS> 1> 3 0>
 	<PUT <GET <GETP ,STORY603 ,P?REQUIREMENTS> 1> 3 0>
 	<PUT <GET <GETP ,STORY606 ,P?REQUIREMENTS> 1> 3 0>
+	<RESET-VISITS>
 	<PUTP ,STORY006 ,P?DOOM T>
 	<PUTP ,STORY007 ,P?DOOM T>
 	<PUTP ,STORY010 ,P?DOOM T>
@@ -6522,7 +6531,34 @@
 	<PUTP ,STORY605 ,P?DOOM T>
 	<PUTP ,STORY634 ,P?DOOM T>
 	<PUTP ,STORY638 ,P?DOOM T>
-	<PUTP ,STORY662 ,P?DOOM T>>
+	<PUTP ,STORY662 ,P?DOOM T>
+	<PUTP ,STORY662 ,P?DOOM T>
+	<PUTP ,STORY675 ,P?DOOM T>>
+
+<ROUTINE RESET-VISITS ()
+	<PUTP ,STORY049 ,P?VISITS 0>
+	<PUTP ,STORY056 ,P?VISITS 0>
+	<PUTP ,STORY057 ,P?VISITS 0>
+	<PUTP ,STORY068 ,P?VISITS 0>
+	<PUTP ,STORY069 ,P?VISITS 0>
+	<PUTP ,STORY084 ,P?VISITS 0>
+	<PUTP ,STORY105 ,P?VISITS 0>
+	<PUTP ,STORY120 ,P?VISITS 0>
+	<PUTP ,STORY143 ,P?VISITS 0>
+	<PUTP ,STORY183 ,P?VISITS 0>
+	<PUTP ,STORY216 ,P?VISITS 0>
+	<PUTP ,STORY351 ,P?VISITS 0>
+	<PUTP ,STORY466 ,P?VISITS 0>
+	<PUTP ,STORY470 ,P?VISITS 0>
+	<PUTP ,STORY477 ,P?VISITS 0>
+	<PUTP ,STORY494 ,P?VISITS 0>
+	<PUTP ,STORY509 ,P?VISITS 0>
+	<PUTP ,STORY515 ,P?VISITS 0>
+	<PUTP ,STORY576 ,P?VISITS 0>
+	<PUTP ,STORY607 ,P?VISITS 0>
+	<PUTP ,STORY651 ,P?VISITS 0>
+	<PUTP ,STORY659 ,P?VISITS 0>
+	<PUTP ,STORY680 ,P?VISITS 0>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -7825,7 +7861,7 @@
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY069-BACKGROUND ()
-	<COND (<CHECK-VISITS-MORE 2> <SETG RESURRECTION-ARRANGEMENTS NONE>)>
+	<COND (<CHECK-VISITS-MORE ,STORY069 2> <SETG RESURRECTION-ARRANGEMENTS NONE>)>
 	<RETURN ,STORY069>>
 
 <CONSTANT TEXT070 "The mate's knife flashes -- a splash of sticky blood, and the witch falls croaking into the sea to sink like a stone. Something flops to the deck. Her hand. It resembles an old white crab.">
@@ -15271,10 +15307,11 @@ back with reinforcements soon.\"||You agree.">
 <ROOM STORY571
 	(IN ROOMS)
 	(DESC "571")
+	(LOCATION LOCATION-DWEOMER)
 	(STORY TEXT571)
 	(CHOICES CHOICES571)
 	(DESTINATIONS <PLTABLE STORY625 STORY508 STORY175 STORY607 STORY589>)
-	(REQUIREMENTS <PLTABLE NONE NONE NONE <PLTABLE STORY607 1> NONE>)
+	(REQUIREMENTS <PLTABLE NONE NONE NONE <PLTABLE STORY607 0> NONE>)
 	(TYPES <PLTABLE R-NONE R-NONE R-NONE R-VISITS R-NONE>)
 	(FLAGS LIGHTBIT)>
 
@@ -16683,225 +16720,175 @@ The finest wines are served -- wines of southern Sokara that were intended for t
 		<PUTP ,CURRENT-SHIP ,P?CONDITION .CONDITION>
 	)>>
 
+<CONSTANT TEXT671 "\"Merciful gods!\" you cry in exasperation as you shuffle your sea charts. \"How many of these cursed islands are there?\"||\"They are numberless, cap'n,\" says the first mate gravely. \"That is why the navies of Sokara and Golnir have had no success in dealing with these pirates. It is impossible to find their base of operations.\"">
+<CONSTANT CHOICES671 <LTABLE "Look for the pirates' base of operations">>
+
 <ROOM STORY671
 	(IN ROOMS)
 	(DESC "671")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT671)
+	(CHOICES CHOICES671)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY545 STORY354 STORY249 STORY164>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE 2 0 <PLTABLE 2 6 8 12> <LTABLE "You find it by luck" "The Reavers find you" "You hit a reef" "You reach open ocean">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY672
 	(IN ROOMS)
 	(DESC "672")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(EVENTS STORY672-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE STORY361 STORY111>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <PLTABLE 6 100> <LTABLE "The pirates overtake you" "You outrun them">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY672-EVENTS ("AUX" (MODIFIER 0) (CONDITION 0))
+	<COND (,CURRENT-CHARACTER
+		<SET MODIFIER <GETP ,CURRENT-CHARACTER ,P?RANK>>
+		<COND (,CURRENT-SHIP
+			<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+			<COND (<EQUAL? .CONDITION ,CONDITION-AVERAGE>
+				<INC .MODIFIER>
+			)(<EQUAL? .CONDITION ,CONDITION-GOOD>
+				<SET MODIFIER <+ .MODIFIER 2>>
+			)(<EQUAL? .CONDITION ,CONDITION-EXCELLENT>
+				<SET MODIFIER <+ .MODIFIER 3>>
+			)>
+		)>
+	)>
+	<RESET-ODDS 2 .MODIFIER ,STORY672>>
+
+<CONSTANT TEXT673 "The boat is so waterlogged that you have to abandon it and swim to the quayside. An old man carrying a lobster pot helps you up and you ask him where you are.||He points along an avenue lined with strange black statues. At the far end is a city of many high turrets, the stone gleaming like gold under an indigo sky.||\"This is Braelak Isle. Yon city is Dweomer.\"">
 
 <ROOM STORY673
 	(IN ROOMS)
 	(DESC "673")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-DWEOMER)
+	(STORY TEXT673)
+	(CONTINUE STORY100)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT674 "The Guildmaster in Marlock City promised a reward if you brought him the head of Amcha One-Eye.">
+<CONSTANT CHOICES674 <LTABLE "Go through with the plan to kill Amcha" "Let him live for now">>
 
 <ROOM STORY674
 	(IN ROOMS)
 	(DESC "674")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT674)
+	(CHOICES CHOICES674)
+	(DESTINATIONS <PLTABLE STORY420 STORY691>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT675 "You are just passing the steps of Sinistrum College when you are set upon by three scholars. They have turned to robbery as a way of supplementing their meagre grants but, being of good families, your assailants are sporting enough to fight you one at a time.">
 
 <ROOM STORY675
 	(IN ROOMS)
 	(DESC "675")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-SINISTRUM)
+	(STORY TEXT675)
+	(EVENTS STORY675-EVENTS)
+	(CONTINUE STORY571)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY675-EVENTS ("AUX" (COMBAT) (DEFENSE) (STAMINA))
+	<CRLF>
+	<TELL "Do you wish to surrender?">
+	<COND (<YES?>
+		<PREVENT-DOOM ,STORY675>
+		<STORY-JUMP ,STORY640>
+	)(ELSE
+		<SET COMBAT <LTABLE 3 4 3>>
+		<SET DEFENSE <LTABLE 4 5 4>>
+		<SET STAMINA <LTABLE 3 4 4>>
+		<DO (I 1 3)
+			<PUTP ,STORY675 ,P?DOOM T>
+			<COMBAT-MONSTER ,MONSTER-SCHOLAR <GET .COMBAT .I> <GET .DEFENSE .I> <GET .STAMINA .I>>
+			<CHECK-COMBAT ,MONSTER-SCHOLAR ,STORY675>
+			<COND (<NOT <IS-ALIVE>> <RETURN>)>
+		>
+	)>>
+
+<CONSTANT TEXT676 "\"Ah, this is a stroke of luck,\" calls the captain of the royalist vessel. \"We were sent to find you. The High King charges you to bring him a fragment of selenium ore.\"||You bow politely. \"Please assure our lord that I go at once to do his bidding.\"||The other ship sails off.">
 
 <ROOM STORY676
 	(IN ROOMS)
 	(DESC "676")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT676)
+	(CONTINUE STORY475)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT677 "The crew is on the verge of mutiny. You must assert your authority if you hope to avoid a disaster.">
+<CONSTANT CHOICES677 <LTABLE "Assert your authority">>
 
 <ROOM STORY677
 	(IN ROOMS)
 	(DESC "677")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT677)
+	(CHOICES CHOICES677)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY188 STORY599>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-CHARISMA 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT678 "Wisps of cloud swirl around you. When you gaze down, the tiny figures of your men are like midges beside the great basin of the sea. The altitude is making you dizzy.">
+<CONSTANT CHOICES678 <LTABLE HAVE-CODEWORD "If not, the increasingly thin air forces you to turn back">>
 
 <ROOM STORY678
 	(IN ROOMS)
 	(DESC "678")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT678)
+	(CHOICES CHOICES678)
+	(DESTINATIONS <PLTABLE STORY642 STORY606>)
+	(REQUIREMENTS <PLTABLE CODEWORD-CALCIUM NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT679 "The Master of the College has you in for a sherry. Waving you to a deep leather armchair that makes a serious bid at engorging you, he scans your exam papers and says: \"You seem unsure about anything at all. Most of the metaphysical questions you've just answered with a Don't Know. The sprite liked you so much that it's taken up residence in your coat pocket -- and your smile, instead of curdling the milk, almost froze it.\"||You look at him uncertainly. \"Does that mean--?\"||He grins and seizes your hand. \"You'll be a model student! Welcome to the college.\"">
 
 <ROOM STORY679
 	(IN ROOMS)
 	(DESC "679")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT679)
+	(EVENTS STORY679-EVENTS)
+	(CONTINUE STORY571)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY679-EVENTS ("AUX" VISITS)
+	<SET VISITS <GETP ,STORY607 ,P?VISITS>>
+	<INC .VISITS>
+	<PUTP ,STORY607 ,P?VISITS .VISITS>>
+
+<CONSTANT TEXT680 "You reach the chamber at the top of the tower.">
+<CONSTANT TEXT680-CONTINUED "There is a wand sealed here inside a crystalline casket.">
+<CONSTANT CHOICES680 <LTABLE "Attempt to open it" "Leave the tower">>
 
 <ROOM STORY680
 	(IN ROOMS)
 	(DESC "680")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT680)
+	(EVENTS STORY680-EVENTS)
+	(CHOICES CHOICES680)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY644 STORY680-WAND> STORY407>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-MAGIC 16> NONE>)
+	(TYPES <PLTABLE R-TEST-ABILITY R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY680-EVENTS ()
+	<COND (<CHECK-VISITS-MORE ,STORY680 1> <STORY-JUMP ,STORY662>)>>
+
+<ROOM STORY680-WAND
+	(IN ROOMS)
+	(DESC "680")
+	(BACKGROUND STORY680-BACKGROUND)
+	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY680-BACKGROUND ()
+	<PUTP ,STORY680 ,P?VISITS 0>
+	<RETURN ,STORY626>>
 
 <ROOM STORY681
 	(IN ROOMS)
