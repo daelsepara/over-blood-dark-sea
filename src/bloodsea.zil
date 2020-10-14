@@ -4135,6 +4135,12 @@
 	(DEFENSE 8)
 	(STAMINA 10)>
 
+<OBJECT MONSTER-TRAU-MINER
+	(DESC "Trau miner")
+	(COMBAT 8)
+	(DEFENSE 10)
+	(STAMINA 10)>
+
 <OBJECT MONSTER-VAMPIRE
 	(DESC "Vampire")
 	(COMBAT 15)
@@ -6473,6 +6479,7 @@
 	<RESET-ODDS 1 0 ,STORY637>
 	<RESET-ODDS 2 0 ,STORY647>
 	<RESET-ODDS 2 0 ,STORY672>
+	<RESET-ODDS 2 0 ,STORY684>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUT <GET <GETP ,STORY391 ,P?REQUIREMENTS> 1> 2 14>
 	<PUT <GET <GETP ,STORY510 ,P?REQUIREMENTS> 1> 3 0>
@@ -6533,7 +6540,9 @@
 	<PUTP ,STORY638 ,P?DOOM T>
 	<PUTP ,STORY662 ,P?DOOM T>
 	<PUTP ,STORY662 ,P?DOOM T>
-	<PUTP ,STORY675 ,P?DOOM T>>
+	<PUTP ,STORY675 ,P?DOOM T>
+	<PUTP ,STORY685 ,P?DOOM T>
+	<PUTP ,STORY686 ,P?DOOM T>>
 
 <ROUTINE RESET-VISITS ()
 	<PUTP ,STORY049 ,P?VISITS 0>
@@ -16364,7 +16373,7 @@ answer?">
 <ROUTINE STORY643-EVENTS ()
 	<RESET-POSSESSIONS>>
 
-<CONSTANT TEXT644 "The casket breaks to under your enchanted touch. You take the celestium wand (MAGIC +5) and then hurry excitedly back outside, eager to test the power of your new acquisition.">
+<CONSTANT TEXT644 "The casket breaks into shards under your enchanted touch. You take the celestium wand (MAGIC +5) and then hurry excitedly back outside, eager to test the power of your new acquisition.">
 
 <ROOM STORY644
 	(IN ROOMS)
@@ -16890,225 +16899,142 @@ The finest wines are served -- wines of southern Sokara that were intended for t
 	<PUTP ,STORY680 ,P?VISITS 0>
 	<RETURN ,STORY626>>
 
+<CONSTANT TEXT681 "The Uttakin originally came across the seas from the south, a warrior race that subjugated the land of Old Harkuna and put the High King to the sword for daring to oppose them. But that was almost three centuries ago. Factional infighting wasted the strength of the Uttakin. Civilization sapped the conquering spirit of the once-proud people, and their ancient rituals became decadent and devoid of meaning. Now they rule only the land of Uttaku, their energies devoted solely to elaborate courtly intrigues and internecine plotting. The courtiers are said to wear masks that symbolically display the wearer's prestige and power while concealing his true feelings. The king is that one man in every generation who is actually born without a face...||You close your books with a shudder.">
+
 <ROOM STORY681
 	(IN ROOMS)
 	(DESC "681")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT681)
+	(CONTINUE STORY368)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT682 "The entire island is carpeted in a mossy grey-green sward. Freshwater has collected in hollows in the ground and there are tame birds that you can easily catch to eat.">
 
 <ROOM STORY682
 	(IN ROOMS)
 	(DESC "682")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT682)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY646 STORY664>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE 1 0 <PLTABLE 1 6> NONE>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT683 "You wake up to find that every man on board lies dead and cold, with the sole exception of yourself. You are at a loss to explain how this ghastly tragedy could have come about -- or why you should have been spared.">
 
 <ROOM STORY683
 	(IN ROOMS)
 	(DESC "683")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT683)
+	(CONTINUE STORY700)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY684
 	(IN ROOMS)
 	(DESC "684")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(EVENTS STORY684-EVENTS)
+	(CHOICES CHOICES-RANDOM)
+	(DESTINATIONS <PLTABLE STORY392 STORY648>)
+	(REQUIREMENTS <LTABLE <LTABLE 2 0 <PLTABLE 6 100> <LTABLE "The pirates overtake you" "You outrun them">>>)
+	(TYPES ONE-RANDOM)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY684-EVENTS ("AUX" (MODIFIER 0) (CONDITION 0))
+	<COND (,CURRENT-CHARACTER
+		<SET MODIFIER <GETP ,CURRENT-CHARACTER ,P?RANK>>
+		<COND (,CURRENT-SHIP
+			<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+			<COND (<EQUAL? .CONDITION ,CONDITION-AVERAGE>
+				<INC .MODIFIER>
+			)(<EQUAL? .CONDITION ,CONDITION-GOOD>
+				<SET MODIFIER <+ .MODIFIER 2>>
+			)(<EQUAL? .CONDITION ,CONDITION-EXCELLENT>
+				<SET MODIFIER <+ .MODIFIER 3>>
+			)>
+		)>
+	)>
+	<RESET-ODDS 2 .MODIFIER ,STORY684>>
+
+<CONSTANT TEXT685 "This promises to be a desperate struggle, but at least you have a fighting chance -- if you could clearly see the Gorgons' eyes, on the other hand, it would all be over in an instant. Fight them one after the other.">
 
 <ROOM STORY685
 	(IN ROOMS)
 	(DESC "685")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT685)
+	(EVENTS STORY685-EVENTS)
+	(CONTINUE STORY393)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY685-EVENTS ("AUX" COMBAT DEFENSE STAMINA)
+	<SET COMBAT <LTABLE 4 5>>
+	<SET DEFENSE <LTABLE 5 6>>
+	<SET STAMINA <LTABLE 8 11>>
+	<DO (I 1 2)
+		<PUTP ,STORY685 ,P?DOOM T>
+		<COMBAT-MONSTER ,MONSTER-GORGON <GET .COMBAT .I> <GET .DEFENSE .I> <GET .STAMINA .I>>
+		<CHECK-COMBAT ,MONSTER-GORGON ,STORY685>
+		<COND (<NOT <IS-ALIVE>> <RETURN>)>
+	>>
+
+<CONSTANT TEXT686 "\"A copper thief, eh?\" snarls a trau who has been employed to work the seam here. He launches himself at you, a burly blot against the darkness, hands like shovels, eyes glossy black like a huge moth's.">
 
 <ROOM STORY686
 	(IN ROOMS)
 	(DESC "686")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT686)
+	(EVENTS STORY686-EVENTS)
+	(CONTINUE STORY376)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY686-EVENTS ()
+	<COMBAT-MONSTER ,MONSTER-TRAU-MINER 8 10 10>
+	<CHECK-COMBAT ,MONSTER-TRAU-MINER ,STORY686>>
+
+<CONSTANT TEXT687 "Mist swirls down the narrow alleys and loiters in darkened doorways. The streetlamps give off a haloed gleam because of it.">
 
 <ROOM STORY687
 	(IN ROOMS)
 	(DESC "687")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT687)
+	(CHOICES CHOICES-CODEWORD)
+	(DESTINATIONS <PLTABLE STORY657 STORY675>)
+	(REQUIREMENTS <PLTABLE CODEWORD-ANGER NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT688 "The fisherman take you to the village alehouse, where drink and good company soon loosen their wary tongues.||\"We are a privileged community,\" boasts one old man, \"for we are situated close to the Reavers' citadel and are often called on to provide food and drink for their table.\"||Before long you have a good idea how to find the Reavers' secret bay. Bidding the villagers goodnight, you return to your ship.">
 
 <ROOM STORY688
 	(IN ROOMS)
 	(DESC "688")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT688)
+	(CONTINUE STORY545)
+	(CODEWORDS <PLTABLE CODEWORD-CHANCE>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT689 "The ship pulls alongside. The pirates cast out grappling hooks and within moments are swarming aboard. You offer them your goods in exchange for your freedom.">
 
 <ROOM STORY689
 	(IN ROOMS)
 	(DESC "689")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT689)
+	(CHOICES CHOICES-CHARISMA)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY416 STORY435>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-CHARISMA 15>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY690
 	(IN ROOMS)
 	(DESC "690")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY690-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY690-BACKGROUND ()
+	<COND (<CHECK-CODEWORD ,CODEWORD-AMCHA> <RETURN ,STORY420>)>
+	<RETURN ,STORY435>>
 
 <ROOM STORY691
 	(IN ROOMS)
