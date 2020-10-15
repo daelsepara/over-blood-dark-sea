@@ -3281,6 +3281,7 @@
 <OBJECT CODEWORD-DIAMOND (DESC "Diamond")>
 <OBJECT CODEWORD-DRAGON (DESC "Dragon")>
 <OBJECT CODEWORD-EDIFICE (DESC "Edifice")>
+<OBJECT CODEWORD-JUDAS (DESC "Judas")>
 
 ; "Shack in Smogmaw (Added by SD Separa)"
 
@@ -6485,6 +6486,7 @@
 	<PUT <GET <GETP ,STORY510 ,P?REQUIREMENTS> 1> 3 0>
 	<PUT <GET <GETP ,STORY603 ,P?REQUIREMENTS> 1> 3 0>
 	<PUT <GET <GETP ,STORY606 ,P?REQUIREMENTS> 1> 3 0>
+	<PUT <GET <GETP ,STORY695 ,P?REQUIREMENTS> 1> 3 0>
 	<RESET-VISITS>
 	<PUTP ,STORY006 ,P?DOOM T>
 	<PUTP ,STORY007 ,P?DOOM T>
@@ -6567,7 +6569,8 @@
 	<PUTP ,STORY607 ,P?VISITS 0>
 	<PUTP ,STORY651 ,P?VISITS 0>
 	<PUTP ,STORY659 ,P?VISITS 0>
-	<PUTP ,STORY680 ,P?VISITS 0>>
+	<PUTP ,STORY680 ,P?VISITS 0>
+	<PUTP ,STORY692 ,P?VISITS 0>>
 
 ; "endings"
 <CONSTANT BAD-ENDING "Your adventure ends here.|">
@@ -17036,224 +17039,146 @@ The finest wines are served -- wines of southern Sokara that were intended for t
 	<COND (<CHECK-CODEWORD ,CODEWORD-AMCHA> <RETURN ,STORY420>)>
 	<RETURN ,STORY435>>
 
+<CONSTANT TEXT691 "The feast goes on late into the night, and dawn find most of the pirates slumped across the tables. A few hardy souls are still stuffing titbits into their mouths, swilling them down with Uttakin brandy. \"So, is it your intention to take up the piratical life yourself?\" asks one man.">
+<CONSTANT CHOICES691 <LTABLE HAVE-CODEWORD HAVE-CODEWORD OTHERWISE>>
+
 <ROOM STORY691
 	(IN ROOMS)
 	(DESC "691")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT691)
+	(CHOICES CHOICES691)
+	(DESTINATIONS <PLTABLE STORY549 STORY458 STORY476>)
+	(REQUIREMENTS <PLTABLE CODEWORD-CROCUS CODEWORD-COLOUR NONE>)
+	(TYPES <PLTABLE R-CODEWORD R-CODEWORD R-NONE>)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY692
 	(IN ROOMS)
 	(DESC "692")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(BACKGROUND STORY692-BACKGROUND)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY692-BACKGROUND ()
+	<COND (<CHECK-VISITS-MORE ,STORY692 1> <RETURN ,STORY382>)>
+	<RETURN ,STORY364>>
+
+<CONSTANT TEXT693 "During an eclipse, when the sun is hidden and day becomes night, hideous straggle-haired crones with leathery wings suddenly drop out of the sky uttering shrill cries.">
 
 <ROOM STORY693
 	(IN ROOMS)
 	(DESC "693")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT693)
+	(CHOICES CHOICES-CODEWORD)
+	(DESTINATIONS <PLTABLE STORY587 STORY605>)
+	(REQUIREMENTS <PLTABLE CODEWORD-JUDAS NONE>)
+	(TYPES ONE-CODEWORD)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT694 "Talanexor laughs triumphantly. The spectators grumble disappointedly and start to wander off.||\"Is that it?\" you ask anyone who'll listen.||\"Talanexor always does that,\" replies an aged college servant.||\"He's too stingy to buy the expensive ingredients he needs for fire magic, you see.\"||As loser of the dispute you are judged guilty of burgling Talanexor's home and must pay him all your cash.">
 
 <ROOM STORY694
 	(IN ROOMS)
 	(DESC "694")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT694)
+	(EVENTS STORY694-EVENTS)
+	(CONTINUE STORY571)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY694-EVENTS ()
+	<COND (<G? ,MONEY 0> <COST-MONEY ,MONEY,TEXT-PAID>)>>
+
+<CONSTANT TEXT695 "The lower slopes are slippery with moss, but after a while you find the going easier. The rock is hard, with deep gouges that provide you with secure handholds.">
 
 <ROOM STORY695
 	(IN ROOMS)
 	(DESC "695")
 	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT695)
+	(EVENTS STORY695-EVENTS)
+	(CHOICES CHOICES-SCOUTING)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY678 STORY660>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-SCOUTING 13 0>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY695-EVENTS ("AUX" (MODIFIER 0) ODDS)
+	<COND (<CHECK-ITEM ,ROPE>
+		<SET MODIFIER 1>
+	)(<CHECK-ITEM ,CLIMBING-GEAR>
+		<SET MODIFIER 2>
+	)>
+	<SET ODDS <GET <GETP ,STORY695 ,P?REQUIREMENTS> 1>>
+	<PUT .ODDS 3 .MODIFIER>>
+
+<CONSTANT TEXT696 "\"It's good to see you remember to turn up at lectures once in a while,\" remarks the senior mage drily as you sidle in at the back of the hall.||You must pay 200 Shards in tutorial fees.">
 
 <ROOM STORY696
 	(IN ROOMS)
 	(DESC "696")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT696)
+	(EVENTS STORY696-EVENTS)
+	(CONTINUE STORY607)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY696-EVENTS ("AUX" ROLL)
+	<COND (<G=? ,MONEY 200>
+		<COST-MONEY 200 ,TEXT-PAID>
+		<SET ROLL <RANDOM-EVENT 2>>
+		<COND (<G? .ROLL <GETP ,CURRENT-CHARACTER ,P?RANK>>
+			<UPGRADE-ABILITY ,ABILITY-MAGIC 1>
+		)(<EQUAL? .ROLL 2>
+			<EMPHASIZE "You have got things so badly wrong that you lose 1 point of MAGIC.">
+			<LOSE-ABILITY ,ABILITY-MAGIC 1>
+		)>
+	)(ELSE
+		<EMPHASIZE "You could not afford the fees!">
+	)>>
+
+<CONSTANT TEXT697 "The bark of the trees has a deep indigo colour, and the leaves sparkle with azure light. Things slither amid the shadows, elusive as memories of old dreams.">
+<CONSTANT CHOICES697 <LTABLE "Search for a way out" "Press on deeper into the wood">>
 
 <ROOM STORY697
 	(IN ROOMS)
 	(DESC "697")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT697)
+	(CHOICES CHOICES697)
+	(DESTINATIONS <PLTABLE STORY388 STORY408>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT698 "Here is the entry you find in an old book that is yellow with age.||\"Once the pinnacle of civilization in the northlands, Old Harkuna is now but a wrecked shell of an empire, like the carapace of a crab discarded on a beach by gulls. The Uttakin conquered Harkuna in ages past, but the lands of Golnir and Sokara that were once its vassal states still maintain the vestiges of ancient tradition. Harkuna remains the model of kingship even though the High King's Seat has been empty for three hundred years. Indeed, many superstitious folk still claim that the High King was never slain by the Uttakin, but sleeps under the frozen Rimewater and will arise when the World Snake spits fire and the end of the world looms.\"||Those, at least, are the words of one long-dead author.">
 
 <ROOM STORY698
 	(IN ROOMS)
 	(DESC "698")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT698)
+	(CONTINUE STORY368)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT699 "\"I believe I've encountered this isle before,\" says the navigator, \"but it never shows up at exactly the place I last marked it on my charts.\"">
+<CONSTANT CHOICES699 <LTABLE "Put in at the island" "Sail on">>
 
 <ROOM STORY699
 	(IN ROOMS)
 	(DESC "699")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT699)
+	(CHOICES CHOICES699)
+	(DESTINATIONS <PLTABLE STORY682 STORY283>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+; "TO-DO: Check if loss of crew implies ship/crew condition is POOR"
+<CONSTANT TEXT700 "The crewmen are all dead, leaving you alone on your ship. You cannot sail her without help. In the rowboat it is possible you might be able to reach the mainland, but that would mean abandoning your cargo and supplies.">
+<CONSTANT CHOICES700 <LTABLE "Put to sea in the rowboat" "Remain aboard the ship">>
 
 <ROOM STORY700
 	(IN ROOMS)
 	(DESC "700")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT700)
+	(CHOICES CHOICES700)
+	(DESTINATIONS <PLTABLE STORY423 STORY518>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
 
 <ROOM STORY701
