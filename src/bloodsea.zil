@@ -7893,15 +7893,15 @@
 	<KEEP-ITEM ,WITCH-HAND>>
 
 <CONSTANT TEXT071 "You can set sail -- either on to the open ocean or up the wide Nozama river.">
-<CONSTANT CHOICES071 <LTABLE "Put to sea" "Sail upriver (The Serpent King's Domain)" "Remain in Smogmaw">>
+<CONSTANT CHOICES071 <LTABLE "Put to sea" "Sail upriver (The Serpent King's Domain)" "Remain in Smogmaw" "Don't have a ship here">>
 
 <ROOM STORY071
 	(IN ROOMS)
 	(DESC "071")
 	(CHOICES CHOICES071)
-	(DESTINATIONS <PLTABLE STORY320 STORY-SERPENT-KINGS-DOMAIN STORY044>)
-	(REQUIREMENTS <PLTABLE DOCK-SMOGMAW NONE NONE>)
-	(TYPES <PLTABLE R-DOCKED R-NONE R-NONE>)
+	(DESTINATIONS <PLTABLE STORY320 STORY-SERPENT-KINGS-DOMAIN STORY044 STORY110>)
+	(REQUIREMENTS <PLTABLE DOCK-SMOGMAW NONE NONE NONE>)
+	(TYPES <PLTABLE R-DOCKED R-NONE R-NONE R-NONE>)
 	(FLAGS LIGHTBIT)>
 
 <CONSTANT TEXT072 "The priestess stretches like a cat, making no effort to stifle a yawn. \"If you'll excuse me, it is time for my siesta.\" She lies back on the divan and closes her eyes. You quietly withdraw from the temple.">
