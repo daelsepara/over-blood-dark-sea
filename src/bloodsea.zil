@@ -3254,6 +3254,7 @@
 <OBJECT CODEWORD-CITRUS (DESC "Citrus")>
 <OBJECT CODEWORD-CIVIL (DESC "Civil")>
 <OBJECT CODEWORD-CHURCH (DESC "Church")>
+<OBJECT CODEWORD-CLANGER (DESC "Clanger")>
 <OBJECT CODEWORD-CLUTCH (DESC "Clutch")>
 <OBJECT CODEWORD-COLOUR (DESC "Colour")>
 <OBJECT CODEWORD-CORADE (DESC "Corade")>
@@ -6481,6 +6482,7 @@
 	<RESET-ODDS 2 0 ,STORY647>
 	<RESET-ODDS 2 0 ,STORY672>
 	<RESET-ODDS 2 0 ,STORY684>
+	<RESET-DIFFICULTY ,STORY703 1 17>
 	<PUT <GETP ,STORY052 ,P?REQUIREMENTS> 1 0>
 	<PUT <GET <GETP ,STORY391 ,P?REQUIREMENTS> 1> 2 14>
 	<PUT <GET <GETP ,STORY510 ,P?REQUIREMENTS> 1> 3 0>
@@ -6544,7 +6546,8 @@
 	<PUTP ,STORY662 ,P?DOOM T>
 	<PUTP ,STORY675 ,P?DOOM T>
 	<PUTP ,STORY685 ,P?DOOM T>
-	<PUTP ,STORY686 ,P?DOOM T>>
+	<PUTP ,STORY686 ,P?DOOM T>
+	<PUTP ,STORY708 ,P?DOOM T>>
 
 <ROUTINE RESET-VISITS ()
 	<PUTP ,STORY049 ,P?VISITS 0>
@@ -17181,181 +17184,130 @@ The finest wines are served -- wines of southern Sokara that were intended for t
 	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT701 "The fishermen entertain you and your men in their village tavern, but you suspect they may have spiked the ale because it is not long before the others are lolling drunkenly and singing ribald songs.||You have sensibly avoided drinking anything yourself, but now you must assert your authority to get the men back on board so you can set sail before the Reavers show up.">
+<CONSTANT CHOICES701 <LTABLE "Assert your authority">>
+
 <ROOM STORY701
 	(IN ROOMS)
 	(DESC "701")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT701)
+	(CHOICES CHOICES701)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY549 STORY378>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-CHARISMA 14>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT702 "Lauria finally leaves the tavern, apparently well lubricated with Bluewood cider by now, and goes striding off into the fog singing to herself.">
+<CONSTANT CHOICES702 <LTABLE "Track her to her digs">>
 
 <ROOM STORY702
 	(IN ROOMS)
 	(DESC "702")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT702)
+	(CHOICES CHOICES702)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY401 STORY477>>)
+	(REQUIREMENTS <PLTABLE <PLTABLE ABILITY-SCOUTING 14>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT703 "\"Correct,\" says Talanexor, arching his eyebrows. \"Good guess.\"||
+No wimpy maths questions for you. This is meant to be a magical duel, isn't it? You toss the Curse of the Creeping Entrails at him, swiftly following it with a puissant hex you learned off an old village witch when you were a toddler.">
 
 <ROOM STORY703
 	(IN ROOMS)
 	(DESC "703")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT703)
+	(EVENTS STORY703-EVENTS)
+	(CHOICES CHOICES-MAGIC)
+	(DESTINATIONS <PLTABLE <PLTABLE STORY383 STORY365>>)
+	(REQUIREMENTS <LTABLE <LTABLE ABILITY-MAGIC 17>>)
+	(TYPES ONE-ABILITY)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY703-EVENTS ("AUX" (DIFFICULTY 17))
+	<COND (<CHECK-PROFESSION ,PROFESSION-MAGE> <SET DIFFICULTY 13>)>
+	<RESET-DIFFICULTY ,STORY703 1 .DIFFICULTY>>
+
+<CONSTANT TEXT704 "You go ashore on Starspike Island. It is a barren wilderness of broken rocks covered in scarlet moss. The central pinnacle rises almost vertically like a pillar supporting the heavens. Your men flatly refuse to try to scale it. As one man says, \"I went to sea to become a sailor, not a mountaineer.\"">
+<CONSTANT CHOICES704 <LTABLE "Try to climb the mountain" "Set sail">>
 
 <ROOM STORY704
 	(IN ROOMS)
 	(DESC "704")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT704)
+	(CHOICES CHOICES704)
+	(DESTINATIONS <PLTABLE STORY695 STORY230>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT705 "You follow a convoluted path that eventually brings you to the edge of the Bluewood.">
+<CONSTANT CHOICES705 <LTABLE "Go into Dweomer" "Go to the harbour">>
 
 <ROOM STORY705
 	(IN ROOMS)
 	(DESC "705")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT705)
+	(EVENTS STORY705-EVENTS)
+	(CHOICES CHOICES705)
+	(DESTINATIONS <PLTABLE STORY571 STORY100>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY705-EVENTS ()
+	<COND (,RUN-ONCE <UPGRADE-ABILITY ,ABILITY-SCOUTING 1>)>>
+
+<CONSTANT TEXT706 "You spend a pleasant few days on the Island of Fire. \"Ah, 'tis an earthly paradise,\" declares the first mate, sucking milk from a coconut while he is fanned by two lovely island maidens.||You suck your teeth, thinking that perhaps you'd better get your men back to sea before their discipline atrophies altogether.">
 
 <ROOM STORY706
 	(IN ROOMS)
 	(DESC "706")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT706)
+	(EVENTS STORY706-EVENTS)
+	(CONTINUE STORY479)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY706-EVENTS ()
+	<GAIN-STAMINA <ROLL-DICE 2>>>
+
+<CONSTANT TEXT707 "The sailmaster is not popular with anyone on board. His protests of innocence fall on deaf ears. You order him trussed up and bundled overboard like a sack of food that had gone off.||Some days later, passing the mess, you overhear a conversation that you realize confirms the sailmaster's alibi. He could not possibly have committed the murder. You are filled with remorse.">
 
 <ROOM STORY707
 	(IN ROOMS)
 	(DESC "707")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT707)
+	(CONTINUE STORY188)
+	(CODEWORDS <PLTABLE CODEWORD-CLANGER>)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT708 "The mixture explodes in your face.">
 
 <ROOM STORY708
 	(IN ROOMS)
 	(DESC "708")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT708)
+	(EVENTS STORY708-EVENTS)
+	(CONTINUE STORY262)
+	(DOOM T)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY708-EVENTS ("AUX" ROLL)
+	<LOSE-ITEM ,SELENIUM-ORE>
+	<SET ROLL <RANDOM-EVENT 1 0>>
+	<COND (<EQUAL? .ROLL 1>
+		<PREVENT-DOOM ,STORY708>
+		<EMPHASIZE "You are killed">
+		<STORY-JUMP ,STORY123>
+	)(<L=? .ROLL 3>
+		<PREVENT-DOOM ,STORY708>
+		<EMPHASIZE "The hull is breached">
+		<STORY-JUMP ,STORY486>
+	)(<EQUAL? .ROLL 4>
+		<PREVENT-DOOM ,STORY708>
+		<LOSE-ABILITY ,ABILITY-MAGIC 1>
+		<STORY-JUMP ,STORY262>
+	)(ELSE
+		<LOSE-STAMINA <ROLL-DICE 1> ,DIED-FROM-INJURIES ,STORY708>
+	)>>
 
 <CONSTANT TEXT709 "You are swept ashore at the mouth of a wide river. Nearby, impaled on the jagged end of a broken branch, a skeleton in rusting armour dangles at the water's edge. Apparently not all shipwrecked mariners are as lucky as you.||Searching the body, you find a sword (COMBAT +1).||Staggering towards trails of smoke that are rising from beyond a copse of olive-green tropical palms, you arrive at a settlement of many thatched-roofed shacks raised on stilts at the river's edge. It is the depot town of Smogmaw, on the great southern continent.">
 
@@ -17367,27 +17319,23 @@ The finest wines are served -- wines of southern Sokara that were intended for t
 	(ITEMS <PLTABLE SWORD1>)
 	(FLAGS LIGHTBIT)>
 
+<CONSTANT TEXT710 "The harbourmaster studies your documents, which confirm you as owner of a small barque called the Thaumaturge. She has a carrying capacity of 1 Cargo Unit and her Crew Quality is average.">
+
 <ROOM STORY710
 	(IN ROOMS)
 	(DESC "710")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT710)
+	(EVENTS STORY710-EVENTS)
+	(CONTINUE STORY100)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY710-EVENTS ()
+	<LOSE-ITEM ,SHIPS-DEEDS>
+	<COND (<NOT <IN? ,SHIP-BARQUE ,SHIPS>>
+		<MOVE ,SHIP-BARQUE ,SHIPS>
+		<STORY-RESET-CREW ,CONDITION-AVERAGE ,SHIP-BARQUE>
+		<STORY-SET-DOCK ,DOCK-DWEOMER ,SHIP-BARQUE F>
+	)>>
 
 <ROOM STORY711
 	(IN ROOMS)
