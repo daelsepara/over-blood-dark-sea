@@ -166,6 +166,7 @@
 <PROPDEF CONDITION -1>
 
 <PROPDEF EFFECTS NONE>
+<PROPDEF TITLES NONE>
 
 ; "STORY"
 ; ---------------------------------------------------------------------------------------------
@@ -2070,7 +2071,7 @@
 			<COND (.BOLD <HLIGHT ,H-BOLD>)(ELSE <HLIGHT ,H-ITALIC>)>
 			<TELL D .ITEMS>
 			<HLIGHT 0>
-			<COND (<OR <G? .BLESSINGS 0> <G? .QUANTITY 1> <G? .CHARGES 0> .WORN .EFFECTS <G=? .CONDITION 0>> <TELL " (">)>
+			<COND (<OR <G? .BLESSINGS 0> <G? .QUANTITY 1> <G? .CHARGES 0> .WORN .EFFECTS <G=? .CONDITION ,CONDITION-POOR>> <TELL " (">)>
 			<COND (<G? .BLESSINGS 0> <PRINT-BLESSINGS .ITEMS>)>
 			<COND (<G? .QUANTITY 1>
 				<COND (<G? .BLESSINGS 0>
@@ -2092,12 +2093,12 @@
 				<COND (<OR <G? .BLESSINGS 0> <G? .QUANTITY 1> <G? .CHARGES 0> .WORN> <TELL ", ">)>
 				<PRINT-MODIFIERS .ITEMS>
 			)>
-			<COND (<G=? .CONDITION 0>
+			<COND (<G=? .CONDITION ,CONDITION-POOR>
 				<COND (<OR <G? .BLESSINGS 0> <G? .QUANTITY 1> <G? .CHARGES 0> .WORN .EFFECTS> <TELL ", ">)>
 				<TELL "condition: " <GET ,CONDITIONS <+ .CONDITION 1>>>
 				<COND (<GETP .ITEMS ,P?DOCKED> <TELL ", docked at: " <GET ,DOCKS <GETP .ITEMS ,P?DOCKED>>>)>
 			)>
-			<COND (<OR <G? .BLESSINGS 0> <G? .QUANTITY 1> <G? .CHARGES 0> .WORN .EFFECTS <G=? .CONDITION 0>> <TELL ")">)>
+			<COND (<OR <G? .BLESSINGS 0> <G? .QUANTITY 1> <G? .CHARGES 0> .WORN .EFFECTS <G=? .CONDITION ,CONDITION-POOR>> <TELL ")">)>
 			<COND (<G? <GETP .ITEMS ,P?MONEY> 0> <TELL " (" N <GETP .ITEMS ,P?MONEY> " " D ,CURRENCY ")">)>
 		)>
 	)>>
@@ -5079,10 +5080,10 @@
 			<COND (<YES?> <RETURN>)>
 		)(<EQUAL? .KEY !\1>
 			<CRLF>
-			<BUY-SHIP .BUY-PRICES .DOCK>
+			<BUY-SHIP ,SHIPS-LIST .BUY-PRICES .DOCK>
 		)(<EQUAL? .KEY !\2>
 			<CRLF>
-			<SELL-SHIP .SELL-PRICES .CARGO-PRICES .DOCK>
+			<SELL-SHIP ,SHIPS-LIST .SELL-PRICES .CARGO-PRICES .DOCK>
 		)(<EQUAL? .KEY !\3>
 			<CRLF>
 			<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
@@ -5093,10 +5094,10 @@
 		)>
 	>>
 
-<ROUTINE BUY-SHIP (BUY-PRICES "OPT" DOCK "AUX" KEY ITEM)
+<ROUTINE BUY-SHIP (SHIPS-FOR-SALE BUY-PRICES "OPT" DOCK "AUX" KEY ITEM)
 	<REPEAT ()
 		<EMPHASIZE "Shipyard">
-		<PRINT-MENU ,SHIPS-LIST T T !\0 ,TEXT-GO-BACK .BUY-PRICES>
+		<PRINT-MENU .SHIPS-FOR-SALE T T !\0 ,TEXT-GO-BACK .BUY-PRICES>
 		<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
 			<DESCRIBE-PLAYER-SHIPS>
 			<CRLF>
@@ -5113,7 +5114,7 @@
 			<COND (<YES?> <RETURN>)>
 		)(ELSE
 			<SET ITEM <- .KEY !\0>>
-			<COND (<IN? <GET ,SHIPS-LIST .ITEM> ,SHIPS>
+			<COND (<IN? <GET .SHIPS-FOR-SALE .ITEM> ,SHIPS>
 				<CRLF>
 				<EMPHASIZE "You already own that ship!">
 			)(<G=? ,MONEY <GET .BUY-PRICES .ITEM>>
@@ -5121,12 +5122,12 @@
 				<TELL CR "Buy a " D <GET ,SHIPS-LIST .ITEM> "?">
 				<COND (<YES?>
 					<COST-MONEY <GET .BUY-PRICES .ITEM> ,TEXT-PAID>
-					<MOVE <GET ,SHIPS-LIST .ITEM> ,SHIPS>
-					<STORY-SET-DOCK .DOCK <GET ,SHIPS-LIST .ITEM> F>
-					<COND (<NOT ,CURRENT-SHIP> <SETG CURRENT-SHIP <GET ,SHIPS-LIST .ITEM>>)>
+					<MOVE <GET .SHIPS-FOR-SALE .ITEM> ,SHIPS>
+					<STORY-SET-DOCK .DOCK <GET .SHIPS-FOR-SALE .ITEM> F>
+					<COND (<NOT ,CURRENT-SHIP> <SETG CURRENT-SHIP <GET .SHIPS-FOR-SALE .ITEM>>)>
 					<CRLF>
 					<TELL "You bought a ">
-					<PRINT-ITEM <GET ,SHIPS-LIST .ITEM> T>
+					<PRINT-ITEM <GET .SHIPS-FOR-SALE .ITEM> T>
 					<TELL ,PERIOD-CR>
 					<UPDATE-STATUS-LINE>
 				)>
@@ -5165,10 +5166,10 @@
 		<MERCHANT ,CARGO-LIST .SELL-PRICES ,CARGO T>
 	)>>
 
-<ROUTINE SELL-SHIP (SELL-PRICES CARGO-PRICES DOCK "AUX" KEY ITEM)
+<ROUTINE SELL-SHIP (SHIPS-FOR-SALE SELL-PRICES CARGO-PRICES DOCK "AUX" KEY ITEM)
 	<REPEAT ()
 		<EMPHASIZE "You can sell your ships at these prices" "Shipyard">
-		<PRINT-MENU ,SHIPS-LIST T T !\0 ,TEXT-GO-BACK .SELL-PRICES>
+		<PRINT-MENU .SHIPS-FOR-SALE T T !\0 ,TEXT-GO-BACK .SELL-PRICES>
 		<COND (<G? <COUNT-CONTAINER ,SHIPS> 0>
 			<DESCRIBE-PLAYER-SHIPS>
 			<CRLF>
@@ -5184,27 +5185,27 @@
 			<COND (<YES?> <RETURN>)>
 		)(ELSE
 			<SET ITEM <- .KEY !\0>>
-			<COND (<NOT <IN? <GET ,SHIPS-LIST .ITEM> ,SHIPS>>
+			<COND (<NOT <IN? <GET .SHIPS-FOR-SALE .ITEM> ,SHIPS>>
 				<CRLF>
 				<EMPHASIZE ,TEXT-SHIP-NOT-OWNER>
-			)(<N=? <GETP <GET ,SHIPS-LIST .ITEM> ,P?DOCKED> .DOCK>
+			)(<N=? <GETP <GET .SHIPS-FOR-SALE .ITEM> ,P?DOCKED> .DOCK>
 				<CRLF>
 				<EMPHASIZE "That ship is not docked here!">
 			)(ELSE
 				<CRLF>
-				<TELL CR "Sell " T <GET ,SHIPS-LIST .ITEM> "?">
+				<TELL CR "Sell " T <GET .SHIPS-FOR-SALE .ITEM> "?">
 				<COND (<YES?>
-					<REMOVE <GET ,SHIPS-LIST .ITEM>>
-					<COND (<EQUAL? ,CURRENT-SHIP <GET ,SHIPS-LIST .ITEM>>
+					<REMOVE <GET .SHIPS-FOR-SALE .ITEM>>
+					<COND (<EQUAL? ,CURRENT-SHIP <GET .SHIPS-FOR-SALE .ITEM>>
 						<SETG CURRENT-SHIP NONE>
 					)>
 					<CRLF>
 					<TELL "You sold the ">
-					<PRINT-ITEM <GET ,SHIPS-LIST .ITEM> T>
+					<PRINT-ITEM <GET .SHIPS-FOR-SALE .ITEM> T>
 					<TELL ,PERIOD-CR>
 					<GAIN-MONEY <GET .SELL-PRICES .ITEM>>
 					<COND (<L=? <COUNT-CONTAINER ,SHIPS> 0> <SELL-ALL-CARGO .CARGO-PRICES>)>
-					<PUTP <GET ,SHIPS-LIST .ITEM> ,P?CONDITION ,CONDITION-POOR>
+					<PUTP <GET .SHIPS-FOR-SALE .ITEM> ,P?CONDITION ,CONDITION-POOR>
 					<UPDATE-STATUS-LINE>
 				)>
 			)>
@@ -17337,70 +17338,38 @@ No wimpy maths questions for you. This is meant to be a magical duel, isn't it? 
 		<STORY-SET-DOCK ,DOCK-DWEOMER ,SHIP-BARQUE F>
 	)>>
 
+<CONSTANT TEXT711 "One night, hearing a commotion on deck, you come up from your cabin to find the sailors crowded around the rail. They are pointing into the water with cries of awe. Pushing your way through to the front, you are astonished to see the glittering lights of an undersea city shining up from below. \"I've heard tales of such a place,\" says the first mate. \"It is the sunken city of Ys, cursed because its inhabitants blasphemed against the gods of the sea.\"">
+<CONSTANT CHOICES711 <LTABLE "Dive down to the city" "Set a course away from here">>
+
 <ROOM STORY711
 	(IN ROOMS)
 	(DESC "711")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT711)
+	(CHOICES CHOICES711)
+	(DESTINATIONS <PLTABLE STORY-INTO-THE-UNDERWORLD STORY311>)
+	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT712 "There are only a few ships for sale and there is not much to choose between them. Choose from the types listed here.">
 
 <ROOM STORY712
 	(IN ROOMS)
 	(DESC "712")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT712)
+	(EVENTS STORY712-EVENTS)
+	(CONTINUE STORY071)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY712-EVENTS ()
+	<BUY-SHIP <LTABLE SHIP-BARQUE SHIP-BRIGANTINE> <LTABLE 240 500> DOCK-SMOGMAW>>
+
+<CONSTANT TEXT713 "At last you manage to break free of the magic that has held you frozen. You cannot tell how much time has passed, but there is no sign of the Gorgons now.">
 
 <ROOM STORY713
 	(IN ROOMS)
 	(DESC "713")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT713)
+	(CONTINUE STORY449)
 	(FLAGS LIGHTBIT)>
 
 <CONSTANT TEXT714 "You are washed up on a narrow stretch of beach at the back of a bay surrounded by high mist-shrouded peaks.||A bottle has been swept up on to the shingle beside you. Though your fingers are trembling with cold, you manage to unscrew it. Inside you find a ship's deeds, which you can add to your list of possessions.||After resting to recover your strength, you pick your way up a series of steep paths until you can get a clear view of the island. To the north lies an expanse of glittering blue forest, so there can be no question where you are -- Braelak, the Sorcerers' Isle. Nearer at hand is a tower built of obsidian blocks.">
@@ -17420,91 +17389,65 @@ No wimpy maths questions for you. This is meant to be a magical duel, isn't it? 
 <ROUTINE STORY714-EVENTS ()
 	<COND (,RUN-ONCE <KEEP-ITEM ,SHIPS-DEEDS>)>>
 
+<CONSTANT TEXT715 "The gypsies offer you cash for any of the following items, if you have them and are willing to trade.">
+<CONSTANT CHOICES715 <LTABLE "If you have enough money to pay the gypsies the Shards they want for cutting out of the seaweed" IF-NOT>>
+
 <ROOM STORY715
 	(IN ROOMS)
 	(DESC "715")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT715)
+	(EVENTS STORY715-EVENTS)
+	(CHOICES CHOICES715)
+	(DESTINATIONS <PLTABLE STORY050 STORY570>)
+	(REQUIREMENTS <PLTABLE 100 NONE>)
+	(TYPES ONE-MONEY)
 	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY715-EVENTS ()
+	<MERCHANT <LTABLE ROPE LANTERN CANDLE WATER-FLASK CORAL-RED-TRESSES GOLDEN-KATANA SMOULDER-FISH CROSS-STAFF VIOLIN PARROT FISHING-HOOK BOARS-TUSK GREEN-GEM> <LTABLE 20 60 5 20 500 3000 90 500 50 90 2 75 100> ,PLAYER T>>
+
+<CONSTANT TEXT716 "You push up, dislodging the iron cover which falls aside with a clang. Emerging, you find yourself on a mist-swaddled street where high-towered edifices loom on all sides like phantom titans.||At the end of the alley you come across a man in a thick fur cape who is locking up his shop for the night. When you say you are lost, he points along the street to where a large latticed window gleams with mist-blurred lamplight. \"This is Dweomer. Yonder is the west window of Maudlin College.\"">
 
 <ROOM STORY716
 	(IN ROOMS)
 	(DESC "716")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(LOCATION LOCATION-DWEOMER)
+	(STORY TEXT716)
+	(CONTINUE STORY508)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT717 "The ship's water barrels are all empty. Some of the crew turn to drinking seawater in desperation, but this is no use -- it only hastens the inevitable end.">
 
 <ROOM STORY717
 	(IN ROOMS)
 	(DESC "717")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT717)
+	(CONTINUE STORY123)
 	(FLAGS LIGHTBIT)>
+
+<CONSTANT TEXT718 "The ship is swept far out to sea. Men and goods are washed overboard by crashing, ink-dark waves that snap your hawsers like twine.||At last the storm blows itself out. You are left drifting in unknown waters.">
 
 <ROOM STORY718
 	(IN ROOMS)
 	(DESC "718")
-	(VISITS 0)
-	(LOCATION NONE)
-	(BACKGROUND NONE)
-	(STORY NONE)
-	(EVENTS NONE)
-	(CHOICES NONE)
-	(DESTINATIONS NONE)
-	(REQUIREMENTS NONE)
-	(TYPES NONE)
-	(CONTINUE NONE)
-	(ITEMS NONE)
-	(CODEWORDS NONE)
-	(TITLES NONE)
-	(INVESTMENTS 0)
-	(MONEY 0)
-	(DOOM F)
-	(VICTORY F)
+	(STORY TEXT718)
+	(EVENTS STORY718-EVENTS)
+	(CONTINUE STORY245)
 	(FLAGS LIGHTBIT)>
 
+<ROUTINE STORY718-EVENTS ("AUX" (CAPACITY 0) (CONDITION 0))
+	<COND (,CURRENT-SHIP
+		<SET CAPACITY <COUNT-CONTAINER ,CARGO>>
+		<COND (<G? .CAPACITY 0>
+			<DEC .CAPACITY>
+			<COND (<G? .CAPACITY 0>
+				<STORY-LOSE-CARGO .CAPACITY>
+			)(ELSE
+				<RESET-CONTAINER ,CARGO>
+			)>
+		)>
+		<SET CONDITION <GETP ,CURRENT-SHIP ,P?CONDITION>>
+		<DEC .CONDITION>
+		<COND (<L? .CONDITION ,CONDITION-POOR> <SET CONDITION ,CONDITION-POOR>)>
+		<PUTP ,CURRENT-SHIP ,P?CONDITION .CONDITION>
+	)>>
