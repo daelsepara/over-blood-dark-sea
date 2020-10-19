@@ -434,7 +434,7 @@
 							<HLIGHT ,H-BOLD>
 							<CRLF>
 							<TELL CR "You do not have " T .LIST " codeword" ,EXCLAMATION-CR>
-							<HLIGHT 0>
+							<HLIGHT ,H-NORMAL>
 							<PRESS-A-KEY>
 						)>
 					)(<AND <EQUAL? .TYPE ,R-CODEWORDS> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
@@ -486,7 +486,7 @@
 								<TELL "a">
 							)>
 							<TELL " " D <GET .LIST 2> ,EXCLAMATION-CR>
-							<HLIGHT 0>
+							<HLIGHT ,H-NORMAL>
 							<PRESS-A-KEY>
 						)>
 					)(<AND <EQUAL? .TYPE ,R-MONEY> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
@@ -519,7 +519,7 @@
 							<CRLF>
 							<HLIGHT ,H-BOLD>
 							<TELL "You are not a " D .LIST ,EXCLAMATION-CR>
-							<HLIGHT 0>
+							<HLIGHT ,H-NORMAL>
 						)>
 					)(<AND <EQUAL? .TYPE ,R-DOCK> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
 						<CRLF>
@@ -545,7 +545,7 @@
 							<CRLF>
 							<HLIGHT ,H-BOLD>
 							<TELL "You are not in " <GET-LOCATION .LIST> ,EXCLAMATION-CR>
-							<HLIGHT 0>
+							<HLIGHT ,H-NORMAL>
 							<PRESS-A-KEY>
 						)>
 					)(<AND <EQUAL? .TYPE ,R-LOSE-ITEM> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
@@ -573,7 +573,7 @@
 								<TELL "a">
 							)>
 							<TELL " " D .LIST ,EXCLAMATION-CR>
-							<HLIGHT 0>
+							<HLIGHT ,H-NORMAL>
 							<PRESS-A-KEY>
 						)>
 					)(<AND <EQUAL? .TYPE ,R-WEAPON> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
@@ -584,7 +584,7 @@
 							<CRLF>
 							<HLIGHT ,H-BOLD>
 							<TELL CR "You do not have a weapon with +" N .LIST " COMBAT score" ,EXCLAMATION-CR>
-							<HLIGHT 0>
+							<HLIGHT ,H-NORMAL>
 							<PRESS-A-KEY>
 						)>
 					)(<AND <EQUAL? .TYPE ,R-DOCKED> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
@@ -597,7 +597,7 @@
 							<CRLF>
 							<TELL CR "You do not have a ship docked at ">
 							<TELL " " <GET ,DOCKS .LIST> ,EXCLAMATION-CR>
-							<HLIGHT 0>
+							<HLIGHT ,H-NORMAL>
 							<PRESS-A-KEY>
 						)>
 					)(<AND <EQUAL? .TYPE ,R-VISITS> .REQUIREMENTS <L=? .CHOICE <GET .REQUIREMENTS 0>>>
@@ -608,7 +608,7 @@
 							<HLIGHT ,H-BOLD>
 							<CRLF>
 							<TELL CR "You do have not visited " <GET .LIST 3> " enough times" ,EXCLAMATION-CR>
-							<HLIGHT 0>
+							<HLIGHT ,H-NORMAL>
 							<PRESS-A-KEY>
 						)>
 					)>
@@ -646,13 +646,13 @@
 					<TELL C <+ !\A <- .I 10>>>
 				)>
 				<TELL ") ">
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 				<TELL <GET .CHOICES .I>>
-				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-TEST-ABILITY> .REQUIREMENTS> <TELL " (Difficulty: "> <HLIGHT ,H-BOLD> <TELL N <GET .LIST 2>> <HLIGHT 0> <TELL")">)>
-				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-ITEM ,R-CODEWORD ,R-DISCHARGE ,R-TITLE> .REQUIREMENTS> <TELL " ("> <COND (<EQUAL? .CHOICE-TYPE ,R-ITEM ,R-DISCHARGE> <HLIGHT ,H-BOLD>)(ELSE <HLIGHT ,H-ITALIC>)> <TELL D .LIST> <HLIGHT 0> <TELL ")">)>
-				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-CODEWORD-ITEM> .REQUIREMENTS> <TELL " (Codeword "> <HLIGHT ,H-ITALIC> <TELL D <GET .LIST 1>> <HLIGHT 0> <TELL " and "> <COND (<FSET? <GET .LIST 2> ,NARTICLEBIT> <TELL "the">)(<FSET? <GET .LIST 2> ,VOWELBIT> <TELL "an">)(ELSE TELL "a")> <TELL " "> <PRINT-ITEM <GET .LIST 2> T> <TELL ")">)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-TEST-ABILITY> .REQUIREMENTS> <TELL " (Difficulty: "> <HLIGHT ,H-BOLD> <TELL N <GET .LIST 2>> <HLIGHT ,H-NORMAL> <TELL")">)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-ITEM ,R-CODEWORD ,R-DISCHARGE ,R-TITLE> .REQUIREMENTS> <TELL " ("> <COND (<EQUAL? .CHOICE-TYPE ,R-ITEM ,R-DISCHARGE> <HLIGHT ,H-BOLD>)(ELSE <HLIGHT ,H-ITALIC>)> <TELL D .LIST> <HLIGHT ,H-NORMAL> <TELL ")">)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-CODEWORD-ITEM> .REQUIREMENTS> <TELL " (Codeword "> <HLIGHT ,H-ITALIC> <TELL D <GET .LIST 1>> <HLIGHT ,H-NORMAL> <TELL " and "> <COND (<FSET? <GET .LIST 2> ,NARTICLEBIT> <TELL "the">)(<FSET? <GET .LIST 2> ,VOWELBIT> <TELL "an">)(ELSE TELL "a")> <TELL " "> <PRINT-ITEM <GET .LIST 2> T> <TELL ")">)>
 				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-MONEY> .REQUIREMENTS> <COND (<G? .LIST 0> <TELL " (" N .LIST " " D ,CURRENCY ")">)>)>
-				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-RANK> .REQUIREMENTS> <COND (<G? .LIST 0> <TELL " (Rank "> <HLIGHT ,H-BOLD> <TELL N .LIST> <HLIGHT 0> <TELL ")">)>)>
+				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-RANK> .REQUIREMENTS> <COND (<G? .LIST 0> <TELL " (Rank "> <HLIGHT ,H-BOLD> <TELL N .LIST> <HLIGHT ,H-NORMAL> <TELL ")">)>)>
 				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-ANY> .REQUIREMENTS> <PRINT-ANY .LIST>)>
 				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-ALL> .REQUIREMENTS> <PRINT-ALL .LIST>)>
 				<COND (<AND <EQUAL? .CHOICE-TYPE ,R-VISITS> .REQUIREMENTS> <COND (<G=? <GET .LIST 0> 3> <TELL " (visited " <GET .LIST 3> " > " N <GET .LIST 2> " times)">)>)>
@@ -696,7 +696,7 @@
 		<TELL "You rolled ">
 		<HLIGHT ,H-BOLD>
 		<TELL N .ROLL>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<COND (<N=? .MODIFIER 0>
 			<TELL " (">
 			<HLIGHT ,H-BOLD>
@@ -704,13 +704,13 @@
 				<TELL "+">
 			)>
 			<TELL N .MODIFIER>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL ") = ">
 			<SET .ROLL <+ .ROLL .MODIFIER>>
 			<HLIGHT ,H-BOLD>
 			<COND (<L? .ROLL 0> <SET .ROLL 0>)>
 			<TELL N .ROLL>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 		)>
 		<CRLF>
 		<COND (<NOT .SILENT>
@@ -828,7 +828,7 @@
 		<CRLF>
 		<HLIGHT ,H-BOLD>
 		<TELL "You do not have enough " D ,CURRENCY ,PERIOD-CR>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<PRESS-A-KEY>
 		<RFALSE>
 	)>
@@ -934,34 +934,34 @@
 			<TELL "codeword">
 			<COND (<G? .COUNT 1>
 				<TELL "s">
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 				<PRINT-CODEWORDS .LIST>
 			)(ELSE
 				<TELL " ">
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 				<HLIGHT ,H-ITALIC>
 				<TELL D <GET .LIST 1>>
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 				<TELL ,PERIOD-CR>
 			)>
 		)(ELSE
 			<COND (<G? .COUNT 1>
 				<TELL "items">
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 				<COND (<EQUAL? .TYPE ,R-ANY>
 					<PRINT-ANY .LIST>
 				)(<EQUAL? .TYPE ,R-ALL>
 					<PRINT-ALL .LIST>
 				)>
 			)(ELSE
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 				<HLIGHT ,H-ITALIC>
 				<TELL D <GET .LIST 1>>
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 				<TELL ,PERIOD-CR>
 			)>
 		)>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<CRLF>
 		<PRESS-A-KEY>
 	)>>
@@ -971,7 +971,7 @@
 	<CRLF>
 	<HLIGHT ,H-BOLD>
 	<TELL CT .OBJECT " has no charges left" ,PERIOD-CR>
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<PRESS-A-KEY>>
 
 <ROUTINE NOT-POSSESSED (OBJECT)
@@ -985,7 +985,7 @@
 		<COND (<FSET? .OBJECT ,VOWELBIT> <TELL "n">)>
 	)>
 	<TELL " " D .OBJECT ,EXCLAMATION-CR>
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<PRESS-A-KEY>>
 
 <ROUTINE PROCESS-RANDOM (LIST DESTINATIONS "AUX" ODDS (EVENTS 0) RESULT (DESTINATION NONE) (MODIFIERS 0) (OUTCOMES NONE) (HAS-DESTINATION F))
@@ -1082,7 +1082,7 @@
 				<COND (<AND <G? .COUNT 1> <EQUAL? .I .COUNT> .LASTFIX> <TELL .LASTFIX>)>
 				<HLIGHT ,H-ITALIC>
 				<TELL D <GET .ITEMS .I>>
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 			>
 			<TELL ")">
 		)>
@@ -1099,20 +1099,20 @@
 			<CRLF>
 			<HLIGHT ,H-BOLD>
 			<TELL "Choose a character:">
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<CRLF>
 			<PRINT-MENU ,CHARACTERS T F>
 			<HLIGHT ,H-BOLD>
 			<TELL "C">
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " - Choose a Profession" CR>
 			<HLIGHT ,H-BOLD>
 			<TELL "R">
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " - Restore from previous save" CR>
 			<HLIGHT ,H-BOLD>
 			<TELL "Q">
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " - Quit the game" CR>
 			<TELL "Select which character?">
 			<REPEAT ()
@@ -1179,16 +1179,16 @@
 			<CRLF>
 			<HLIGHT ,H-BOLD>
 			<TELL "Choose a professions:">
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<CRLF>
 			<PRINT-MENU ,PROFESSIONS T F>
 			<HLIGHT ,H-BOLD>
 			<TELL "R">
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " - Return to character selection" CR>
 			<HLIGHT ,H-BOLD>
 			<TELL "Q">
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " - Quit the game" CR>
 			<TELL "Select which profession?">
 			<REPEAT ()
@@ -1250,7 +1250,7 @@
 		<CRLF>
 		<HLIGHT ,H-BOLD>
 		<TELL CT .CHARACTER CR>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<COND (<GETP .CHARACTER ,P?LDESC>
 			<CRLF>
 			<TELL <GETP .CHARACTER ,P?LDESC> ,PERIOD-CR>
@@ -1259,7 +1259,7 @@
 		<CRLF>
 		<HLIGHT ,H-BOLD>
 		<TELL "Possessions: ">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<SET POSSESSIONS <GETP .CHARACTER ,P?POSSESSIONS>>
 		<COND (.POSSESSIONS
 			<SET COUNT <GET .POSSESSIONS 0>>
@@ -1395,7 +1395,7 @@
 		<TELL " for ">
 		<HLIGHT ,H-BOLD>
 		<TELL N .FEE " shards?">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<COND (<YES?>
 			<COST-MONEY .FEE ,TEXT-PAID>
 			<TAKE-ITEM .ITEM>
@@ -1419,7 +1419,7 @@
 			<TELL " sells at ">
 			<HLIGHT ,H-BOLD>
 			<TELL N .PRICE " " D ,CURRENCY>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " each.">
 			<SET NUMBER <GET-NUMBER "How many will you buy?" 0 .MAX>>
 			<COND (<G? .NUMBER 0>
@@ -1457,7 +1457,7 @@
 			<TELL "are charged">
 		)>
 		<TELL " " N .COST " " D ,CURRENCY ,PERIOD-CR>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<SETG MONEY <- ,MONEY .COST>>
 		<COND (<L? ,MONEY 0> <SETG MONEY 0>)>
 		<UPDATE-STATUS-LINE>
@@ -1489,7 +1489,7 @@
 				<TELL "Pay ">
 				<HLIGHT ,H-BOLD>
 				<TELL N .FEE " " D ,CURRENCY>
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 			)(<EQUAL? .FEE 0>
 				<TELL "Do you wish">
 			)>
@@ -1559,7 +1559,7 @@
 		<TELL "You lose the " .DESCRIPTION " ">
 		<HLIGHT .RENDER>
 		<TELL D .OBJECT>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL ,PERIOD-CR>
 		<REMOVE .OBJECT>
 	)>>
@@ -1602,7 +1602,7 @@
 		<HLIGHT ,H-BOLD>
 		<PRINT-CAP-OBJ ,AILMENTS>
 		<TELL ": ">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<PRINT-CONTAINER ,AILMENTS>
 	)>>
 
@@ -1610,7 +1610,7 @@
 	<CRLF>
 	<HLIGHT ,H-BOLD>
 	<TELL CT ,CURRENT-CHARACTER CR>
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<COND (<GETP ,CURRENT-CHARACTER ,P?LDESC>
 		<CRLF>
 		<TELL <GETP ,CURRENT-CHARACTER ,P?LDESC> CR>
@@ -1621,7 +1621,7 @@
 		<HLIGHT ,H-BOLD>
 		<PRINT-CAP-OBJ ,BLESSINGS>
 		<TELL ": ">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<PRINT-CONTAINER ,BLESSINGS>
 	)>>
 
@@ -1630,7 +1630,7 @@
 		<HLIGHT ,H-BOLD>
 		<PRINT-CAP-OBJ ,CODEWORDS>
 		<TELL ": ">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<PRINT-CONTAINER ,CODEWORDS>
 	)>>
 
@@ -1638,34 +1638,34 @@
 	<HLIGHT ,H-BOLD>
 	<PRINT-CAP-OBJ ,CURRENCY>
 	<TELL ": ">
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<TELL N ,MONEY CR>>
 
 <ROUTINE DESCRIBE-PLAYER-LOCATION ()
 	<CRLF>
 	<HLIGHT ,H-BOLD>
 	<TELL "Current Location: ">
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<TELL "Somewhere in " <GET-LOCATION ,CURRENT-LOCATION> CR>>
 
 <ROUTINE DESCRIBE-PLAYER-POSSESSIONS ()
 	<COND (<L=? <COUNT-CONTAINER ,PLAYER-STORAGE> 0> <CRLF>)>
 	<HLIGHT ,H-BOLD>
 	<TELL "Possessions: ">
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<PRINT-CONTAINER ,PLAYER>
 	<COND (<OR ,BEST-ARMOUR ,BEST-WEAPON>
 		<COND (,BEST-ARMOUR
 			<HLIGHT ,H-BOLD>
 			<TELL "Best Armour: ">
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<PRINT-ITEM ,BEST-ARMOUR>
 			<COND (,BEST-WEAPON <TELL " ">)>
 		)>
 		<COND (,BEST-WEAPON
 			<HLIGHT ,H-BOLD>
 			<TELL "Best Weapon: ">
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<PRINT-ITEM ,BEST-WEAPON>
 		)>
 		<CRLF>
@@ -1675,7 +1675,7 @@
 	<COND (,RESURRECTION-ARRANGEMENTS
 		<HLIGHT ,H-BOLD>
 		<TELL "Resurrection Arrangements: ">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL D ,RESURRECTION-ARRANGEMENTS>
 		<CRLF>
 	)>>
@@ -1693,7 +1693,7 @@
 		)(ELSE
 			<TELL "Female">
 		)>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 	)>
 	<CRLF>
 	<COND (<GETP .CHARACTER ,P?PROFESSION>
@@ -1717,12 +1717,12 @@
 		<HLIGHT ,H-BOLD>
 		<PRINT-CAP-OBJ ,SHIPS>
 		<TELL ": ">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<PRINT-CONTAINER ,SHIPS>
 		<HLIGHT ,H-BOLD>
 		<PRINT-CAP-OBJ ,CARGO>
 		<TELL ": ">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<PRINT-CONTAINER ,CARGO>
 	)>>
 
@@ -1731,7 +1731,7 @@
 		<HLIGHT ,H-BOLD>
 		<PRINT-CAP-OBJ ,TITLES-AND-HONOURS>
 		<TELL ": ">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<PRINT-CONTAINER ,TITLES-AND-HONOURS>
 	)>>
 
@@ -1741,7 +1741,7 @@
 		<HLIGHT ,H-BOLD>
 		<PRINT-CAP-OBJ ,PLAYER-STORAGE>
 		<TELL ": ">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<PRINT-CONTAINER ,PLAYER-STORAGE>
 	)>>
 
@@ -1749,7 +1749,7 @@
 	<COND (,GOD
 	<HLIGHT ,H-BOLD>
 	<TELL "God: ">
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<TELL D ,GOD>
 	<CRLF>
 	)>>
@@ -1776,7 +1776,7 @@
 					<INC .COUNT>
 					<HLIGHT ,H-BOLD>
 					<TELL N .COUNT>
-					<HLIGHT 0>
+					<HLIGHT ,H-NORMAL>
 					<TELL " - " T .ITEM>
 					<SET QUANTITY <GETP .ITEM ,P?QUANTITY>>
 					<COND (<G? .QUANTITY 0> <TELL " (" N .QUANTITY ")">)>
@@ -1786,7 +1786,7 @@
 			>
 			<HLIGHT ,H-BOLD>
 			<TELL N <+ .COUNT 1>>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " - drop " T .OBJ " instead" ,PERIOD-CR>
 			<REPEAT ()
 				<SET KEY <INPUT 1>>
@@ -1799,15 +1799,15 @@
 					<CRLF>
 					<TELL "Drop " T .ITEM "?">
 					<COND (<YES?>
-						<HLIGHT 0>
+						<HLIGHT ,H-NORMAL>
 						<TELL CR "You dropped ">
 						<HLIGHT ,H-BOLD>
 						<TELL T .ITEM>
-						<HLIGHT 0>
+						<HLIGHT ,H-NORMAL>
 						<TELL " and took ">
 						<HLIGHT ,H-BOLD>
 						<TELL T .OBJ>
-						<HLIGHT 0>
+						<HLIGHT ,H-NORMAL>
 						<TELL ,PERIOD-CR>
 						<COND (<NOT <EQUAL? .ITEM .OBJ>>
 							<SET QUANTITY <GETP .ITEM ,P?QUANTITY>>
@@ -1838,11 +1838,11 @@
 				<CRLF>
 				<TELL "Drop " T .OBJ "?">
 				<COND (<YES?>
-					<HLIGHT 0>
+					<HLIGHT ,H-NORMAL>
 					<TELL CR "You dropped ">
 					<HLIGHT ,H-BOLD>
 					<TELL T .OBJ>
-					<HLIGHT 0>
+					<HLIGHT ,H-NORMAL>
 					<TELL ,PERIOD-CR>
 					<SET QUANTITY <GETP .OBJ ,P?QUANTITY>>
 					<COND (<L? .QUANTITY 0> <REMOVE .OBJ>)>
@@ -1864,7 +1864,7 @@
 		<TELL "You gain ">
 		<HLIGHT ,H-BOLD>
 		<TELL N .AMOUNT " " D ,CURRENCY>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL ,PERIOD-CR>
 		<SETG MONEY <+ ,MONEY .AMOUNT>>
 		<UPDATE-STATUS-LINE>
@@ -1887,13 +1887,10 @@
 		<TELL "You've gained a rank! Your rank is now is now: ">
 		<HLIGHT ,H-BOLD>
 		<TELL N .RANK>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL ,PERIOD-CR>
 		<PUTP ,CURRENT-CHARACTER ,P?RANK .RANK>
 	)>>
-
-<ROUTINE GAIN-CACHE (CACHE)
-	<GAIN-OBJECT .CACHE ,PLAYER-STORAGE "secret cache" ,CHECK-STORAGE>>
 
 <ROUTINE GAIN-STAMINA (POINTS "AUX" DIFFERENCE)
 	<COND (<L? ,STAMINA ,MAX-STAMINA>
@@ -1909,14 +1906,15 @@
 			<TELL N .POINTS>
 		)>
 		<TELL " stamina" ,PERIOD-CR>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
     )>>
 
 <ROUTINE GAIN-TITLE (TITLE)
 	<GAIN-OBJECT .TITLE ,TITLES-AND-HONOURS "title" ,CHECK-TITLE>>
 
-<ROUTINE GAIN-STORAGE (SHACK)
-	<GAIN-OBJECT .SHACK ,PLAYER-STORAGE "shack" ,CHECK-STORAGE>>
+<ROUTINE GAIN-STORAGE (STORAGE "OPT" DESCRIPTION)
+	<COND (<NOT .DESCRIPTION> <SET DESCRIPTION "shack">)>
+	<GAIN-OBJECT .STORAGE ,PLAYER-STORAGE .DESCRIPTION ,CHECK-STORAGE>>
 
 <ROUTINE GET-ITEM (ITEM "OPT" CONTAINER "AUX" ITEMS COUNT)
 	<COND (<NOT .CONTAINER> <SET CONTAINER ,PLAYER>)>
@@ -1966,7 +1964,7 @@
 	<TELL "Your " <GET ,ABILITIES .ABILITY> " score has decreased from ">
 	<HLIGHT ,H-BOLD>
 	<TELL N .SCORE>
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<SET PROPERTY <GET-ABILITY-PROPERTY .ABILITY>>
 	<TELL " to ">
 	<SET SCORE <- .SCORE .LOSS>>
@@ -1974,7 +1972,7 @@
 	<HLIGHT ,H-BOLD>
 	<TELL N .SCORE ,EXCLAMATION-CR>
 	<COND (.PROPERTY <PUTP ,CURRENT-CHARACTER .PROPERTY .SCORE>)>
-	<HLIGHT 0>>
+	<HLIGHT ,H-NORMAL>>
 
 <ROUTINE LOSE-ITEM (ITEM "OPT" (SILENT F))
 	<REMOVE-ITEM .ITEM "lost" F .SILENT>>
@@ -1996,7 +1994,7 @@
 		<PUTP .STORY ,P?DOOM F>
 		<TELL "You lost " N .DAMAGE " stamina">
 	)>
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<TELL ,PERIOD-CR>>
 
 <ROUTINE LOSE-STUFF (CONTAINER LOST-CONTAINER ITEM "OPT" MAX ACTION "AUX" (COUNT 0) ITEMS)
@@ -2027,7 +2025,7 @@
 				<TELL "You must select " N .MAX " " .ITEM>
 				<COND (<G? .MAX 1> <TELL "s">)>
 				<TELL ,PERIOD-CR>
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 			)>
 		>
 		<DO (I 1 .COUNT)
@@ -2070,7 +2068,7 @@
 			<COND (<G? .COUNT 0> <TELL ", ">)>
 			<COND (.BOLD <HLIGHT ,H-BOLD>)(ELSE <HLIGHT ,H-ITALIC>)>
 			<TELL D .ITEMS>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<COND (<OR <G? .BLESSINGS 0> <G? .QUANTITY 1> <G? .CHARGES 0> .WORN .EFFECTS <G=? .CONDITION ,CONDITION-POOR>> <TELL " (">)>
 			<COND (<G? .BLESSINGS 0> <PRINT-BLESSINGS .ITEMS>)>
 			<COND (<G? .QUANTITY 1>
@@ -2173,7 +2171,7 @@
 			)(ELSE
 				<TELL C <+ <- .I 10> !\A>>
 			)>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " - [">
 			<COND (<INTBL? <GET .LIST .I> ,SELECT-CHOICES 21> <TELL "X">)(ELSE <TELL " ">)>
 			<TELL "] - ">
@@ -2182,11 +2180,11 @@
 		>
 		<HLIGHT ,H-BOLD>
 		<TELL "P">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL " - View your character (" D ,CURRENT-CHARACTER ")" CR>
 		<HLIGHT ,H-BOLD>
 		<TELL "0">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL " - I'm alright with my choices" ,PERIOD-CR>
 		<TELL "Select which " .DESC "(s) to ">
 		<TELL .ACTION>
@@ -2231,7 +2229,7 @@
 						<CRLF>
 						<HLIGHT ,H-BOLD>
 						<TELL "You have already selected " N .MAX " " .DESC "s" ,EXCLAMATION-CR>
-						<HLIGHT 0>
+						<HLIGHT ,H-NORMAL>
 					)(ELSE
 						<INC .COUNT>
 						<PUT ,SELECT-CHOICES <GET-INDEX ,SELECT-CHOICES NONE> <GET .LIST .CHOICE>>
@@ -2314,7 +2312,7 @@
 		<DO (I 1 6)
 			<HLIGHT ,H-BOLD>
 			<TELL N .I>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " - " <GET ,ABILITIES .I> " (" N <GET-ABILITY-SCORE ,CURRENT-CHARACTER .I> ")" CR>
 		>
 		<TELL "Select ability to improve:">
@@ -2333,16 +2331,16 @@
 				<TELL "Your ">
 				<HLIGHT ,H-BOLD>
 				<TELL <GET ,ABILITIES .ABILITY>>
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 				<TELL " score improved from ">
 				<HLIGHT ,H-BOLD>
 				<TELL N .CURRENT>
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 				<TELL " -> ">
 				<HLIGHT ,H-BOLD>
 				<INC .CURRENT>
 				<TELL N .CURRENT ,EXCLAMATION-CR>
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 				<PUTP ,CURRENT-CHARACTER <GET-ABILITY-PROPERTY .ABILITY> .CURRENT>
 				<DEC .POINTS>
 			)>
@@ -2351,7 +2349,7 @@
 			<TELL "Your ">
 			<HLIGHT ,H-BOLD>
 			<TELL <GET ,ABILITIES .ABILITY>>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " score is already at a maximum" ,EXCLAMATION-CR>
 		)>
 	>>
@@ -2364,7 +2362,7 @@
 	<TELL "Your " <GET ,ABILITIES .ABILITY> " score has improved from ">
 	<HLIGHT ,H-BOLD>
 	<TELL N .SCORE>
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<SET PROPERTY <GET-ABILITY-PROPERTY .ABILITY>>
 	<TELL " to ">
 	<SET SCORE <+ .SCORE .UPGRADE>>
@@ -2372,7 +2370,7 @@
 	<HLIGHT ,H-BOLD>
 	<TELL N .SCORE ,EXCLAMATION-CR>
 	<COND (.PROPERTY <PUTP ,CURRENT-CHARACTER .PROPERTY .SCORE>)>
-	<HLIGHT 0>>
+	<HLIGHT ,H-NORMAL>>
 
 <ROUTINE UPGRADE-STAMINA ("OPT" UPGRADE)
 	<COND (<NOT .UPGRADE> <SET UPGRADE 1>)>
@@ -2380,7 +2378,7 @@
 	<TELL "You've gained ">
 	<HLIGHT ,H-BOLD>
 	<TELL "+" N .UPGRADE>
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<TELL " stamina permanently!" CR>
 	<SETG MAX-STAMINA <+ ,MAX-STAMINA .UPGRADE>>
 	<SETG STAMINA <+ ,STAMINA .UPGRADE>>
@@ -2490,7 +2488,7 @@
 		<COND (<AND <L? .ITEMS 12> <EQUAL? .CONTAINER ,CARGO>>
 			<HLIGHT ,H-BOLD>
 			<TELL "C">
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " - View cargo">
 			<COND (,CURRENT-SHIP <TELL " (" D ,CURRENT-SHIP ")">)>
 			<CRLF>
@@ -2498,14 +2496,14 @@
 		<COND (<EQUAL? .CONTAINER ,PLAYER>
 			<HLIGHT ,H-BOLD>
 			<TELL "P">
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " - View character">
 			<COND (,CURRENT-CHARACTER <TELL " (" D ,CURRENT-CHARACTER ")">)>
 			<CRLF>
 		)>
 		<HLIGHT ,H-BOLD>
 		<TELL "0">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL " - Bye" CR>
 		<TELL "You are carrying " N ,MONEY " " D ,CURRENCY ": ">
 		<REPEAT ()
@@ -2551,13 +2549,13 @@
 				<COND (<AND <G? .LIMIT 0> <N=? .CONTAINER ,PLAYER> <G=? <COUNT-CONTAINER .CONTAINER> .LIMIT>>
 					<HLIGHT ,H-BOLD>
 					<TELL "Your " D .CONTAINER " is already at full capacity" ,EXCLAMATION-CR>
-					<HLIGHT 0>
+					<HLIGHT ,H-NORMAL>
 					<PRESS-A-KEY>
 					<AGAIN .MAIN>
 				)(<EQUAL? <GET .PRICELIST .ITEM> 0>
 					<HLIGHT ,H-BOLD>
 					<TELL <GET .WARES .ITEM> " not available here" ,PERIOD-CR>
-					<HLIGHT 0>
+					<HLIGHT ,H-NORMAL>
 					<PRESS-A-KEY>
 					<AGAIN .MAIN>
 				)>
@@ -2684,7 +2682,7 @@
 		)>
 		<TELL " with the " D .DISEASE>
 		<TELL ,EXCLAMATION-CR>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<CRLF>
 		<TELL "Do you want to drop it instead?">
 		<COND (<YES?> <REMOVE-ITEM .ANTIDOTE "dropped" T T>)>
@@ -2692,11 +2690,11 @@
 		<CRLF>
 		<HLIGHT ,H-BOLD>
 		<TELL "You do not have the ">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<PRINT-ITEM .ANTIDOTE>
 		<HLIGHT ,H-BOLD>
 		<TELL ,EXCLAMATION-CR>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<PRESS-A-KEY>
 	)>>
 
@@ -2706,11 +2704,11 @@
 		<SET COUNT <PRINT-CONTAINER-MENU ,PLAYER>>
 		<HLIGHT ,H-BOLD>
 		<TELL "V">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL " - View ship manifest" CR>
 		<HLIGHT ,H-BOLD>
 		<TELL "0">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL " - Back" CR>
 		<TELL "Select an item to use:">
 		<REPEAT ()
@@ -2853,10 +2851,10 @@
 		<HLIGHT ,H-BOLD>
 		<COND (<ASSIGNED? SPEAKER>
 			<TELL .SPEAKER ": ">
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 		)>
 		<TELL .TEXT>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<CRLF>
 	)>>
 
@@ -2909,7 +2907,7 @@
 			)(ELSE
 				<TELL C <+ !\A <- .COUNT 10>>>
 			)>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " - ">
 			<PRINT-ITEM .ITEMS>
 			<CRLF>
@@ -2919,7 +2917,7 @@
 	<COND (<AND .EXIT-KEY .EXIT-TEXT>
 		<HLIGHT ,H-BOLD>
 		<TELL C .EXIT-KEY>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL " - " .EXIT-TEXT>
 		<CRLF>
 	)>
@@ -2935,7 +2933,7 @@
 		)(ELSE
 			<TELL C <+ !\A <- .I 10>>>
 		)>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL " - ">
 		<COND (.ITEM-MENU
 			<COND (.SHOW-STATS
@@ -2951,7 +2949,7 @@
 				<TELL " (">
 				<HLIGHT ,H-BOLD>
 				<TELL N <GET .PRICES .I>>
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 				<TELL " " D ,CURRENCY ")">
 			)>
 		)>
@@ -2960,7 +2958,7 @@
 	<COND (<AND .EXIT-KEY .EXIT-TEXT>
 		<HLIGHT ,H-BOLD>
 		<TELL C .EXIT-KEY>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL " - " .EXIT-TEXT>
 		<CRLF>
 	)>>
@@ -3002,7 +3000,7 @@
 		)>
 	)>
 	<SCREEN 0>
-	<HLIGHT 0>>
+	<HLIGHT ,H-NORMAL>>
 
 ; "Gamebook loop routines"
 ; ---------------------------------------------------------------------------------------------
@@ -3034,7 +3032,7 @@
 	<COLOR .COLOR 0>
 	<TELL .MESSAGE>
 	<COLOR 1 0>
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<GAMES-UP>>
 
 <ROUTINE QUIT-MESSAGE ()
@@ -3663,7 +3661,7 @@
 			<TELL " to heal up to ">
 			<HLIGHT ,H-BOLD>
 			<TELL "6">
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " stamina points?">
 			<COND (<YES?>
 				<GAIN-STAMINA <ROLL-DICE 1>>
@@ -3727,12 +3725,31 @@
 
 <OBJECT MAP
 	(DESC "map")
+	(ACTION MAP-F)
 	(FLAGS TAKEBIT)>
 
-; "TO-DO: implement ASCII-art of MAP-OF-BAZALEK"
+<ROUTINE MAP-F ()
+	<CRLF>
+	<TELL "Please refer to the map at: ">
+	<HLIGHT ,H-BOLD>
+	<TELL "https://github.com/daelsepara/over-blood-dark-sea">
+	<HLIGHT ,H-NORMAL>
+	<CRLF>
+	<PRESS-A-KEY>>
+
 <OBJECT MAP-OF-BAZALEK
 	(DESC "map of Bazalek")
+	(ACTION MAP-OF-BAZALEK-F)
 	(FLAGS TAKEBIT)>
+
+<ROUTINE MAP-OF-BAZALEK-F ()
+	<CRLF>
+	<TELL "Please refer to the map of Bazalek at: ">
+	<HLIGHT ,H-BOLD>
+	<TELL "https://github.com/daelsepara/over-blood-dark-sea">
+	<HLIGHT ,H-NORMAL>
+	<CRLF>
+	<PRESS-A-KEY>>
 
 <OBJECT MARINERS-RUTTIER
 	(DESC "mariner's ruttier")
@@ -3795,7 +3812,7 @@
 			<TELL " to heal up to ">
 			<HLIGHT ,H-BOLD>
 			<TELL "5">
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " stamina points?">
 			<COND (<YES?>
 				<GAIN-STAMINA 5>
@@ -4390,7 +4407,7 @@
 		<TELL CT .ATTACKER>
 	)>
 	<TELL "'s attack was ineffective" ,EXCLAMATION-CR>
-	<HLIGHT 0>>
+	<HLIGHT ,H-NORMAL>>
 
 <ROUTINE ATTACK-MESSAGE (ATTACKER DEFENDER ATTACK DAMAGE)
 	<CRLF>
@@ -4400,7 +4417,7 @@
 	)(ELSE
 		<TELL CT .ATTACKER "'s">
 	)>
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<TELL " attack (" N .ATTACK ") hits ">
 	<HLIGHT ,H-BOLD>
 	<COND (<EQUAL? .DEFENDER ,CURRENT-CHARACTER>
@@ -4408,11 +4425,11 @@
 	)(ELSE
 		<TELL T .DEFENDER>
 	)>
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<TELL " for ">
 	<HLIGHT ,H-BOLD>
 	<TELL N .DAMAGE " damage">
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<TELL ,PERIOD-CR>>
 
 ; "Calculate combat score"
@@ -4458,14 +4475,14 @@
 	<CRLF>
 	<HLIGHT ,H-BOLD>
 	<TELL "Round " N .ROUND ": ">
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<HLIGHT ,H-ITALIC>
 	<TELL D ,CURRENT-CHARACTER> 
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<TELL " (STAMINA: " N .STAMINA-PLAYER "), ">
 	<HLIGHT ,H-ITALIC>
 	<TELL CT .MONSTER>
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<TELL " (STAMINA: " N .STAMINA-MONSTER ")">
 	<TELL ,PERIOD-CR>
 	<UPDATE-STATUS-LINE>>
@@ -4482,7 +4499,7 @@
 		<TELL " in this fight (Current COMBAT score: ">
 		<HLIGHT ,H-BOLD>
 		<TELL N .COMBAT-PLAYER>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL ")?">
 		<COND (<YES?>
 			<REMOVE-ITEM ,POTION-OF-STRENGTH ,TEXT-USED F T>
@@ -4498,13 +4515,13 @@
 	<TELL "Resolving combat between ">
 	<HLIGHT ,H-BOLD>
 	<TELL D ,CURRENT-CHARACTER>
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<TELL " (COMBAT: " N .COMBAT-PLAYER " DEFENSE: " N .DEFENSE-PLAYER>
 	<COND (<G? .MODIFIER 0> <TELL ", +" N .MODIFIER " to rolls">)>
 	<TELL ") and ">
 	<HLIGHT ,H-BOLD>
 	<TELL T .MONSTER>
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<TELL " (COMBAT: " N .COMBAT-MONSTER " DEFENSE: " N .DEFENSE-MONSTER ")">
 	<TELL ,PERIOD-CR>
 	; "Track Previous Stamina"
@@ -4558,7 +4575,7 @@
 	<TELL " ">
 	<COND (<FSET? .CHARACTER ,PLURALBIT> <TELL "have">)(ELSE <TELL "has">)>
 	<TELL " prevailed">
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<TELL ,PERIOD-CR>>
 
 <ROUTINE TEST-ABILITY (CHARACTER ABILITY DIFFICULTY "OPT" (MODIFIER 0) "AUX" SCORE (ROLL 0) (RESULT F) (TOTAL 0) (INITIAL-MODIFIER 0))
@@ -4567,15 +4584,15 @@
 		<TELL "Making a ">
 		<HLIGHT ,H-BOLD>
 		<TELL <GET ,ABILITIES .ABILITY>>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL " (" >
 		<HLIGHT ,H-BOLD>
 		<TELL N .SCORE>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL ") roll at ">
 		<HLIGHT ,H-BOLD>
 		<TELL N .DIFFICULTY>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL " difficulty.." ,PERIOD-CR>
 		<SET MODIFIER <+ .MODIFIER <TEST-ABILITY-GOD .ABILITY>>>
 		<SET INITIAL-MODIFIER .MODIFIER>
@@ -4591,11 +4608,11 @@
 		<TELL "Rolled (">
 		<HLIGHT ,H-BOLD>
 		<TELL <GET ,ABILITIES .ABILITY> " " N .SCORE>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL ") + ">
 		<HLIGHT ,H-BOLD>
 		<TELL N .ROLL>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<COND (<N=? .MODIFIER 0>
 			<TELL " ">
 			<COND (<G? .MODIFIER 0>
@@ -4609,24 +4626,24 @@
 			)(ELSE
 				<TELL N <* .MODIFIER -1>>
 			)>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 		)>
 		<TELL " = ">
 		<HLIGHT ,H-BOLD>
 		<TELL N .TOTAL>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL " ... ">
 		<COND (<G? .TOTAL .DIFFICULTY>
 			<HLIGHT ,H-BOLD>
 			<TELL "Success!">
 			<SET RESULT T>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<CRLF>
 			<RETURN>
 		)(ELSE
 			<HLIGHT ,H-BOLD>
 			<TELL "Failed!">
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<SET RESULT F>
 			<COND (<NOT <TEST-ABILITY-BLESSING .ABILITY>>
 				<RETURN>
@@ -4820,7 +4837,7 @@
 		<CRLF>
 		<HLIGHT ,H-BOLD>
 		<TELL "1">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<COND (.INVEST
 			<TELL " - Invest (in multiples of 100 " D ,CURRENCY ")" CR>
 		)(ELSE
@@ -4828,7 +4845,7 @@
 		)>
 		<HLIGHT ,H-BOLD>
 		<TELL "2">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL " - Withdraw ">
 		<COND (.INVEST
 			<TELL "investments" CR>
@@ -4837,7 +4854,7 @@
 		)>
 		<HLIGHT ,H-BOLD>
 		<TELL "0">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL " - Bye" CR>
 		<TELL "You are currently carrying: " N ,MONEY " " D ,CURRENCY "." CR>
 		<TELL "Select what to do next: ">
@@ -5008,7 +5025,7 @@
 				<TELL "Book a passage to ">
 				<HLIGHT ,H-BOLD>
 				<TELL <GET .PASSAGES .CHOICE>>
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 				<COND (<G? <GET .PRICES .CHOICE> 0>
 					<TELL " for " N <GET .PRICES .CHOICE> " " D ,CURRENCY "?">
 				)(ELSE
@@ -5025,7 +5042,7 @@
 				<CRLF>
 				<HLIGHT ,H-BOLD>
 				<TELL "You cannot afford to book a passage to " <GET .PASSAGES .CHOICE> ,EXCLAMATION-CR>
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 			)>
 		)>
 	>
@@ -5314,12 +5331,12 @@
 				<PUT .LIST .COUNT .SHIP>
 				<HLIGHT ,H-BOLD>
 				<TELL N .COUNT>
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 				<TELL " [">
 				<COND (<EQUAL? ,CURRENT-SHIP .SHIP>
 					<HLIGHT ,H-BOLD>
 					<TELL "X">
-					<HLIGHT 0>
+					<HLIGHT ,H-NORMAL>
 				)(ELSE
 					<TELL " ">
 				)>
@@ -5330,11 +5347,11 @@
 		>
 		<HLIGHT ,H-BOLD>
 		<TELL "C">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL " - View Cargo" CR>
 		<HLIGHT ,H-BOLD>
 		<TELL "0">
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<TELL " - Back" CR>
 		<TELL "Select primary ship: ">
 		<REPEAT ()
@@ -5412,7 +5429,7 @@
 		)(ELSE
 			<TELL D .FROM>
 		)>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<CRLF>
 		<PRINT-CONTAINER-MENU .FROM !\0 ,TEXT-BACK>
 		<TELL "Choose what items to " .MESSAGE>
@@ -5420,13 +5437,13 @@
 			<TELL " at ">
 			<HLIGHT ,H-BOLD>
 			<TELL D .TO>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL ": ">
 		)(ELSE
 			<TELL " from ">
 			<HLIGHT ,H-BOLD>
 			<TELL T .FROM>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL ": ">
 		)>
 		<REPEAT ()
@@ -5457,7 +5474,7 @@
 			<TELL " ">
 			<HLIGHT ,H-BOLD>
 			<PRINT-ITEM <GET-ITEM .CHOICE .FROM> T>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<COND (.LEAVE
 				<TELL " at ">
 				<HLIGHT ,H-BOLD>
@@ -5467,7 +5484,7 @@
 				<HLIGHT ,H-BOLD>
 				<TELL T .FROM "?">
 			)>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<COND (<YES?>
 				<COND (.LEAVE
 					<MOVE <GET-ITEM .CHOICE .FROM> .TO>	
@@ -5536,7 +5553,7 @@
 		<CRLF>
 		<HLIGHT ,H-BOLD>
 		<TELL D .STORAGE>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<CRLF>
 		<PRINT-MENU ,STORAGE-MENU-MONEY F F !\0 ,TEXT-BACK>
 		<SET .MONEY <GETP .STORAGE ,P?MONEY>>
@@ -5544,11 +5561,11 @@
 			<TELL "There are ">
 			<HLIGHT ,H-BOLD>
 			<TELL N .MONEY>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " " D ,CURRENCY " kept here at ">
 			<HLIGHT ,H-BOLD>
 			<TELL T .STORAGE ,PERIOD-CR>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 		)>
 		<TELL "You are carrying " N ,MONEY " " D ,CURRENCY ": ">
 		<REPEAT ()
@@ -5569,7 +5586,7 @@
 				<CRLF>
 				<HLIGHT ,H-BOLD>
 				<TELL "You are not carrying any " D, CURRENCY ,EXCLAMATION-CR>
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 				<PRESS-A-KEY>
 			)>
 		)(<EQUAL? .KEY !\2>
@@ -5591,7 +5608,7 @@
 		<CRLF>
 		<HLIGHT ,H-BOLD>
 		<TELL D .STORAGE>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<CRLF>
 		<PRINT-MENU ,STORAGE-MENU-POSSESSIONS F F !\0 ,TEXT-BACK>
 		<DESCRIBE-INVENTORY-MAIN>
@@ -5635,7 +5652,7 @@
 		<CRLF>
 		<HLIGHT ,H-BOLD>
 		<TELL D .STORAGE>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 		<CRLF>
 		<PRINT-MENU ,STORAGE-MENU F F !\0 "You're done here">
 		<TELL "What do you want to do?">
@@ -5652,7 +5669,7 @@
 				<TELL "You leave your ">
 				<HLIGHT ,H-BOLD>
 				<TELL D .STORAGE>
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 				<TELL ,PERIOD-CR>
 				<RETURN>
 			)>
@@ -5719,12 +5736,12 @@
 							<HLIGHT ,H-BOLD>
 							<COND (<L=? .ROLL 1>
 								<TELL "Dysentery" ,EXCLAMATION-CR>
-								<HLIGHT 0>
+								<HLIGHT ,H-NORMAL>
 								<LOSE-STAMINA 1 ,DIED-GREW-WEAKER .STORY>
 							)(<L=? .ROLL 2>
 								<PREVENT-DOOM .STORY>
 								<TELL "No gain or loss of Stamina" ,PERIOD-CR>
-								<HLIGHT 0>
+								<HLIGHT ,H-NORMAL>
 							)(ELSE
 								<PREVENT-DOOM .STORY>
 								<TELL "A good rest" ,EXCLAMATION-CR>
@@ -5783,13 +5800,13 @@
 			<CRLF>
 			<HLIGHT ,H-BOLD>
 			<TELL "You cannot afford to become an initiate of " D .WORSHIP " at this time" ,EXCLAMATION-CR>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 		)>
 	)(ELSE
 		<CRLF>
 		<HLIGHT ,H-BOLD>
 		<TELL "You are already an initiate of " D ,GOD ,EXCLAMATION-CR>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 	)>>
 
 <ROUTINE BECOME-INITIATE-TYRNAI ("AUX" COMBAT)
@@ -5800,36 +5817,36 @@
 			<TELL "Become an Initiate of ">
 			<HLIGHT ,H-BOLD>
 			<TELL D ,GOD-TYRNAI>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " (COMBAT: ">
 			<HLIGHT ,H-BOLD>
 			<TELL N .COMBAT>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL ")?">
 			<COND (<YES?>
 				<SETG GOD ,GOD-TYRNAI>
 				<CRLF>
 				<HLIGHT ,H-BOLD>
 				<TELL "You have become an Initiate of " D ,GOD ,PERIOD-CR>
-				<HLIGHT 0>
+				<HLIGHT ,H-NORMAL>
 			)>
 		)(ELSE
 			<CRLF>
 			<TELL "You cannot become an Initiate of ">
 			<HLIGHT ,H-BOLD>
 			<TELL D ,GOD-TYRNAI>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL " at this time. Your combat is score is ">
 			<HLIGHT ,H-BOLD>
 			<TELL N .COMBAT>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 			<TELL ", lower than the required.">
 		)>
 	)(ELSE
 		<CRLF>
 		<HLIGHT ,H-BOLD>
 		<TELL "You are already an Initiate of " D ,GOD ,EXCLAMATION-CR>
-		<HLIGHT 0>
+		<HLIGHT ,H-NORMAL>
 	)>>
 
 <ROUTINE GOD-CURE (FEE DISCOUNT INITIATE FLAG "OPT" FLAG2)
@@ -5916,7 +5933,7 @@
 			<CRLF>
 			<HLIGHT ,H-BOLD>
 			<TELL "You are not an initiate of " D .WORSHIP ,EXCLAMATION-CR>
-			<HLIGHT 0>
+			<HLIGHT ,H-NORMAL>
 		)>
 	)(ELSE
 		<EMPHASIZE "You are not an initiate of any god!">
@@ -6345,7 +6362,7 @@
 <ROUTINE INSTRUCTIONS ()
 	<HLIGHT ,H-BOLD>
 	<TELL ,INSTRUCTIONS-HEADER>
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<CRLF>
 	<TELL ,INSTRUCTIONS-TEXT>
 	<CRLF>>
@@ -6356,7 +6373,7 @@
 	<CRLF>
 	<HLIGHT ,H-BOLD>
 	<TELL "Additional Command Keys:">
-	<HLIGHT 0>
+	<HLIGHT ,H-NORMAL>
 	<CRLF>
 	<TELL CR ,HELP-TEXT>
 	<CRLF>>
@@ -6465,6 +6482,7 @@
 	<RESET-GOT-FREE>
 	<SETG SOLD-PIRATES-HEAD F>
 	<SETG LOST-SHARDS 0>
+	<SETG CANDLE-USED F>
 	<RESET-ODDS 2 0 ,STORY079>
 	<RESET-ODDS 2 0 ,STORY108>
 	<RESET-ODDS 1 0 ,STORY142>
@@ -6850,6 +6868,8 @@
 ; "Over the Blood-Dark Sea"
 ; ---------------------------------------------------------------------------------------------
 
+<GLOBAL CANDLE-USED F>
+
 <CONSTANT TEXT001 "You are alone in an open boat waiting for death.||How your life has changed since the day that you set out from your homeland across the Unbounded Ocean! You had signed on aboard a ship in the hope of visiting a dozen ports, seeing a thousand wonders. But calamity overtook your voyage in the first week, when pirates swooped down upon the vessel. You and a handful of shipmates managed to get the cutter down into the water and were making off, but some of the pirates leapt down from the rail right in your midst. The fighting was hard. You remember little of it now, but when it was over the boat was awash with blood and you were the only one left alive. Of your own ship and the pirates' there was no sign -- the current had carried you out of sight of any living thing.||Best not to think how you've survived since then. At the mercy of the wind and the currents, you have been swept steadily westwards into regions completely unknown to you. Drinking water has been your biggest problem -- you've had to rely on rain and there has been none for days. Your body is weak, your spirits low. Then, just as death seems ready to draw his boat alongside, you see something that kindles new hope. White clouds. Birds turning high above. The grey hump of land on the horizon!||Steering towards the shore, you feel the cutter lurch as it enters rough water. The wind whips up plumes of spindrift and breakers pound the cliffs. The tiller is yanked out of your hands. The little boat is spun around, out of control, and goes plunging towards the coast.||You leap clear at the last second. There is the snap of timber, the roaring crescendo of the waves -- and then silence as you go under. Striking out wildly, you try to swim clear, then suddenly a wave catches you and flings you contemptuously on to the beach.||You are battered and bedraggled, but alive. Now your adventures can begin.">
 
 <ROOM STORY001
@@ -7002,10 +7022,24 @@
 	(DESC "011")
 	(STORY TEXT011)
 	(CHOICES CHOICES011)
-	(DESTINATIONS <PLTABLE STORY178 STORY178 STORY196>)
+	(DESTINATIONS <PLTABLE STORY011-LIGHT STORY178 STORY196>)
 	(REQUIREMENTS <PLTABLE <PLTABLE CANDLE LANTERN> PROFESSION-MAGE NONE>)
 	(TYPES <PLTABLE R-ANY R-PROFESSION R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<ROOM STORY011-LIGHT
+	(IN ROOMS)
+	(DESC "011")
+	(BACKGROUND STORY011-BACKGROUND)
+	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY011-BACKGROUND ()
+	<COND (<CHECK-ITEM ,LANTERN>
+		<SETG CANDLE-USED F>
+	)(<CHECK-ITEM ,CANDLE> 
+		<SETG CANDLE-USED T>
+	)>
+	<RETURN ,STORY178>>
 
 <CONSTANT TEXT012 "\"Lucky it turned out to be pretty old,\" remarks the bosun. \"A younger one would have been tough to beat.\"||Leaning against a tree to get your breath back, you merely throw him a withering glare.||A trail winds up the hillside towards the middle of the island. One of the men sees you glance along it and says, \"Shouldn't we be setting sail, captain?\"">
 <CONSTANT CHOICES012 <LTABLE "Explore further inland" "Return to the ship">>
@@ -7189,7 +7223,6 @@
 	<COND (<CHECK-TITLE ,TITLE-SAVIOUR-VERVAYENS> <RETURN ,STORY169>)>
 	<RETURN ,STORY024>>
 
-; "TO-DO: track if candle was used in mines and adjust this section"
 <ROOM STORY025
 	(IN ROOMS)
 	(DESC "025")
@@ -7198,7 +7231,10 @@
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY025-EVENTS ()
-	<REMOVE-ITEM ,CANDLE ,TEXT-USED F T>>
+	<COND (,CANDLE-USED
+		<REMOVE-ITEM ,CANDLE ,TEXT-USED F T>
+		<SETG CANDLE-USED F>
+	)>>
 
 <CONSTANT TEXT026 "You are swept ashore at the mouth of a wide river. Staggering towards trails of smoke that are rising from beyond a copse of olive-green tropical palms, you arrive at a settlement of many thatched-roof shacks raised on stilts at the river's edge. It is the depot town of Smogmaw, on the great southern continent.">
 
@@ -9313,7 +9349,6 @@
 	(BACKGROUND STORY167-BACKGROUND)
 	(FLAGS LIGHTBIT)>
 
-; "TO-DO: Verify if flag needs to be reset on story 185"
 <ROUTINE STORY167-BACKGROUND ()
 	<COND (,SOLD-PIRATES-HEAD <RETURN ,STORY185>)>
 	<RETURN ,STORY044>>
@@ -12783,7 +12818,6 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 <CONSTANT TEXT395 "Now choose which door you will open. Each is a magical portal leading to a distant place.">
 <CONSTANT CHOICES395 <LTABLE "The left hand door (The War-Torn Kingdom)" "The middle door (The Plains of Howling Darkness)" "The right-hand door">>
 
-; "TO-DO: Verify if candle was used in sections leading to this"
 <ROOM STORY395
 	(IN ROOMS)
 	(DESC "395")
@@ -12796,8 +12830,9 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 
 <ROUTINE STORY395-EVENTS ()
 	<COND (,RUN-ONCE
-		<COND (<AND <NOT <CHECK-ITEM ,LANTERN>> <CHECK-ITEM ,CANDLE>>
+		<COND (,CANDLE-USED
 			<REMOVE-ITEM ,CANDLE ,TEXT-USED F T>
+			<SETG CANDLE-USED F>
 		)>
 	)>>
 
@@ -13093,10 +13128,24 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	(DESC "414")
 	(STORY TEXT414)
 	(CHOICES CHOICES414)
-	(DESTINATIONS <PLTABLE STORY452 STORY317>)
+	(DESTINATIONS <PLTABLE STORY414-LIGHT STORY317>)
 	(REQUIREMENTS <PLTABLE <PLTABLE CANDLE LANTERN> NONE>)
 	(TYPES <PLTABLE R-ANY R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<ROOM STORY414-LIGHT
+	(IN ROOMS)
+	(DESC "414")
+	(BACKGROUND STORY414-BACKGROUND)
+	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY414-BACKGROUND ()
+	<COND (<CHECK-ITEM ,LANTERN>
+		<SETG CANDLE-USED F>
+	)(<CHECK-ITEM ,CANDLE>
+		<SETG CANDLE-USED T>
+	)>
+	<RETURN ,STORY452>>	
 
 <CONSTANT TEXT415 "You emerge from a doorway set in the side of a tree. You now seem to be standing in a forest. The foliage overhead is so thick that you can hardly tell if it is day or night.">
 
@@ -13889,10 +13938,24 @@ back with reinforcements soon.\"||You agree.">
 	(DESC "471")
 	(STORY TEXT471)
 	(CHOICES CHOICES471)
-	(DESTINATIONS <PLTABLE STORY509 STORY317>)
+	(DESTINATIONS <PLTABLE STORY471-LIGHT STORY317>)
 	(REQUIREMENTS <PLTABLE <PLTABLE CANDLE LANTERN> NONE>)
 	(TYPES <PLTABLE R-ANY R-NONE>)
 	(FLAGS LIGHTBIT)>
+
+<ROOM STORY471-LIGHT
+	(IN ROOMS)
+	(DESC "471")
+	(BACKGROUND STORY471-BACKGROUND)
+	(FLAGS LIGHTBIT)>
+
+<ROUTINE STORY471-BACKGROUND ()
+	<COND (<CHECK-ITEM ,LANTERN>
+		<SETG CANDLE-USED F>
+	)(<CHECK-ITEM ,CANDLE>
+		<SETG CANDLE-USED T>
+	)>
+	<RETURN ,STORY509>>
 
 <CONSTANT TEXT472 "You are chained by the pirates and taken inland on one of the Unnumbered Isles. The landscape consists of windswept bluffs under a sky of perpetual racing clouds. A thin cold drizzle comes down in gusts.">
 
@@ -15268,7 +15331,6 @@ back with reinforcements soon.\"||You agree.">
 
 <CONSTANT TEXT567 "Your old friend Verin Crookback agrees to help you. He takes you to where your ship is lying at anchor. Your men have been pressed into service in the fields to gather produce for the Reavers' table, but with Verin's help you round up most of them and set sail under cover of darkness.">
 
-; "TO-DO: Implement recovery of ship"
 <ROOM STORY567
 	(IN ROOMS)
 	(DESC "567")
@@ -15862,6 +15924,7 @@ answer?">
 	(FLAGS LIGHTBIT)>
 
 <ROUTINE STORY607-EVENTS ()
+	<GAIN-STORAGE ,COLLEGE-DWEOMER "college">
 	<VISIT-STORAGE ,STORY607 ,COLLEGE-DWEOMER>>
 
 <CONSTANT TEXT608 "\"Were you set ashore by your fellow crewmen?\" you ask the poor wretch, for this is a common punishment at sea.||\"No,\" he says. \"We had the misfortune to encounter a shoal of mermaids. Hearing their sad sweet song, all the others flung themselves into the sea and were drowned. Later the ship hit that reef and sank, and there I waited till you found me.\"||\"Why didn't the mermaids' song affect you?\"||He gives a wry smile. \"I'm tone deaf.\"">
@@ -16576,7 +16639,6 @@ The finest wines are served -- wines of southern Sokara that were intended for t
 	(CONTINUE STORY571)
 	(FLAGS LIGHTBIT)>
 
-; "TO-DO: Validate college"
 <ROUTINE STORY658-EVENTS ()
 	<REMOVE ,COLLEGE-DWEOMER>
 	<PUTP ,STORY607 ,P?VISITS 0>>
@@ -17172,7 +17234,6 @@ The finest wines are served -- wines of southern Sokara that were intended for t
 	(TYPES TWO-CHOICES)
 	(FLAGS LIGHTBIT)>
 
-; "TO-DO: Check if loss of crew implies ship/crew condition is POOR"
 <CONSTANT TEXT700 "The crewmen are all dead, leaving you alone on your ship. You cannot sail her without help. In the rowboat it is possible you might be able to reach the mainland, but that would mean abandoning your cargo and supplies.">
 <CONSTANT CHOICES700 <LTABLE "Put to sea in the rowboat" "Remain aboard the ship">>
 
