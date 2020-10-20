@@ -1,6 +1,6 @@
 #!/bin/bash
 grep -n '(STORY' bloodsea.zil | grep -v '(STORY TEXT' | grep -v '(STORY NONE)' | grep -v 'STORY-JUMP (STORY)' | grep -v '(STORY "' | grep -v '(STORY JUMP ' | grep -v '(STORY SHACK ' | grep -v '(STORY INDEX ' | grep -v 'SET-DESTINATION (STORY DESTINATION' | grep -v 'PROCESS-HOUSE (STORY ' | grep -v 'STORAGE-MONEY (STORY ' | grep -v 'STORAGE-POSSESSIONS (STORY ' | grep -v 'VISIT-STORAGE (STORY ' | grep -v 'PROCESS-COLLEGE (STORY COLLEGE'
-grep -n '(CHOICE' bloodsea.zil | grep -v '(CHOICES CHOICES' | grep -v '(CHOICES NONE)' | grep -v '(CHOICES "AUX"' | grep -v '<ROUTINE PRINT-MENU' | grep -v '(CHOICES SMOGMAW-'
+grep -n '(CHOICE' bloodsea.zil | grep -v '(CHOICES CHOICES' | grep -v '(CHOICES NONE)' | grep -v '(CHOICES "AUX"' | grep -v '<ROUTINE PRINT-MENU' | grep -v '(CHOICES SMOGMAW-' | grep -v '(CHOICE 0)'
 grep -n '(CONTINUE' bloodsea.zil | grep -v '(CONTINUE STORY' | grep -v '(CONTINUE NONE)' | grep -v '(CONTINUE SMOGMAW-' | grep -v '(CONTINUE COPPER-' | grep -v '(CONTINUE VERVAYENS-' | grep -v '(CONTINUE SHAMANS-'
 grep -n '(DESTINATION' bloodsea.zil | grep -v '(DESTINATIONS <LTABLE ' | grep -v '(DESTINATIONS <PLTABLE ' | grep -v '(DESTINATIONS NONE)' | grep -v 'RESULT (DESTINATION NONE)' | grep -v '(DESTINATIONS SMOGMAW-' | grep -v '(DESTINATIONS STORY'
 grep -n '(REQUIREMENTS' bloodsea.zil | grep -v '(REQUIREMENTS NONE)' | grep -v '(REQUIREMENTS <LTABLE ' | grep -v '(REQUIREMENTS <PLTABLE ' | grep -v '(REQUIREMENTS STORY' | grep -v '(REQUIREMENTS SMOGMAW-'

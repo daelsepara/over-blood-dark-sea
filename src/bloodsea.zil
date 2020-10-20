@@ -2923,7 +2923,7 @@
 	)>
 	<RETURN .COUNT>>
 
-<ROUTINE PRINT-MENU (CHOICES ITEM-MENU SHOW-STATS "OPT" EXIT-KEY EXIT-TEXT PRICES (NO-QUANTITY F)"AUX" ITEMS)
+<ROUTINE PRINT-MENU (CHOICES ITEM-MENU SHOW-STATS "OPT" EXIT-KEY EXIT-TEXT PRICES (NO-QUANTITY F) "AUX" ITEMS)
 	<COND (<NOT .CHOICES> <RETURN>)>
 	<SET ITEMS <GET .CHOICES 0>>
 	<DO (I 1 .ITEMS)
@@ -6718,6 +6718,74 @@
 		<RESET-CARGO>
 	)(ELSE
 		<LOSE-STUFF ,CARGO ,LOST-STUFF "cargo" <- .COUNT .MAX> ,RESET-CARGO>
+	)>>
+
+<ROUTINE STORY-TRADE-CARGO (ITEM LIST "OPT" (CONTAINER NONE) (UNITS 1) "AUX" (COUNT 0) (ITEMS 0) (QUANTITY 0) (GOODS NONE) (KEY NONE) (CHOICE 0))
+	<COND (<OR <NOT .ITEM> <NOT .LIST>> <RETURN>)>
+	<COND (<NOT .CONTAINER> <SET .CONTAINER ,CARGO>)>
+	<SET COUNT <GET .LIST 0>>
+	<SET GOODS <LTABLE NONE NONE NONE>>
+	<DO (I 1 .COUNT)
+		<COND (<IN? <GET .LIST .I> .CONTAINER>
+			<INC .ITEMS>
+			<PUT .GOODS .ITEMS <GET .LIST .I>>
+		)>
+	>
+	<COND (<G? .ITEMS 0>
+		<PUT .GOODS 0 .ITEMS>
+		<DO (I 1 .UNITS)
+			<REPEAT ()
+				<CRLF>
+				<TELL "Get">
+				<COND (<G? .I 1>
+					<TELL " another unit of ">
+				)(ELSE
+					<TELL " the ">
+				)>
+				<PRINT-ITEM .ITEM T>
+				<TELL " in exchange for your: " CR>
+				<DO (J 1 .ITEMS)
+					<HLIGHT ,H-BOLD>
+					<TELL N .J>
+					<HLIGHT ,H-NORMAL>
+					<TELL " - " <GET .GOODS .J> CR>
+				>
+				<HLIGHT ,H-BOLD>
+				<TELL "0">
+				<HLIGHT ,H-NORMAL>
+				<TELL " - You do not wish to trade" CR>
+				<TELL "Select cargo to trade: ">
+				<REPEAT ()
+					<SET KEY <INPUT 1>>
+					<COND (<OR <EQUAL? .KEY 0> <AND <G=? .KEY !\1> <L=? .KEY <+ !\0 .ITEMS>>>>
+						<RETURN>
+					)>
+				>
+				<COND (<EQUAL? .KEY !\0>
+					<RETURN>
+				)(ELSE
+					<SET CHOICE <- .KEY !\0>>
+					<COND (<IN? <GET .GOODS .CHOICE> .CONTAINER>
+						<SET QUANTITY <GETP <GET .GOODS .CHOICE> ,P?QUANTITY>>
+						<COND (<G? .QUANTITY 1>
+							<DEC .QUANTITY>
+							<PUTP <GET .GOODS .CHOICE> ,P?QUANTITY .QUANTITY>
+							<STORY-GAIN-CARGO .ITEM 1>
+						)(ELSE
+							<REMOVE <GET .GOODS .CHOICE>>
+							<PUTP <GET .GOODS .CHOICE> ,P?QUANTITY 1>
+							<STORY-GAIN-CARGO .ITEM 1>
+						)>
+						<RETURN>
+					)(ELSE
+						<EMPHASIZE "Your ship is not carrying that cargo!">
+					)>
+				)>
+			>
+			<COND (<EQUAL? .KEY !\0> <RETURN>)>
+		>
+	)(ELSE
+		<EMPHASIZE "You do not have cargo they are interested in.">
 	)>>
 
 <CONSTANT TEXT-DROWNED "You drowned!">
@@ -15362,9 +15430,8 @@ back with reinforcements soon.\"||You agree.">
 	(CONTINUE STORY264)
 	(FLAGS LIGHTBIT)>
 
-; "TO-DO: Implement Cargo Trading"
 <ROUTINE STORY569-EVENTS ()
-	<RETURN>>
+	<STORY-TRADE-CARGO ,CARGO-SPICES <LTABLE CARGO-FURS CARGO-TIMBER CARGO-GRAINS> ,CARGO 2>>
 
 <CONSTANT TEXT570 "You cannot make any headway. Your ship is trapped in the Sea of Reeds; each day your supplies of food and water get lower and lower.">
 
