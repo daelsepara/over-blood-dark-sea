@@ -2972,12 +2972,12 @@
 	<CURSET .ROW 1>>
 
 <ROUTINE UPDATE-STATUS-LINE ("AUX" WIDTH)
-	<SPLIT 2>
-	<SCREEN 1>
-	<SET WIDTH <LOWCORE SCRH>>
-	<HLIGHT ,H-INVERSE>
-	<LINE-ERASE 1>
 	<COND (,HERE
+		<SPLIT 2>
+		<SCREEN 1>
+		<SET WIDTH <LOWCORE SCRH>>
+		<HLIGHT ,H-INVERSE>
+		<LINE-ERASE 1>
 		<CURSET 1 1>
 		<TELL D ,HERE>
 		<COND (<G? <GETP ,HERE ,P?VISITS> 1>
@@ -2998,9 +2998,9 @@
 				<TELL ": " N ,MONEY>
 			)>
 		)>
-	)>
-	<SCREEN 0>
-	<HLIGHT ,H-NORMAL>>
+		<SCREEN 0>
+		<HLIGHT ,H-NORMAL>
+	)>>
 
 ; "Gamebook loop routines"
 ; ---------------------------------------------------------------------------------------------
