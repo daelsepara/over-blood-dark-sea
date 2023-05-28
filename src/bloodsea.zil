@@ -34,7 +34,7 @@
 <CONSTANT SELECT-CHOICES <LTABLE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE>>
 <CONSTANT TEMP-LIST <LTABLE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE NONE>>
 
-<CONSTANT R-NONE 0> 
+<CONSTANT R-NONE 0>
 <CONSTANT R-TEST-ABILITY 1> ; "test ABILITY versus difficulty roll"
 <CONSTANT R-RANDOM 2> ; "rolls a number of dice and choose destination based on threshold"
 <CONSTANT R-CODEWORD 3> ; "presence of codeword(s)"
@@ -1939,7 +1939,7 @@
 	<COND (<L=? .LOCATION 20>
 		<RETURN <GET ,LOCATIONS .LOCATION>>
 	)(<L=? .LOCATION 40>
-		
+
 	)>>
 
 <ROUTINE GIVE-ITEM (ITEM "OPT" (SILENT F))
@@ -4477,7 +4477,7 @@
 	<TELL "Round " N .ROUND ": ">
 	<HLIGHT ,H-NORMAL>
 	<HLIGHT ,H-ITALIC>
-	<TELL D ,CURRENT-CHARACTER> 
+	<TELL D ,CURRENT-CHARACTER>
 	<HLIGHT ,H-NORMAL>
 	<TELL " (STAMINA: " N .STAMINA-PLAYER "), ">
 	<HLIGHT ,H-ITALIC>
@@ -4525,7 +4525,7 @@
 	<TELL " (COMBAT: " N .COMBAT-MONSTER " DEFENSE: " N .DEFENSE-MONSTER ")">
 	<TELL ,PERIOD-CR>
 	; "Track Previous Stamina"
-	<SETG PREVIOUS-STAMINA .STAMINA-PLAYER> 
+	<SETG PREVIOUS-STAMINA .STAMINA-PLAYER>
 	<REPEAT ()
 		<INC .ROUND>
 		<COMBAT-STATUS .ROUND .MONSTER .STAMINA-PLAYER .STAMINA-MONSTER>
@@ -4761,7 +4761,7 @@
 		<COND (<OR
 			<AND <G=? .CHARACTER !\0> <L=? .CHARACTER !\9>>
 			<AND <G? .BASE 10> <L=? .BASE 36>
-				<OR 
+				<OR
 					<AND <G=? .CHARACTER !\A> <L=? .CHARACTER !\Z>>
 					<AND <G=? .CHARACTER !\a> <L=? .CHARACTER !\z>>
 				>
@@ -5487,7 +5487,7 @@
 			<HLIGHT ,H-NORMAL>
 			<COND (<YES?>
 				<COND (.LEAVE
-					<MOVE <GET-ITEM .CHOICE .FROM> .TO>	
+					<MOVE <GET-ITEM .CHOICE .FROM> .TO>
 				)(ELSE
 					<COND (<EQUAL? .TO ,PLAYER>
 						<COND (<G=? <COUNT-CONTAINER .TO> ,LIMIT-POSSESSIONS>
@@ -7104,7 +7104,7 @@
 <ROUTINE STORY011-BACKGROUND ()
 	<COND (<CHECK-ITEM ,LANTERN>
 		<SETG CANDLE-USED F>
-	)(<CHECK-ITEM ,CANDLE> 
+	)(<CHECK-ITEM ,CANDLE>
 		<SETG CANDLE-USED T>
 	)>
 	<RETURN ,STORY178>>
@@ -7952,7 +7952,7 @@
 	<COND (<CHECK-CODEWORD ,CODEWORD-CALCIUM>
 		<PREVENT-DOOM ,STORY067>
 	)(ELSE
-		<LOSE-STAMINA 4 ,DIED-GREW-WEAKER ,STORY067> 
+		<LOSE-STAMINA 4 ,DIED-GREW-WEAKER ,STORY067>
 	)>>
 
 <CONSTANT TEXT068 "The man strides right up to the side of your vessel and hails you as casually as if he were standing on the quayside at Wishport.">
@@ -13213,7 +13213,7 @@ snarl. Acid drips from its fangs as it snaps at you.||Lying in the shade has lef
 	)(<CHECK-ITEM ,CANDLE>
 		<SETG CANDLE-USED T>
 	)>
-	<RETURN ,STORY452>>	
+	<RETURN ,STORY452>>
 
 <CONSTANT TEXT415 "You emerge from a doorway set in the side of a tree. You now seem to be standing in a forest. The foliage overhead is so thick that you can hardly tell if it is day or night.">
 
@@ -15674,7 +15674,7 @@ unknown waters.">
 		<GAIN-CODEWORD ,CODEWORD-CUTLASS>
 	)>>
 
-<CONSTANT TEXT586 "The duel is arranged for the next day, to be held in Erebus Meadow. Quite a crowd gathers in the hope of seeing some spectacular sorcery. In the event, however, Talanexor  does not commence with one of his fabled fireballs. Instead, as the challenged party, he poses a conundrum. You must solve it or forfeit the duel!||\"There are thirty colleges in Dweomer,\" he says. \"The other day I attended a sherry party where there were six others besides myself. What was the chance that at least two of us belonged to the same college?\"||What will you 
+<CONSTANT TEXT586 "The duel is arranged for the next day, to be held in Erebus Meadow. Quite a crowd gathers in the hope of seeing some spectacular sorcery. In the event, however, Talanexor  does not commence with one of his fabled fireballs. Instead, as the challenged party, he poses a conundrum. You must solve it or forfeit the duel!||\"There are thirty colleges in Dweomer,\" he says. \"The other day I attended a sherry party where there were six others besides myself. What was the chance that at least two of us belonged to the same college?\"||What will you
 answer?">
 <CONSTANT CHOICES586 <LTABLE "Twenty per cent" "Twenty-five per cent" "Fifty per cent">>
 

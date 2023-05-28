@@ -6,7 +6,7 @@ ZIL Implementation of Over the Blood-Dark Sea (Quest / Fabled Lands Game book) b
 |:-:|-|
 |![Cover Art](/images/over-the-blood-dark-sea.jpg)|SET OUT ON A JOURNEY OF INCREDIBLE ADVENTURE ROLE-PLAYING IN LANDS BEYOND YOUR IMAGINATION<br><br>Choose for yourself what role to play, where to go, and what to do.<br><br>OVER THE BLOOD-DARK SEA lie countless islands steeped in mystery. Every port brings peril -- from the half-wild settlements on the edge of Anon-Konu, to the forbidden cloisters of the sorcerers' colleges of Dweomer. Every voyage means danger -- from murderous pirates and haunted ships.<br><br>You can choose to be a daring explorer, in search of conquests, treasures and power. Or a magical savant, invoking the secrets of the occult to annihilate your foes. Or you can amass a fortune as a merchant, trading in spice shipments from the Sea of Hydras to the Innis Shoals.<br><br>Decide for yourself how to tackle the perils of the Sea, and reap the rewards that will lead you to greater adventures -- in the fantastic role-playing world of the FABLED LANDS.|
 | |*Cover illustration by Kevin Jenkins|
-| |**The Ports and Anchorages of of the Violet Ocean**| 
+| |**The Ports and Anchorages of of the Violet Ocean**|
 | |![Map of the Violet Ocean](/images/violet-ocean-map.jpg)<br>**From: [Museum of Computer Adventure Game History](https://mocagh.org/)|
 | |**Map of Bazalek**|
 | |![Map of Bazalek](/images/map-of-bazalek.png)|
@@ -20,7 +20,7 @@ ZIL Implementation of Over the Blood-Dark Sea (Quest / Fabled Lands Game book) b
 ## Full Cover Art (c) Kevin Jenkins
 ![Full Cover Art](/images/full-cover-art.jpg)
 
-## Additional Copyright Information 
+## Additional Copyright Information
 
 ```
 Text copyright (c) 1995 Dave Morris and Jamie Thomson
@@ -59,7 +59,7 @@ First Edition
 - Press **r** or **R** to restore progress from a save file
 - Press **s** or **S** to save current progress to a file
 - Press **u** or **U** Use/drop an item from your inventory
-- Press **?** to list the commands **P**/**S**/**R**/**U**/**Q** and what each does 
+- Press **?** to list the commands **P**/**S**/**R**/**U**/**Q** and what each does
 
 ## Additional Notes
 
